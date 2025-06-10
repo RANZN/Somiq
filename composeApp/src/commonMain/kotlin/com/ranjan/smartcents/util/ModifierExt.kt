@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.util
+package com.ranjan.smartcents.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.component.OnClick
+import com.ranjan.smartcents.component.OnClick
 
 @Stable
 fun Modifier.defaultHorizontalPadding() = padding(horizontal = 16.dp)

@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz_intro.components
+package com.ranjan.smartcents.quiz_intro.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.component.OnClick
+import com.ranjan.smartcents.component.OnClick
 
 @Composable
 fun QuizTypeButton(

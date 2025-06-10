@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz.components
+package com.ranjan.smartcents.quiz.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,7 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.component.OnClick
+import com.ranjan.smartcents.component.OnClick
 
 @Composable
 fun OptionButton(

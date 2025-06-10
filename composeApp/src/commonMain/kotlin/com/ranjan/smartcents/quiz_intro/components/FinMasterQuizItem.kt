@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz_intro.components
+package com.ranjan.smartcents.quiz_intro.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -15,12 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.R
-import com.ranjan.smartcents.android.component.OnClick
+import smartcents.composeapp.generated.resources.Res
+import com.ranjan.smartcents.component.OnClick
+import smartcents.composeapp.generated.resources.*
 
 @Composable
 fun FinMasterQuizItem(
@@ -58,7 +59,7 @@ fun FinMasterQuizItem(
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             ) {
-                Text(stringResource(R.string.start_quiz), color = Color.Black)
+                Text(stringResource(Res.string.start_quiz), color = Color.Black)
             }
         }
     }
@@ -68,7 +69,7 @@ fun FinMasterQuizItem(
 @Composable
 private fun FinMasterQuizItemPrev() {
     FinMasterQuizItem(
-        icon = painterResource(id = R.drawable.ic_quizzes),
+        icon = painterResource(Res.drawable.ic_quizzes),
         title = "FinMaster Quiz",
         description = "Test your finance knowledge",
         onClick = {}

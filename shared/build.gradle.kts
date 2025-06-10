@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
@@ -15,7 +17,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
     
@@ -25,7 +27,7 @@ kotlin {
     
     jvm()
     
-    @OptIn(ExperimentalWasmDsl::class)
+/*    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
             val rootDirPath = project.rootDir.path
@@ -41,11 +43,12 @@ kotlin {
             }
         }
     }
-    
+    */
     sourceSets {
         commonMain.dependencies {
             implementation(libs.room.runtime)
             api(libs.koin.core)
+            api(libs.koin.compose.viewmodel)
             implementation(libs.kmp.viewmodel)
             implementation(libs.firebase.auth)
             implementation(libs.firebase.firestore)
@@ -58,6 +61,19 @@ kotlin {
             implementation(libs.koin.android)
         }
     }
+}
+
+dependencies {
+    // KSP support for Room Compiler.
+    add("kspCommonMainMetadata", libs.room.compiler)
+    add("kspAndroid", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 android {

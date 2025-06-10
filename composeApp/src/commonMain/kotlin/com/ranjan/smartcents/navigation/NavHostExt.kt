@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.navigation
+package com.ranjan.smartcents.navigation
 
 
 import androidx.navigation.NavHostController

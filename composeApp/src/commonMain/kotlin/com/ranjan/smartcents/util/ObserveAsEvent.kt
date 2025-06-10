@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.util
+package com.ranjan.smartcents.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.component
+package com.ranjan.smartcents.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues

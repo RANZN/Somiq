@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.navigation
+package com.ranjan.smartcents.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -7,18 +7,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.ranjan.smartcents.android.home.HomeScreenHost
-import com.ranjan.smartcents.android.login.LoginScreenHost
-import com.ranjan.smartcents.android.navigation.Screen.Home
-import com.ranjan.smartcents.android.quiz_intro.FinMasterQuiz
-import com.ranjan.smartcents.android.quiz_intro.FounderQuiz
-import com.ranjan.smartcents.android.quiz_intro.QuizInstruction
-import com.ranjan.smartcents.android.quiz_intro.QuizzesHost
+import com.ranjan.smartcents.home.HomeScreenHost
+import com.ranjan.smartcents.login.LoginScreenHost
+import com.ranjan.smartcents.navigation.Screen.Home
+import com.ranjan.smartcents.quiz_intro.FinMasterQuiz
+import com.ranjan.smartcents.quiz_intro.FounderQuiz
+import com.ranjan.smartcents.quiz_intro.QuizInstruction
+import com.ranjan.smartcents.quiz_intro.QuizzesHost
 import com.ranjan.smartcents.presentation.quiz.QuizType
-import com.ranjan.smartcents.android.signup.SignupScreenHost
-import com.ranjan.smartcents.android.splash.SplashScreenHost
-import com.ranjan.smartcents.android.quiz.QuizHostScreen
-import com.ranjan.smartcents.android.quiz_result.QuizResultHost
+import com.ranjan.smartcents.signup.SignupScreenHost
+import com.ranjan.smartcents.splash.SplashScreenHost
+import com.ranjan.smartcents.quiz.QuizHostScreen
+import com.ranjan.smartcents.quiz_result.QuizResultHost
 import kotlinx.serialization.json.Json
 
 @Composable

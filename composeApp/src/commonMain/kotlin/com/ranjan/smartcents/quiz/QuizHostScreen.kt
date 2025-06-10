@@ -1,11 +1,10 @@
-package com.ranjan.smartcents.android.quiz
+package com.ranjan.smartcents.quiz
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ranjan.smartcents.android.component.OnClick
 import com.ranjan.smartcents.presentation.quiz.QuizType
 import com.ranjan.smartcents.presentation.quiz.QuizViewModel
 import org.koin.mp.KoinPlatform.getKoin

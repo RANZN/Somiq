@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz_intro
+package com.ranjan.smartcents.quiz_intro
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,16 +13,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.R
-import com.ranjan.smartcents.android.component.OnClick
-import com.ranjan.smartcents.android.component.VSpace
-import com.ranjan.smartcents.android.quiz_intro.components.QuizTypeButton
-import com.ranjan.smartcents.android.util.screenDefault
+import smartcents.composeapp.generated.resources.Res
+import com.ranjan.smartcents.component.OnClick
+import com.ranjan.smartcents.component.VSpace
+import com.ranjan.smartcents.quiz_intro.components.QuizTypeButton
+import com.ranjan.smartcents.util.screenDefault
+import smartcents.composeapp.generated.resources.*
 
 @Composable
 fun QuizzesScreen(
@@ -41,30 +42,30 @@ fun QuizzesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                stringResource(R.string.quiz),
+                stringResource(Res.string.quiz),
                 style = MaterialTheme.typography.displayLarge,
                 modifier = Modifier.padding(top = 20.dp)
             )
             Icon(
-                painter = painterResource(id = R.drawable.ic_quizzes),
+                painter = painterResource(Res.drawable.ic_quizzes),
                 contentDescription = null,
                 modifier = Modifier
                     .size(200.dp),
             )
             Text(
-                stringResource(R.string.participate_and_compete_in_our_engaging_finance_and_business_quiz_challenges),
+                stringResource(Res.string.participate_and_compete_in_our_engaging_finance_and_business_quiz_challenges),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
             VSpace(20.dp)
             QuizTypeButton(
-                title = stringResource(R.string.finmaster_quiz),
-                desc = stringResource(R.string.for_students_and_aspiring_professionals),
+                title = stringResource(Res.string.finmaster_quiz),
+                desc = stringResource(Res.string.for_students_and_aspiring_professionals),
                 onClick = navigateToFinMasterQuiz
             )
             QuizTypeButton(
-                title = stringResource(R.string.founder_quiz),
-                desc = stringResource(R.string.for_entrepreneurs_business_owners_and_working_professionals),
+                title = stringResource(Res.string.founder_quiz),
+                desc = stringResource(Res.string.for_entrepreneurs_business_owners_and_working_professionals),
                 onClick = navigateToFounderQuiz
             )
         }

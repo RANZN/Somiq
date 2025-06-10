@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.signup
+package com.ranjan.smartcents.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,31 +22,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.R
-import com.ranjan.smartcents.android.component.CustomOutlinedButton
-import com.ranjan.smartcents.android.component.CustomTextField
-import com.ranjan.smartcents.android.component.OnboardingButton
-import com.ranjan.smartcents.android.signup.components.SignupHeader
-import com.ranjan.smartcents.android.util.defaultPadding
-import com.ranjan.smartcents.presentation.signup.SignupViewModel
+import smartcents.composeapp.generated.resources.Res
+import com.ranjan.smartcents.component.CustomOutlinedButton
+import com.ranjan.smartcents.component.CustomTextField
+import com.ranjan.smartcents.component.OnboardingButton
+import com.ranjan.smartcents.signup.components.SignupHeader
+import com.ranjan.smartcents.util.defaultPadding
 import com.ranjan.smartcents.presentation.signup.SignupViewModel.Action
+import com.ranjan.smartcents.presentation.signup.SignupViewModel.UiState
+import com.ranjan.smartcents.signup.mapper.getMessage
+import smartcents.composeapp.generated.resources.*
 
 @Composable
 fun SignupScreen(
-    uiState: SignupViewModel.UiState,
+    uiState: UiState,
     errorMsg: String,
     action: (Action) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    Surface (
+    Surface(
         Modifier.fillMaxSize()
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .defaultPadding()
@@ -62,16 +64,16 @@ fun SignupScreen(
 
             val nameError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it.type == SignupViewModel.UiState.Error.NAME }
+                    uiState.error.find { it is UiState.Error.NAME }
                 }
             }
             CustomTextField(
                 value = uiState.name,
                 onValueChange = { action(Action.OnNameChange(it)) },
-                placeholder = stringResource(R.string.full_name),
+                placeholder = stringResource(Res.string.full_name),
                 leadingImageVector = Icons.Outlined.Person,
                 isError = nameError != null,
-                errorMessage = nameError?.message,
+                errorMessage = nameError?.getMessage(),
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Next,
@@ -80,16 +82,16 @@ fun SignupScreen(
 
             val emailError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it.type == SignupViewModel.UiState.Error.EMAIL }
+                    uiState.error.find { it is UiState.Error.EMAIL }
                 }
             }
             CustomTextField(
                 value = uiState.email,
                 onValueChange = { action(Action.OnEmailChange(it)) },
-                placeholder = stringResource(R.string.email_or_phone),
+                placeholder = stringResource(Res.string.email_or_phone),
                 leadingImageVector = Icons.Outlined.Email,
                 isError = emailError != null,
-                errorMessage = emailError?.message,
+                errorMessage = emailError?.getMessage(),
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Next,
@@ -98,16 +100,16 @@ fun SignupScreen(
             )
             val passwordError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it.type == SignupViewModel.UiState.Error.PASSWORD }
+                    uiState.error.find { it is UiState.Error.PASSWORD }
                 }
             }
             CustomTextField(
                 value = uiState.password,
                 onValueChange = { action(Action.OnPasswordChange(it)) },
-                placeholder = stringResource(R.string.password),
+                placeholder = stringResource(Res.string.password),
                 leadingImageVector = Icons.Outlined.Password,
-                isError = passwordError!=null,
-                errorMessage = passwordError?.message,
+                isError = passwordError != null,
+                errorMessage = passwordError?.getMessage(),
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Next,
@@ -117,16 +119,16 @@ fun SignupScreen(
 
             val rePasswordError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it.type == SignupViewModel.UiState.Error.RE_PASSWORD }
+                    uiState.error.find { it is UiState.Error.CONFIRM_PASSWORD }
                 }
             }
             CustomTextField(
                 value = uiState.confirmPassword,
                 onValueChange = { action(Action.OnConfirmPasswordChange(it)) },
-                placeholder = stringResource(R.string.confirm_password),
+                placeholder = stringResource(Res.string.confirm_password),
                 leadingImageVector = Icons.Outlined.Repartition,
                 isError = rePasswordError != null,
-                errorMessage = rePasswordError?.message,
+                errorMessage = rePasswordError?.getMessage(),
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Done,
@@ -135,7 +137,7 @@ fun SignupScreen(
             )
 
             OnboardingButton(
-                text = stringResource(R.string.sign_up),
+                text = stringResource(Res.string.sign_up),
                 isLoading = uiState.isLoading,
                 onClick = { action(Action.Signup) }
             )
@@ -147,7 +149,7 @@ fun SignupScreen(
             )
 
             CustomOutlinedButton(
-                text = stringResource(R.string.continue_with_google),
+                text = stringResource(Res.string.continue_with_google),
                 icon = Icons.Outlined.Email,
                 onClick = { action(Action.OnGoogleLoginClick) }
             )
@@ -158,5 +160,5 @@ fun SignupScreen(
 @Preview
 @Composable
 private fun SignupScreenPrev() {
-    SignupScreen(SignupViewModel.UiState(),"") {}
+    SignupScreen(UiState(), "") {}
 }

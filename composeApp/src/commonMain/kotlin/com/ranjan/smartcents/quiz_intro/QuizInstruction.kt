@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz_intro
+package com.ranjan.smartcents.quiz_intro
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,14 +9,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.R
-import com.ranjan.smartcents.android.component.BoldOutlinedButton
-import com.ranjan.smartcents.android.component.OnClick
-import com.ranjan.smartcents.android.util.screenDefault
+import smartcents.composeapp.generated.resources.Res
+import com.ranjan.smartcents.component.BoldOutlinedButton
+import com.ranjan.smartcents.component.OnClick
+import com.ranjan.smartcents.util.screenDefault
+import org.jetbrains.compose.resources.stringArrayResource
+import smartcents.composeapp.generated.resources.*
 
 @Composable
 fun QuizInstruction(startQuiz: OnClick) {
@@ -26,18 +27,18 @@ fun QuizInstruction(startQuiz: OnClick) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                stringResource(R.string.quiz_instruction),
+                stringResource(Res.string.quiz_instruction),
                 style = MaterialTheme.typography.displayMedium
             )
             BulletPoints(
-                points = stringArrayResource(R.array.quiz_instruction_list).toList(),
+                points = stringArrayResource(Res.array.quiz_instruction_list).toList(),
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = 16.dp)
             )
 
             BoldOutlinedButton(
-                text = stringResource(R.string.start_quiz),
+                text = stringResource(Res.string.start_quiz),
                 modifier = Modifier.padding(vertical = 16.dp),
                 onClick = startQuiz
             )

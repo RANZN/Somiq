@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.smartcents.domain.model.AuthResult
 import com.ranjan.smartcents.domain.repository.AuthRepo
-import com.ranjan.smartcents.res.strings
-import com.ranjan.smartcents.util.ErrorState
 import com.ranjan.smartcents.util.isValidEmail
 import com.ranjan.smartcents.util.isValidPassword
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignupViewModel(
-    private val authRepo: AuthRepo
+    private val authRepo: AuthRepo,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -64,23 +62,19 @@ class SignupViewModel(
                         AuthResult.Failure.EmailAlreadyInUse -> {
                             _uiState.update {
                                 it.copy(
-                                    error = listOf(
-                                        ErrorState(
-                                            UiState.Error.EMAIL,
-                                            strings.emailAlreadyInUse
-                                        )
-                                    ),
+                                    error = listOf(UiState.Error.EMAIL.AlreadyInUse),
                                     isLoading = false
                                 )
                             }
                         }
 
                         is AuthResult.Failure.Unknown -> {
-                            handleAction(
-                                Action.ShowError(
-                                    result.message ?: strings.somethingWentWring
+                            _uiState.update {
+                                it.copy(
+                                    error = listOf(UiState.Error.GenericError(result.message)),
+                                    isLoading = false
                                 )
-                            )
+                            }
                         }
 
                         is AuthResult.Success -> {
@@ -93,12 +87,7 @@ class SignupViewModel(
                     _error.emit(action.error)
                     _uiState.update {
                         it.copy(
-                            error = listOf(
-                                ErrorState(
-                                    UiState.Error.SIGNUP,
-                                    action.error
-                                )
-                            ),
+                            error = listOf(UiState.Error.GenericError(action.error)),
                             isLoading = false
                         )
                     }
@@ -116,32 +105,36 @@ class SignupViewModel(
         }
     }
 
-    fun validateFields(state: UiState): List<ErrorState<UiState.Error>> {
-        val errors = mutableListOf<ErrorState<UiState.Error>>()
+    fun validateFields(state: UiState): List<UiState.Error> {
+        val errors = mutableListOf<UiState.Error>()
 
+        // Name validation
         if (state.name.isEmpty()) {
-            errors.add(ErrorState(UiState.Error.NAME, strings.nameRequired))
+            errors.add(UiState.Error.NAME.Required)
         } else if (state.name.length < 3) {
-            errors.add(ErrorState(UiState.Error.NAME, strings.nameTooShort))
+            errors.add(UiState.Error.NAME.TooShort)
         }
 
+        // Email validation
         if (state.email.isEmpty()) {
-            errors.add(ErrorState(UiState.Error.EMAIL, strings.emailRequired))
+            errors.add(UiState.Error.EMAIL.Required)
         } else if (!state.email.isValidEmail()) {
-            errors.add(ErrorState(UiState.Error.EMAIL, strings.invalidEmail))
+            errors.add(UiState.Error.EMAIL.InvalidFormat)
         }
 
+        // Password validation
         if (state.password.isEmpty()) {
-            errors.add(ErrorState(UiState.Error.PASSWORD, strings.passwordRequired))
+            errors.add(UiState.Error.PASSWORD.Required)
         } else if (!state.password.isValidPassword()) {
-            errors.add(ErrorState(UiState.Error.PASSWORD, strings.invalidPassword))
+            errors.add(UiState.Error.PASSWORD.InvalidFormat)
         }
 
+        // Confirm Password validation
         if (state.confirmPassword.isEmpty()) {
-            errors.add(ErrorState(UiState.Error.RE_PASSWORD, strings.confirmPasswordRequired))
+            errors.add(UiState.Error.CONFIRM_PASSWORD.Required)
         } else if (state.password != state.confirmPassword) {
-            errors.add(ErrorState(UiState.Error.PASSWORD))
-            errors.add(ErrorState(UiState.Error.RE_PASSWORD, strings.passwordsDoNotMatch))
+            errors.add(UiState.Error.PASSWORD.Mismatch)
+            errors.add(UiState.Error.CONFIRM_PASSWORD.Mismatch)
         }
 
         return errors
@@ -154,14 +147,32 @@ class SignupViewModel(
         val password: String = "",
         val confirmPassword: String = "",
         val isLoading: Boolean = false,
-        val error: List<ErrorState<Error>> = emptyList()
+        val error: List<Error> = emptyList()
     ) {
-        enum class Error {
-            EMAIL,
-            NAME,
-            PASSWORD,
-            RE_PASSWORD,
-            SIGNUP
+        sealed interface Error {
+            sealed interface NAME : Error {
+                object Required : NAME
+                object TooShort : NAME
+            }
+
+            sealed interface EMAIL : Error {
+                object Required : EMAIL
+                object InvalidFormat : EMAIL
+                object AlreadyInUse : EMAIL
+            }
+
+            sealed interface PASSWORD : Error {
+                object Required : PASSWORD
+                object InvalidFormat : PASSWORD
+                object Mismatch : PASSWORD
+            }
+
+            sealed interface CONFIRM_PASSWORD : Error {
+                object Required : CONFIRM_PASSWORD
+                object Mismatch : CONFIRM_PASSWORD
+            }
+
+            data class GenericError(val errorMsg: String?) : Error
         }
     }
 

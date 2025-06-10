@@ -1,9 +1,9 @@
-package com.ranjan.smartcents.android.splash
+package com.ranjan.smartcents.splash
 
 import androidx.compose.runtime.Composable
-import com.ranjan.smartcents.android.util.ObserveAsEvent
+import com.ranjan.smartcents.util.ObserveAsEvent
 import com.ranjan.smartcents.presentation.splash.SplashViewModel
-import org.koin.compose.getKoin
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun SplashScreenHost(

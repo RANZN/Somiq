@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz_intro
+package com.ranjan.smartcents.quiz_intro
 
 import androidx.compose.runtime.Composable
 

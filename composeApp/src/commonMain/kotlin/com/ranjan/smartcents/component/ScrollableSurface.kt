@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.component
+package com.ranjan.smartcents.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +8,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.util.screenDefault
+import com.ranjan.smartcents.util.screenDefault
 
 @Composable
 fun ScrollableSurface(

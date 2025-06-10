@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.login
+package com.ranjan.smartcents.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,24 +16,25 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ranjan.smartcents.presentation.login.LoginViewModel.LoginAction
-import com.ranjan.smartcents.android.R
-import com.ranjan.smartcents.android.component.CustomOutlinedButton
-import com.ranjan.smartcents.android.component.CustomTextField
-import com.ranjan.smartcents.android.component.OnboardingButton
-import com.ranjan.smartcents.android.login.components.LoginHeader
-import com.ranjan.smartcents.android.util.defaultPadding
+import smartcents.composeapp.generated.resources.Res
+import smartcents.composeapp.generated.resources.*
+import com.ranjan.smartcents.component.CustomOutlinedButton
+import com.ranjan.smartcents.component.CustomTextField
+import com.ranjan.smartcents.component.OnboardingButton
+import com.ranjan.smartcents.login.components.LoginHeader
+import com.ranjan.smartcents.util.defaultPadding
 import com.ranjan.smartcents.presentation.login.LoginViewModel
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.font.FontWeight
-import com.ranjan.smartcents.android.util.clickWithEffect
+import com.ranjan.smartcents.util.clickWithEffect
 
 @Composable
 fun LoginScreen(
@@ -59,7 +60,7 @@ fun LoginScreen(
             CustomTextField(
                 value = uiState.email,
                 onValueChange = { action(LoginAction.OnEmailChange(it)) },
-                placeholder = stringResource(R.string.email_or_phone),
+                placeholder = stringResource(Res.string.email_or_phone),
                 leadingImageVector = Icons.Outlined.Email,
                 isError = isEmailError,
                 keyboardOptions = KeyboardOptions(
@@ -68,12 +69,13 @@ fun LoginScreen(
                     keyboardType = KeyboardType.Email
                 )
             )
-            val isPasswordError = uiState.error == LoginViewModel.LoginState.Errors.INVALID_PASSWORD ||
-                    uiState.error == LoginViewModel.LoginState.Errors.INVALID_CREDENTIALS
+            val isPasswordError =
+                uiState.error == LoginViewModel.LoginState.Errors.INVALID_PASSWORD ||
+                        uiState.error == LoginViewModel.LoginState.Errors.INVALID_CREDENTIALS
             CustomTextField(
                 value = uiState.password,
                 onValueChange = { action(LoginAction.OnPasswordChange(it)) },
-                placeholder = stringResource(R.string.password),
+                placeholder = stringResource(Res.string.password),
                 leadingImageVector = Icons.Outlined.Lock,
                 isError = isPasswordError,
                 keyboardOptions = KeyboardOptions(
@@ -86,17 +88,17 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                Text(stringResource(R.string.forgot_password))
+                Text(stringResource(Res.string.forgot_password))
             }
             OnboardingButton(
-                text = stringResource(R.string.login),
+                text = stringResource(Res.string.login),
                 isLoading = uiState.isLoading,
                 onClick = { action(LoginAction.Login) }
             )
 
 
             CustomOutlinedButton(
-                text = stringResource(R.string.continue_with_google),
+                text = stringResource(Res.string.continue_with_google),
                 icon = Icons.Outlined.Email,
                 onClick = { action(LoginAction.OnGoogleLoginClick) }
             )
@@ -107,9 +109,9 @@ fun LoginScreen(
                     .padding(vertical = 20.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(stringResource(R.string.don_t_have_an_account))
+                Text(stringResource(Res.string.don_t_have_an_account))
                 Text(
-                    text = stringResource(R.string.sign_up),
+                    text = stringResource(Res.string.sign_up),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier

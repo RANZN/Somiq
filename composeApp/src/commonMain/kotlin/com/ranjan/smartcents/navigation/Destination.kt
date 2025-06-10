@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.navigation
+package com.ranjan.smartcents.navigation
 
 import com.ranjan.smartcents.presentation.quiz.QuizType
 import kotlinx.serialization.Serializable

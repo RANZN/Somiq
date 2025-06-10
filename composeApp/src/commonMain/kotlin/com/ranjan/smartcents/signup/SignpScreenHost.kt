@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.signup
+package com.ranjan.smartcents.signup
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ranjan.smartcents.android.util.ObserveAsEvent
+import com.ranjan.smartcents.util.ObserveAsEvent
 import com.ranjan.smartcents.presentation.signup.SignupViewModel
 import org.koin.mp.KoinPlatform.getKoin
 

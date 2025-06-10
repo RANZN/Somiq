@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.component
+package com.ranjan.smartcents.component
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope

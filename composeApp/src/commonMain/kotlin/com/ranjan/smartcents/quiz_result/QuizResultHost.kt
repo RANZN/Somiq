@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz_result
+package com.ranjan.smartcents.quiz_result
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn

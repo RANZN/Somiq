@@ -1,3 +1,3 @@
-package com.ranjan.smartcents.android.component
+package com.ranjan.smartcents.component
 
 typealias OnClick = () -> Unit

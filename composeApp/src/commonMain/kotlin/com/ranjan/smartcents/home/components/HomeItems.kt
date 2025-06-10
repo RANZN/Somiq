@@ -1,6 +1,5 @@
-package com.ranjan.smartcents.android.home.components
+package com.ranjan.smartcents.home.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,13 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.component.OnClick
+import com.ranjan.smartcents.component.OnClick
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun HomeItems(
-    @DrawableRes iconRes: Int,
+    iconRes: DrawableResource,
     text: String,
     modifier: Modifier = Modifier,
     onClick: OnClick

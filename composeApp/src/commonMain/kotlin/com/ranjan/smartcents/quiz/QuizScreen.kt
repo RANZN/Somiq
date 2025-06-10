@@ -1,4 +1,4 @@
-package com.ranjan.smartcents.android.quiz
+package com.ranjan.smartcents.quiz
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,14 +24,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
-import com.ranjan.smartcents.android.R
-import com.ranjan.smartcents.android.component.FillSpacer
-import com.ranjan.smartcents.android.quiz.components.OptionButton
-import com.ranjan.smartcents.android.util.defaultPadding
+import smartcents.composeapp.generated.resources.Res
+import com.ranjan.smartcents.component.FillSpacer
+import com.ranjan.smartcents.quiz.components.OptionButton
+import com.ranjan.smartcents.util.defaultPadding
 import com.ranjan.smartcents.presentation.quiz.QuizViewModel
 import kotlinx.coroutines.launch
+import smartcents.composeapp.generated.resources.*
 
 @Composable
 fun QuizScreen(
@@ -50,20 +51,20 @@ fun QuizScreen(
     ) {
         Column(modifier = Modifier.defaultPadding()) {
             Text(
-                stringResource(R.string.finmaster_quiz),
+                stringResource(Res.string.finmaster_quiz),
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.padding(vertical = 20.dp),
             )
             Row(Modifier.fillMaxWidth()) {
                 Text(
                     stringResource(
-                        R.string.question,
+                        Res.string.question,
                         pagerState.currentPage + 1,
                         uiState.questions.size
                     ),
                 )
                 FillSpacer()
-                Text(stringResource(R.string.time_left, uiState.time))
+                Text(stringResource(Res.string.time_left, uiState.time))
             }
             HorizontalPager(
                 state = pagerState,
@@ -117,9 +118,9 @@ fun QuizScreen(
                         )
                     ) {
                         val text = if (isLastQuestion) {
-                            stringResource(R.string.submit)
+                            stringResource(Res.string.submit)
                         } else {
-                            stringResource(R.string.next)
+                            stringResource(Res.string.next)
                         }
                         Text(text)
                     }

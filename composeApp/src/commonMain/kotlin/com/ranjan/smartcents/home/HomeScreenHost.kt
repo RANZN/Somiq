@@ -1,7 +1,7 @@
-package com.ranjan.smartcents.android.home
+package com.ranjan.smartcents.home
 
 import androidx.compose.runtime.Composable
-import com.ranjan.smartcents.android.component.OnClick
+import com.ranjan.smartcents.component.OnClick
 
 @Composable
 fun HomeScreenHost(

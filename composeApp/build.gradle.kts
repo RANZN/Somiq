@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -75,6 +77,9 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.compose.navigation)
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -115,6 +120,8 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    ksp(libs.room.compiler)
+    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {
@@ -127,4 +134,8 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

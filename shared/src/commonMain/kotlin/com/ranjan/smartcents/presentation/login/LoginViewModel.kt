@@ -53,7 +53,7 @@ class LoginViewModel(
                             handleAction(LoginAction.NavigateToHome)
                         }
 
-                        else -> {
+                        is AuthResult.Failure -> {
                             _uiState.update {
                                 it.copy(
                                     error = LoginState.Errors.LOGIN_FAILED,
@@ -62,7 +62,6 @@ class LoginViewModel(
                             }
                         }
                     }
-
                 }
 
                 is LoginAction.NavigateToHome -> {

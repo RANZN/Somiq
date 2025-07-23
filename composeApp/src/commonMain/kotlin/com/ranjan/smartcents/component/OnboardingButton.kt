@@ -30,8 +30,10 @@ fun OnboardingButton(
         },
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        colors = ButtonDefaults.buttonColors()
-            .copy(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = Color.White
+        ),
     ) {
         if (!isLoading) Text(
             text = text,

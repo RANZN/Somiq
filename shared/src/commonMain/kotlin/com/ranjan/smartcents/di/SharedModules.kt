@@ -1,5 +1,8 @@
 package com.ranjan.smartcents.di
 
+import com.ranjan.smartcents.data.db.AppDatabase
+import com.ranjan.smartcents.data.db.dao.UserDao
+import com.ranjan.smartcents.data.db.getRoomDatabaseBuilder
 import com.ranjan.smartcents.data.repository.AuthRepoImpl
 import com.ranjan.smartcents.data.repository.QuizRepoImpl
 import com.ranjan.smartcents.domain.repository.AuthRepo
@@ -30,4 +33,10 @@ val sharedModules = module {
             questionDatabase = get(named("questionDatabase"))
         )
     }
+
+    single<AppDatabase> {
+        getRoomDatabaseBuilder(get())
+    }
+
+    single<UserDao> { get<AppDatabase>().userDao() }
 }

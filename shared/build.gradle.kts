@@ -26,8 +26,8 @@ kotlin {
     iosSimulatorArm64()
     
     jvm()
-    
-/*    @OptIn(ExperimentalWasmDsl::class)
+    /*
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
             val rootDirPath = project.rootDir.path
@@ -42,8 +42,8 @@ kotlin {
                 }
             }
         }
-    }
-    */
+    }*/
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.room.runtime)
@@ -53,6 +53,8 @@ kotlin {
             implementation(libs.firebase.auth)
             implementation(libs.firebase.firestore)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -64,12 +66,14 @@ kotlin {
 }
 
 dependencies {
+    ksp(libs.room.compiler)
+    debugImplementation(compose.uiTooling)
     // KSP support for Room Compiler.
-    add("kspCommonMainMetadata", libs.room.compiler)
+/*    add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
     add("kspIosX64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)*/
 }
 
 room {

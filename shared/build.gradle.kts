@@ -69,11 +69,11 @@ dependencies {
     ksp(libs.room.compiler)
     debugImplementation(compose.uiTooling)
     // KSP support for Room Compiler.
-/*    add("kspCommonMainMetadata", libs.room.compiler)
+    add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
     add("kspIosX64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)*/
+    add("kspIosArm64", libs.room.compiler)
 }
 
 room {

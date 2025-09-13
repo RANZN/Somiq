@@ -13,8 +13,8 @@ fun SplashScreenHost(
     val viewmodel = getKoin().get<SplashViewModel>()
     ObserveAsEvent(viewmodel.splashAction) {
         when (it) {
-            SplashViewModel.SplashAction.NavigateToHome -> navigateToHome()
-            SplashViewModel.SplashAction.NavigateToLogin -> navigateToLogin()
+            is SplashViewModel.SplashAction.NavigateToHome -> navigateToHome()
+            is SplashViewModel.SplashAction.NavigateToLogin -> navigateToLogin()
         }
     }
 

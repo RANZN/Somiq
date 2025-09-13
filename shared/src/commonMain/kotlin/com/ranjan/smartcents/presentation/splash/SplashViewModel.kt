@@ -5,51 +5,52 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 class SplashViewModel : ViewModel() {
 
-    private val _finishSplash = MutableStateFlow(false)
-    val finishSplash = _finishSplash.asStateFlow()
-
-    private val _splashAction = MutableSharedFlow<SplashAction>()
+    private val _splashAction = MutableSharedFlow<SplashAction>(replay = 1)
     val splashAction = _splashAction.asSharedFlow()
 
     init {
         handleSplashTransition()
     }
 
-    fun handleSplashTransition() {
-        viewModelScope.launch {
-            val splashDelay = async { delay(2000) }
-            val updateCheckDeferred = async {
-                delay(100)
-                //Check for update
-                false
-            }
-            val isUserLoggedInDeferred = async {
-                false
-            }
-            val isUpdateNeeded = updateCheckDeferred.await()
-            val isUserLoggedIn = isUserLoggedInDeferred.await()
-
-            splashDelay.await()
-
-            val action = when {
-                isUserLoggedIn -> SplashAction.NavigateToHome
-                else -> SplashAction.NavigateToLogin
-            }
-
-            _splashAction.emit(action)
-            _finishSplash.emit(true)
+    fun handleSplashTransition() = viewModelScope.launch {
+        val splashDelay = async { delay(3.seconds) }
+        val updateCheckDeferred = async {
+            delay(900)
+            //Check for update
+            false
         }
+        val isUserLoggedInDeferred = async {
+            delay(200)
+            false
+        }
+
+        splashDelay.await()
+
+        val isUpdateNeeded = if (updateCheckDeferred.isCompleted) {
+            updateCheckDeferred.await()
+        } else {
+            updateCheckDeferred.cancel()
+            false
+        }
+
+        val isUserLoggedIn = isUserLoggedInDeferred.await()
+
+        val action = when {
+            isUserLoggedIn -> SplashAction.NavigateToHome(isUpdateNeeded)
+            else -> SplashAction.NavigateToLogin(isUpdateNeeded)
+        }
+
+        _splashAction.emit(action)
     }
 
     sealed interface SplashAction {
-        object NavigateToHome : SplashAction
-        object NavigateToLogin : SplashAction
+        data class NavigateToHome(val isUpdateNeeded: Boolean) : SplashAction
+        data class NavigateToLogin(val isUpdateNeeded: Boolean) : SplashAction
     }
 }

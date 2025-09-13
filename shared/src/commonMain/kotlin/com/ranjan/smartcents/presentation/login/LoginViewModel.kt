@@ -31,38 +31,7 @@ class LoginViewModel(
                     _uiState.update { it.copy(email = action.it) }
                 }
 
-                is LoginAction.Login -> {
-                    val isValidEmail = _uiState.value.email.isValidEmail()
-                    val isValidPassword = _uiState.value.password.isValidPassword()
-                    val error = when {
-                        !isValidEmail && !isValidPassword -> LoginState.Errors.INVALID_CREDENTIALS
-                        !isValidEmail -> LoginState.Errors.INVALID_EMAIL
-                        !isValidPassword -> LoginState.Errors.INVALID_PASSWORD
-                        else -> null
-                    }
-                    if (error != null) {
-                        _uiState.update { it.copy(error = error) }
-                        return@launch
-                    }
-
-                    _uiState.update { it.copy(isLoading = true, error = null) }
-
-                    val result = authRepo.loginUser(_uiState.value.email, _uiState.value.password)
-                    when (result) {
-                        is AuthResult.Success -> {
-                            handleAction(LoginAction.NavigateToHome)
-                        }
-
-                        is AuthResult.Failure -> {
-                            _uiState.update {
-                                it.copy(
-                                    error = LoginState.Errors.LOGIN_FAILED,
-                                    isLoading = false
-                                )
-                            }
-                        }
-                    }
-                }
+                is LoginAction.Login -> handleLogin()
 
                 is LoginAction.NavigateToHome -> {
                     _navigateToHome.emit(Unit)
@@ -77,6 +46,37 @@ class LoginViewModel(
                 }
 
                 else -> Unit
+            }
+        }
+    }
+
+    suspend fun handleLogin() {
+        val isValidEmail = _uiState.value.email.isValidEmail()
+        val isValidPassword = _uiState.value.password.isValidPassword()
+        val error = when {
+            !isValidEmail && !isValidPassword -> LoginState.Errors.INVALID_CREDENTIALS
+            !isValidEmail -> LoginState.Errors.INVALID_EMAIL
+            !isValidPassword -> LoginState.Errors.INVALID_PASSWORD
+            else -> null
+        }
+        if (error != null) {
+            _uiState.update { it.copy(error = error) }
+            return
+        }
+
+        _uiState.update { it.copy(isLoading = true, error = null) }
+
+        val result = authRepo.loginUser(_uiState.value.email, _uiState.value.password)
+        when (result) {
+            is AuthResult.Success -> handleAction(LoginAction.NavigateToHome)
+
+            is AuthResult.Failure -> {
+                _uiState.update {
+                    it.copy(
+                        error = LoginState.Errors.LOGIN_FAILED,
+                        isLoading = false
+                    )
+                }
             }
         }
     }

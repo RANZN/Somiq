@@ -2,6 +2,7 @@ package com.ranjan.smartcents.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -22,10 +23,10 @@ import com.ranjan.smartcents.quiz_result.QuizResultHost
 import kotlinx.serialization.json.Json
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(modifier: Modifier) {
     val navController = rememberNavController()
     val json = remember { Json { encodeDefaults = true } }
-    NavHost(navController = navController, startDestination = Screen.Splash) {
+    NavHost(navController = navController, modifier = modifier, startDestination = Screen.Splash) {
         composable<Screen.Splash> {
             SplashScreenHost(
                 navigateToHome = { navController.navigateToHome() },

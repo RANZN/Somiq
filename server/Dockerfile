@@ -1,5 +1,5 @@
 # Stage 1: Build the application using a JDK image
-FROM openjdk:17-jdk-slim as builder
+FROM eclipse-temurin:17-jdk-focal as builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY src ./src
 RUN chmod +x ./gradlew && ./gradlew build -x test
 
 # Stage 2: Create a minimal final image to run the application
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-focal
 
 # Set the working directory
 WORKDIR /app

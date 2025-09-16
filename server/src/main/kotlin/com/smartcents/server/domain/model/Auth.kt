@@ -1,4 +1,4 @@
-package com.smartcents.server.models
+package com.smartcents.server.domain.model
 
 import kotlinx.serialization.Serializable
 
@@ -29,5 +29,10 @@ data class ResetPasswordRequest(
 @Serializable
 data class AuthResponse(
     val token: String,
-    val user: User
+    val user: UserResponse
+)
+
+@Serializable
+data class ErrorResponse(
+    val message: String
 )

@@ -51,6 +51,8 @@ class LoginViewModel(
     }
 
     suspend fun handleLogin() {
+        handleAction(LoginAction.NavigateToHome)
+
         val isValidEmail = _uiState.value.email.isValidEmail()
         val isValidPassword = _uiState.value.password.isValidPassword()
         val error = when {

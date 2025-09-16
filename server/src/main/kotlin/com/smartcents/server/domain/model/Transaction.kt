@@ -1,4 +1,4 @@
-package com.smartcents.server.models
+package com.smartcents.server.domain.model
 
 import kotlinx.serialization.Serializable
 

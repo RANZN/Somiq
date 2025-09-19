@@ -3,6 +3,7 @@ package com.ranjan.smartcents.data.repository
 import com.ranjan.smartcents.consts.BASE_URL
 import com.ranjan.smartcents.domain.repository.AppRepository
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.get
 import kotlin.time.Duration.Companion.seconds
@@ -12,14 +13,14 @@ class AppRepositoryImpl(
 ) : AppRepository {
 
     override suspend fun isUpdateNeeded(): Result<Boolean> = runCatching {
-        httpClient.get("$BASE_URL/") {
+        val response = httpClient.get("$BASE_URL/checkUpdate") {
             timeout {
                 requestTimeoutMillis = 5.seconds.inWholeMilliseconds
                 connectTimeoutMillis = 3.seconds.inWholeMilliseconds
                 socketTimeoutMillis = 5.seconds.inWholeMilliseconds
             }
         }
-        return@runCatching false //todo update it.
+        return@runCatching response.body<Boolean>()
     }
 
 }

@@ -4,7 +4,8 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.smartcents.domain.model.AuthResult
-import com.ranjan.smartcents.domain.repository.AuthRepo
+import com.ranjan.smartcents.domain.usecase.SignupUseCase
+import com.ranjan.smartcents.presentation.signup.SignupViewModel.UiState.Error.*
 import com.ranjan.smartcents.util.isValidEmail
 import com.ranjan.smartcents.util.isValidPassword
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignupViewModel(
-    private val authRepo: AuthRepo,
+    private val signupUseCase: SignupUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -53,7 +54,7 @@ class SignupViewModel(
                     }
 
                     _uiState.update { it.copy(isLoading = true, error = emptyList()) }
-                    val result = authRepo.signUpUser(
+                    val result = signupUseCase(
                         name = _uiState.value.name,
                         email = _uiState.value.email,
                         password = _uiState.value.password
@@ -62,7 +63,7 @@ class SignupViewModel(
                         AuthResult.Failure.EmailAlreadyInUse -> {
                             _uiState.update {
                                 it.copy(
-                                    error = listOf(UiState.Error.EMAIL.AlreadyInUse),
+                                    error = listOf(Email.AlreadyInUse),
                                     isLoading = false
                                 )
                             }
@@ -71,7 +72,7 @@ class SignupViewModel(
                         is AuthResult.Failure.Unknown -> {
                             _uiState.update {
                                 it.copy(
-                                    error = listOf(UiState.Error.GenericError(result.message)),
+                                    error = listOf(GenericError(result.message)),
                                     isLoading = false
                                 )
                             }
@@ -80,6 +81,8 @@ class SignupViewModel(
                         is AuthResult.Success -> {
                             handleAction(Action.NavigateToHome)
                         }
+
+                        else -> {}
                     }
                 }
 
@@ -87,7 +90,7 @@ class SignupViewModel(
                     _error.emit(action.error)
                     _uiState.update {
                         it.copy(
-                            error = listOf(UiState.Error.GenericError(action.error)),
+                            error = listOf(GenericError(action.error)),
                             isLoading = false
                         )
                     }
@@ -110,31 +113,31 @@ class SignupViewModel(
 
         // Name validation
         if (state.name.isEmpty()) {
-            errors.add(UiState.Error.NAME.Required)
+            errors.add(Name.Required)
         } else if (state.name.length < 3) {
-            errors.add(UiState.Error.NAME.TooShort)
+            errors.add(Name.TooShort)
         }
 
         // Email validation
         if (state.email.isEmpty()) {
-            errors.add(UiState.Error.EMAIL.Required)
+            errors.add(Email.Required)
         } else if (!state.email.isValidEmail()) {
-            errors.add(UiState.Error.EMAIL.InvalidFormat)
+            errors.add(Email.InvalidFormat)
         }
 
         // Password validation
         if (state.password.isEmpty()) {
-            errors.add(UiState.Error.PASSWORD.Required)
+            errors.add(Password.Required)
         } else if (!state.password.isValidPassword()) {
-            errors.add(UiState.Error.PASSWORD.InvalidFormat)
+            errors.add(Password.InvalidFormat)
         }
 
         // Confirm Password validation
         if (state.confirmPassword.isEmpty()) {
-            errors.add(UiState.Error.CONFIRM_PASSWORD.Required)
+            errors.add(ConfirmPassword.Required)
         } else if (state.password != state.confirmPassword) {
-            errors.add(UiState.Error.PASSWORD.Mismatch)
-            errors.add(UiState.Error.CONFIRM_PASSWORD.Mismatch)
+            errors.add(Password.Mismatch)
+            errors.add(ConfirmPassword.Mismatch)
         }
 
         return errors
@@ -150,26 +153,26 @@ class SignupViewModel(
         val error: List<Error> = emptyList()
     ) {
         sealed interface Error {
-            sealed interface NAME : Error {
-                object Required : NAME
-                object TooShort : NAME
+            sealed interface Name : Error {
+                object Required : Name
+                object TooShort : Name
             }
 
-            sealed interface EMAIL : Error {
-                object Required : EMAIL
-                object InvalidFormat : EMAIL
-                object AlreadyInUse : EMAIL
+            sealed interface Email : Error {
+                object Required : Email
+                object InvalidFormat : Email
+                object AlreadyInUse : Email
             }
 
-            sealed interface PASSWORD : Error {
-                object Required : PASSWORD
-                object InvalidFormat : PASSWORD
-                object Mismatch : PASSWORD
+            sealed interface Password : Error {
+                object Required : Password
+                object InvalidFormat : Password
+                object Mismatch : Password
             }
 
-            sealed interface CONFIRM_PASSWORD : Error {
-                object Required : CONFIRM_PASSWORD
-                object Mismatch : CONFIRM_PASSWORD
+            sealed interface ConfirmPassword : Error {
+                object Required : ConfirmPassword
+                object Mismatch : ConfirmPassword
             }
 
             data class GenericError(val errorMsg: String?) : Error

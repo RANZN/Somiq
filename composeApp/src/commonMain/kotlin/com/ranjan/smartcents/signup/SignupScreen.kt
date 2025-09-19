@@ -64,7 +64,7 @@ fun SignupScreen(
 
             val nameError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it is UiState.Error.NAME }
+                    uiState.error.find { it is UiState.Error.Name }
                 }
             }
             CustomTextField(
@@ -82,7 +82,7 @@ fun SignupScreen(
 
             val emailError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it is UiState.Error.EMAIL }
+                    uiState.error.find { it is UiState.Error.Email }
                 }
             }
             CustomTextField(
@@ -100,7 +100,7 @@ fun SignupScreen(
             )
             val passwordError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it is UiState.Error.PASSWORD }
+                    uiState.error.find { it is UiState.Error.Password }
                 }
             }
             CustomTextField(
@@ -119,7 +119,7 @@ fun SignupScreen(
 
             val rePasswordError by remember(uiState.error) {
                 derivedStateOf {
-                    uiState.error.find { it is UiState.Error.CONFIRM_PASSWORD }
+                    uiState.error.find { it is UiState.Error.ConfirmPassword }
                 }
             }
             CustomTextField(

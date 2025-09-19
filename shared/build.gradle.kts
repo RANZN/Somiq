@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -55,12 +53,23 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.ktor.client.content.negotiation)
+            implementation(libs.ktor.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
             implementation(libs.koin.android)
+            implementation(libs.ktor.client.okhttp)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.cio)
         }
     }
 }
@@ -89,5 +98,9 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+    dependencies {
+        debugImplementation(libs.chucker)
+        releaseImplementation(libs.chucker.release)
     }
 }

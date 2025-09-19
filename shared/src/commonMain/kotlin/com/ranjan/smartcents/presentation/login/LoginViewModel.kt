@@ -3,7 +3,7 @@ package com.ranjan.smartcents.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.smartcents.domain.model.AuthResult
-import com.ranjan.smartcents.domain.repository.AuthRepo
+import com.ranjan.smartcents.domain.usecase.LoginUseCase
 import com.ranjan.smartcents.util.isValidEmail
 import com.ranjan.smartcents.util.isValidPassword
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val authRepo: AuthRepo
+    private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginState())
@@ -51,10 +51,11 @@ class LoginViewModel(
     }
 
     suspend fun handleLogin() {
-        handleAction(LoginAction.NavigateToHome)
+        val email = _uiState.value.email
+        val password = _uiState.value.password
 
-        val isValidEmail = _uiState.value.email.isValidEmail()
-        val isValidPassword = _uiState.value.password.isValidPassword()
+        val isValidEmail = email.isValidEmail()
+        val isValidPassword = password.isValidPassword()
         val error = when {
             !isValidEmail && !isValidPassword -> LoginState.Errors.INVALID_CREDENTIALS
             !isValidEmail -> LoginState.Errors.INVALID_EMAIL
@@ -68,7 +69,7 @@ class LoginViewModel(
 
         _uiState.update { it.copy(isLoading = true, error = null) }
 
-        val result = authRepo.loginUser(_uiState.value.email, _uiState.value.password)
+        val result = loginUseCase(email, password)
         when (result) {
             is AuthResult.Success -> handleAction(LoginAction.NavigateToHome)
 
@@ -84,8 +85,8 @@ class LoginViewModel(
     }
 
     data class LoginState(
-        val email: String = "",
-        val password: String = "",
+        val email: String = "ranjan@yopmail.com",
+        val password: String = "Ranjan@123",
         val isLoading: Boolean = false,
         val error: Errors? = null
     ) {

@@ -3,6 +3,7 @@ package com.ranjan.smartcents.di
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.ranjan.smartcents.data.db.AppDatabase
 import org.koin.dsl.module
 
@@ -16,6 +17,10 @@ val appModule = module {
             context = appContext,
             name = dbFile.absolutePath
         )
+    }
+
+    single<ChuckerInterceptor> {
+        ChuckerInterceptor.Builder(get<Context>()).build()
     }
 
 }

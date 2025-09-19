@@ -2,6 +2,8 @@ package com.ranjan.smartcents.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranjan.smartcents.domain.usecase.CheckUpdate
+import com.ranjan.smartcents.domain.usecase.UserLoginStatus
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,7 +11,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-class SplashViewModel : ViewModel() {
+class SplashViewModel(
+    private val checkUpdate: CheckUpdate,
+    private val userLoginStatus: UserLoginStatus,
+) : ViewModel() {
 
     private val _splashAction = MutableSharedFlow<SplashAction>(replay = 1)
     val splashAction = _splashAction.asSharedFlow()
@@ -20,15 +25,8 @@ class SplashViewModel : ViewModel() {
 
     fun handleSplashTransition() = viewModelScope.launch {
         val splashDelay = async { delay(3.seconds) }
-        val updateCheckDeferred = async {
-            delay(900)
-            //Check for update
-            false
-        }
-        val isUserLoggedInDeferred = async {
-            delay(200)
-            false
-        }
+        val updateCheckDeferred = async { checkUpdate() }
+        val isUserLoggedInDeferred = async { userLoginStatus() }
 
         splashDelay.await()
 

@@ -2,6 +2,7 @@ package com.ranjan.smartcents.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,7 +43,8 @@ fun OnboardingButton(
             modifier = Modifier.padding(vertical = 4.dp)
         ) else CircularProgressIndicator(
             color = Color.White,
-            modifier = Modifier.padding(vertical = 4.dp)
+            modifier = Modifier
+                .size(MaterialTheme.typography.bodyLarge.fontSize.value.dp + 4.dp)
         )
     }
 }

@@ -33,6 +33,9 @@ import com.ranjan.smartcents.presentation.login.LoginViewModel
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.ranjan.smartcents.util.clickWithEffect
 
@@ -67,7 +70,8 @@ fun LoginScreen(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Next,
                     keyboardType = KeyboardType.Email
-                )
+                ),
+                modifier = Modifier.semantics { contentType = ContentType.EmailAddress },
             )
             val isPasswordError =
                 uiState.error == LoginViewModel.LoginState.Errors.INVALID_PASSWORD ||
@@ -83,6 +87,7 @@ fun LoginScreen(
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Password
                 ),
+                modifier = Modifier.semantics { contentType = ContentType.Password },
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -21,7 +21,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -77,7 +80,8 @@ fun SignupScreen(
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Next,
-                )
+                ),
+                modifier = Modifier.semantics { contentType = ContentType.PersonFirstName },
             )
 
             val emailError by remember(uiState.error) {
@@ -96,7 +100,8 @@ fun SignupScreen(
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Next,
                     keyboardType = KeyboardType.Email
-                )
+                ),
+                modifier = Modifier.semantics { contentType = ContentType.EmailAddress },
             )
             val passwordError by remember(uiState.error) {
                 derivedStateOf {
@@ -115,6 +120,7 @@ fun SignupScreen(
                     imeAction = ImeAction.Next,
                     keyboardType = KeyboardType.Password
                 ),
+                modifier = Modifier.semantics { contentType = ContentType.Password },
             )
 
             val rePasswordError by remember(uiState.error) {
@@ -134,6 +140,7 @@ fun SignupScreen(
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Password
                 ),
+                modifier = Modifier.semantics { contentType = ContentType.Password },
             )
 
             OnboardingButton(

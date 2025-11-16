@@ -1,4 +1,4 @@
-rootProject.name = "SmartCents"
+rootProject.name = "Somiq"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

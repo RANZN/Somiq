@@ -19,7 +19,6 @@ kotlin {
         }
     }
     
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
     
@@ -43,6 +42,9 @@ kotlin {
     }*/
 
     sourceSets {
+        val appleMain by creating {
+            dependsOn(commonMain.get())
+        }
         commonMain.dependencies {
             implementation(libs.room.runtime)
             api(libs.koin.core)
@@ -65,7 +67,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
         }
-        iosMain.dependencies {
+        appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
         jvmMain.dependencies {
@@ -81,7 +83,6 @@ dependencies {
     add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
 }
 
@@ -90,7 +91,7 @@ room {
 }
 
 android {
-    namespace = "com.ranjan.smartcents.shared"
+    namespace = "com.ranjan.somiq.shared"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

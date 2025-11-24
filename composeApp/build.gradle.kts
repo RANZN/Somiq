@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -31,17 +30,18 @@ kotlin {
     }
 
     jvm()
+    /*
 
     js {
         browser()
         binaries.executable()
     }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+            browser()
+            binaries.executable()
+        }
+    */
 
     sourceSets {
         androidMain.dependencies {
@@ -60,8 +60,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(libs.firebase.auth)
-            implementation(libs.firebase.firestore)
+            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.navigation)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.koin.compose.viewmodel)
+
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
@@ -77,6 +80,15 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
         }
+
+        val iosMain by creating {
+            dependsOn(getByName("commonMain"))
+            dependencies {
+            }
+        }
+
+        getByName("iosArm64Main").dependsOn(iosMain)
+        getByName("iosSimulatorArm64Main").dependsOn(iosMain)
     }
 }
 
@@ -105,6 +117,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    dependencies {
+        debugImplementation(libs.chucker)
+        releaseImplementation(libs.chucker.release)
+    }
 }
 
 dependencies {
@@ -113,7 +129,6 @@ dependencies {
     ksp(libs.room.compiler)
     debugImplementation(compose.uiTooling)
     // KSP support for Room Compiler.
-    add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)           // For physical iOS devices
     add("kspIosSimulatorArm64", libs.room.compiler) // For M-series Mac simulators
@@ -132,6 +147,21 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ranjan.somiq"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+afterEvaluate {
+    android.buildTypes.forEach { buildType ->
+        val buildTypeName = buildType.name.replaceFirstChar(Char::titlecase)
+        val kspTaskName = "ksp${buildTypeName}KotlinAndroid"
+        tasks.named(kspTaskName) {
+            dependsOn(tasks.named("generateResourceAccessorsForAndroid$buildTypeName"))
+            dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
+            dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
+            dependsOn(tasks.named("generateComposeResClass"))
+            dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+            tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { dependsOn(it) }
         }
     }
 }

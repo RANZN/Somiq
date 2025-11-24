@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Cents</string>
+    <string name="app_name_txt">Smart Cents</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="email_or_phone">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login">Login</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="full_name">Full Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="money_insights">Money Insights</string>
+    <string name="quizzes">Quizzes</string>
+    <string name="learn_finance">Learn Finance</string>
+    <string name="money_quotes">Money Quotes</string>
+    <string name="email_is_not_valid">Email is not valid</string>
+    <string name="invalid_email_address">Invalid email address</string>
+    <string name="email_already_used">Email already used</string>
+    <string name="name_is_too_short">Name is too short</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="signup_failed">Signup failed</string>
+    <string name="participate_and_compete_in_our_engaging_finance_and_business_quiz_challenges">Participate and compete in our engaging finance and business quiz challenges</string>
+    <string name="finmaster_quiz">FinMaster Quiz</string>
+    <string name="for_students_and_aspiring_professionals">For students and aspiring professionals</string>
+    <string name="for_entrepreneurs_business_owners_and_working_professionals">For entrepreneurs, business owners and working professionals</string>
+    <string name="founder_quiz">Founder Quiz</string>
+    <string name="quiz">Quiz</string>
+    <string name="test_your_money_skills_in_a_fun_quiz_for_students_of_all_grades">Test your money skills in a fun quiz for students of all grades!</string>
+    <string name="start_quiz">Start Quiz</string>
+    <string name="finmaster_junior">FinMaster Junior</string>
+    <string name="for_class_5_8">For Class 5-8</string>
+    <string name="finmaster_senior">FinMaster Senior</string>
+    <string name="for_class_9_10">For Class 9-10</string>
+    <string name="finmaster_pro">FinMaster Pro</string>
+    <string name="for_class_11_12">For Class 11-12</string>
+    <string name="quiz_instruction">Quiz Instruction</string>
+    <string name="challenge_your_business_brain_take_the_quiz_built_for_founders_innovators_and_future_leaders">"Challenge your business brain - take the quiz built for founders, innovators, and future leaders "</string>
+    <string name="question">Question %1$d of %2$d</string>
+    <string name="time_left">Time Left: %1$s</string>
+    <string name="next">Next</string>
+    <string name="submit">Submit</string>
+
+    <string-array name="quiz_instruction_list">
+        <item>10 questions.</item>
+        <item>Time limit: 15 minutes.</item>
+        <item>Each correct answer: 1 point.</item>
+        <item>No going back to previous questions</item>
+    </string-array>
+
+
+    <string name="name_required">Name Required</string>
+    <string name="name_too_short">Name must be at least 3 characters</string>
+    <string name="email_required">Email Required</string>
+    <string name="invalid_email">Invalid Email</string>
+    <string name="password_required">Password Required</string>
+    <string name="password_too_short">Password Too Short</string>
+    <string name="invalid_password_error">Use 8+ chars with uppercase, lowercase, number &amp; symbol.</string>
+    <string name="confirm_password_required">Re-Password Required</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+    <string name="email_already_in_use">Email already in use</string>
+</resources>

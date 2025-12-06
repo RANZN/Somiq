@@ -37,7 +37,7 @@ class SplashViewModel(
             false
         }
 
-        val isUserLoggedIn = true // isUserLoggedInDeferred.await()
+        val isUserLoggedIn = isUserLoggedInDeferred.await()
 
         val action = when {
             isUserLoggedIn -> SplashEvents.NavigateToHome(isUpdateNeeded)

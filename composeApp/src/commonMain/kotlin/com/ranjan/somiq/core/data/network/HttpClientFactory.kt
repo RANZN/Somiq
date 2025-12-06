@@ -1,10 +1,14 @@
-package com.ranjan.somiq.core.data.remote
+package com.ranjan.somiq.core.data.network
 
+import com.ranjan.somiq.core.consts.BASE_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
@@ -20,6 +24,13 @@ import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 
 expect fun createHttpClient(shared: HttpClientConfig<*>.() -> Unit): HttpClient
+
+fun createBaseHttpClient(
+    config: HttpClientConfig<*>.() -> Unit
+): HttpClient = createHttpClient {
+    setupCommonPlugins()
+    config()
+}
 
 fun HttpClientConfig<*>.setupCommonPlugins() {
     install(ContentNegotiation) {
@@ -62,6 +73,37 @@ fun HttpClientConfig<*>.setupCommonPlugins() {
                     HttpStatusCode.NotFound -> ApiException.NotFound()
                     else -> ApiException.ServerError(response.status.value)
                 }
+            }
+        }
+    }
+}
+
+fun provideNonAuthHttpClient(): HttpClient = createBaseHttpClient { }
+
+fun provideAuthHttpClient(
+    tokenProvider: TokenProvider,
+    tokenRefresher: TokenRefresher
+): HttpClient = createBaseHttpClient {
+    install(Auth) {
+        bearer {
+            loadTokens {
+                val accessToken = tokenProvider.getAccessToken()
+                val refreshToken = tokenProvider.getRefreshToken()
+
+                if (accessToken != null && refreshToken != null) {
+                    return@loadTokens BearerTokens(accessToken, refreshToken)
+                }
+                null
+            }
+
+            refreshTokens {
+                val newTokens = tokenRefresher.tryRefresh(oldRefreshToken = oldTokens?.refreshToken)
+
+                newTokens ?: return@refreshTokens null
+                return@refreshTokens BearerTokens(newTokens.accessToken, newTokens.refreshToken)
+            }
+            sendWithoutRequest { request ->
+                request.url.host.contains(BASE_URL)
             }
         }
     }

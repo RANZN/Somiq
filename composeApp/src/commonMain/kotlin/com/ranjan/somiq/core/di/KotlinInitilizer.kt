@@ -9,5 +9,5 @@ expect class KotlinInitializer {
 
 fun initKoin(appDeclaration: KoinAppDeclaration) = startKoin {
     appDeclaration()
-    modules(appModules, viewmodelModules)
+    modules(appModules, viewmodelModules, networkModule)
 }

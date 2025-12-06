@@ -60,6 +60,7 @@ compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-co
 
 #Ktor Client
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ## For logging network requests (very helpful for debugging)
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ##For JSON serialization/deserialization

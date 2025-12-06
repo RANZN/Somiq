@@ -9,7 +9,11 @@ class SignupUseCase(
 ) {
 
     suspend operator fun invoke(name: String, email: String, password: String): AuthResult {
-        return authRepository.signUpUser(name, email, password)
+        val response = authRepository.signUpUser(name, email, password)
+        if (response is AuthResult.Success) {
+            authRepository.loginUser(email, password)
+        }
+        return response
     }
 
 }

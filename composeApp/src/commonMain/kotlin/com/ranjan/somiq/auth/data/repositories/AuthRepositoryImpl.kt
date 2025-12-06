@@ -5,7 +5,7 @@ import com.ranjan.somiq.auth.data.model.LoginRequest
 import com.ranjan.somiq.auth.data.model.SignUpRequest
 import com.ranjan.somiq.auth.domain.model.AuthResult
 import com.ranjan.somiq.core.consts.BASE_URL
-import com.ranjan.somiq.core.data.remote.NetworkException
+import com.ranjan.somiq.core.data.network.NetworkException
 import com.ranjan.somiq.auth.domain.repository.AuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

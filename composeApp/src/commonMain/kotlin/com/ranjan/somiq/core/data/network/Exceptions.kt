@@ -1,4 +1,4 @@
-package com.ranjan.somiq.core.data.remote
+package com.ranjan.somiq.core.data.network
 
 sealed class ApiException(message: String?) : Exception(message) {
     class Unauthorized : ApiException("Invalid credentials")

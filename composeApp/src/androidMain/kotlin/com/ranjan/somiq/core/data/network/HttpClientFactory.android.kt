@@ -1,4 +1,4 @@
-package com.ranjan.somiq.core.data.remote
+package com.ranjan.somiq.core.data.network
 
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.ktor.client.HttpClient

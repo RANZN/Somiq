@@ -18,7 +18,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Somiq",
+            text = "SomiQ",
             style = MaterialTheme.typography.headlineLarge
         )
         Text(

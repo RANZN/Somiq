@@ -23,7 +23,7 @@ fun SignupHeader(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.headlineLarge
         )
         Text(
-            text = "Somiq",
+            text = "SomiQ",
             style = MaterialTheme.typography.headlineLarge.copy(fontSize = 16.sp)
         )
         Text(

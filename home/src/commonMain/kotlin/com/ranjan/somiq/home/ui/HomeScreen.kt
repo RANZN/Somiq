@@ -37,7 +37,7 @@ fun HomeScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = "Somiq",
+                    text = "SomiQ",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface

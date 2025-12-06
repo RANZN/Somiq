@@ -1,0 +1,40 @@
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+    <rect width="1080" height="1920" fill="#000000" />
+
+    <g transform="translate(540, 960)">
+
+        <g transform="translate(0, -220) scale(1.8)">
+            <g transform="translate(-100, -100)">
+                <path d="M40 0 H160 C182.09 0 200 17.9 200 40 V140 C200 162.1 182.09 180 160 180 H130 L160 210 L110 180 H40 C17.9 180 0 162.1 0 140 V40 C0 17.9 17.9 0 40 0 Z"
+                    fill="#FFE600"/>
+
+                <circle cx="100" cy="90" r="45" stroke="#FFFFFF" stroke-width="14" fill="none"/>
+
+                <circle cx="165" cy="35" r="12" fill="#FFFFFF"/>
+            </g>
+        </g>
+
+        <g transform="translate(0, 160)">
+            <g transform="translate(-145, 0)">
+
+                <path d="M40 10 C40 0 20 0 15 5 C5 10 5 25 20 30 C35 35 45 40 45 60 C45 80 20 85 10 80"
+                    stroke="white" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+                <circle cx="82" cy="58" r="22" stroke="white" stroke-width="12" fill="none"/>
+
+                <path d="M119 35 V80 M119 50 C119 35 144 35 144 50 V80 M144 50 C144 35 169 35 169 50 V80"
+                    stroke="white" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+                <line x1="198" y1="35" x2="198" y2="80" stroke="white" stroke-width="12" stroke-linecap="round"/>
+                <circle cx="198" cy="15" r="8" fill="white"/>
+
+                <g>
+                    <circle cx="248" cy="45" r="35" stroke="white" stroke-width="12" fill="none"/>
+                    <path d="M265 65 L285 85" stroke="white" stroke-width="12" stroke-linecap="round"/>
+                </g>
+
+            </g>
+        </g>
+    </g>
+</svg>

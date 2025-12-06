@@ -22,8 +22,20 @@ sealed interface Screen {
     data object HomeGraph : Screen
 
     @Serializable
-    sealed interface Home {
-
+    sealed interface Home : Screen {
+        @Serializable
+        data object Feed : Home
+        
+        @Serializable
+        data object Search : Home
+        
+        @Serializable
+        data object Reels : Home
+        
+        @Serializable
+        data object Profile : Home
     }
 
+    @Serializable
+    data object PostDetail : Screen
 }

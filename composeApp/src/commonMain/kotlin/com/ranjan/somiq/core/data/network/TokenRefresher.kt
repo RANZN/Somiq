@@ -1,86 +1,83 @@
 package com.ranjan.somiq.core.data.network
 
+import com.ranjan.somiq.core.consts.BASE_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.ResponseException
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.header
-import io.ktor.client.request.request
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.Serializable
+
+data class TokenPair(
+    val accessToken: String,
+    val refreshToken: String
+)
+
+@Serializable
+private data class RefreshTokenRequest(
+    val refreshToken: String
+)
+
+@Serializable
+private data class RefreshTokenResponse(
+    val accessToken: String,
+    val refreshToken: String
+)
 
 interface TokenRefresher {
-    suspend fun tryRefresh(oldRefreshToken: String?): Boolean
+    suspend fun tryRefresh(oldRefreshToken: String?): TokenPair?
 }
 
 class TokenRefresherImpl(
     private val tokenProvider: TokenProvider,
+    private val nonAuthHttpClient: HttpClient
 ) : TokenRefresher {
-    val mutex = Mutex()
-    override suspend fun tryRefresh(oldRefreshToken: String?): Boolean {
+    private val mutex = Mutex()
+    
+    override suspend fun tryRefresh(oldRefreshToken: String?): TokenPair? {
         return mutex.withLock {
-            val accessToken = tokenProvider.getAccessToken()
-            val refreshToken = tokenProvider.getRefreshToken()
+            val currentAccessToken = tokenProvider.getAccessToken()
+            val currentRefreshToken = tokenProvider.getRefreshToken()
 
-            if (refreshToken != oldRefreshToken && accessToken != null) {
-                return@withLock true
+            // If tokens have already been refreshed by another coroutine
+            if (currentRefreshToken != oldRefreshToken && currentAccessToken != null && currentRefreshToken != null) {
+                return@withLock TokenPair(currentAccessToken, currentRefreshToken)
             }
-            //do API call
 
-            return@withLock false
-        }
-    }
+            // If no refresh token available, cannot refresh
+            val refreshToken = currentRefreshToken ?: return@withLock null
 
-}
+            try {
+                // Make API call to refresh token using non-auth client to avoid circular dependency
+                val response = nonAuthHttpClient.post("$BASE_URL/auth/refresh") {
+                    setBody(RefreshTokenRequest(refreshToken))
+                }
 
-private class AuthRequestRunner(
-    private val client: HttpClient,
-    private val tokenProvider: TokenProvider,
-    private val tokenRefresher: TokenRefresher
-) {
-    private val refreshMutex = Mutex()
-
-    @Suppress("BlockingMethodInNonBlockingContext")
-    suspend inline fun <reified T> runRequest(crossinline builder: HttpRequestBuilder.() -> Unit): T {
-        try {
-            return client.request {
-                tokenProvider.getAccessToken()?.let { header("Authorization", "Bearer $it") }
-                builder()
-            }.body()
-        } catch (cause: ResponseException) {
-            // If not 401 -> rethrow
-            val status = cause.response.status
-            if (status != HttpStatusCode.Unauthorized) throw cause
-
-            val currentToken = tokenProvider.getRefreshToken()
-            val refreshed = tokenRefresher.tryRefresh(currentToken)
-
-            if (!refreshed) {
+                if (response.status == HttpStatusCode.OK) {
+                    val tokenResponse = response.body<RefreshTokenResponse>()
+                    
+                    // Save new tokens
+                    tokenProvider.saveToken(
+                        accessToken = tokenResponse.accessToken,
+                        refreshToken = tokenResponse.refreshToken
+                    )
+                    
+                    return@withLock TokenPair(
+                        accessToken = tokenResponse.accessToken,
+                        refreshToken = tokenResponse.refreshToken
+                    )
+                } else {
+                    // Refresh failed, clear tokens
+                    tokenProvider.clearToken()
+                    return@withLock null
+                }
+            } catch (_: Exception) {
+                // Refresh failed, clear tokens
                 tokenProvider.clearToken()
-                throw ApiException.Unauthorized() // or throw your SessionExpiredException
+                return@withLock null
             }
-
-            // retry once with fresh token
-            val newToken = tokenProvider.getAccessToken()
-            if (newToken == null) {
-                tokenProvider.clearTokens()
-                throw ApiException.Unauthorized()
-            }
-
-            return try {
-                client.request {
-                    header("Authorization", "Bearer $newToken")
-                    builder()
-                }.body()
-            } catch (e: ResponseException) {
-                // If retry still fails, bubble up (or you can convert to Unauthorized)
-                throw e
-            }
-        } catch (io: Throwable) {
-            // other exceptions, bubble up
-            throw io
         }
     }
 }

@@ -10,7 +10,7 @@ fun SplashScreenHost(
     navigateToHome: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    ObserveAsEvent(viewmodel.splashAction) {
+    ObserveAsEvent(viewmodel.splashEvents) {
         when (it) {
             is SplashEvents.NavigateToHome -> navigateToHome()
             is SplashEvents.NavigateToLogin -> navigateToLogin()

@@ -1,5 +1,6 @@
 package com.ranjan.somiq.core.presentation.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -16,7 +17,7 @@ import somiq.composeapp.generated.resources.cocon
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = false, //isSystemInDarkTheme(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {

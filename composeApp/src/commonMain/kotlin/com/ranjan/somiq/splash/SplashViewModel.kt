@@ -17,7 +17,7 @@ class SplashViewModel(
 ) : ViewModel() {
 
     private val _splashEvents = Channel<SplashEvents>(Channel.BUFFERED)
-    val splashAction = _splashEvents.receiveAsFlow()
+    val splashEvents = _splashEvents.receiveAsFlow()
 
     init {
         handleSplashTransition()
@@ -37,7 +37,7 @@ class SplashViewModel(
             false
         }
 
-        val isUserLoggedIn = isUserLoggedInDeferred.await()
+        val isUserLoggedIn = true // isUserLoggedInDeferred.await()
 
         val action = when {
             isUserLoggedIn -> SplashEvents.NavigateToHome(isUpdateNeeded)

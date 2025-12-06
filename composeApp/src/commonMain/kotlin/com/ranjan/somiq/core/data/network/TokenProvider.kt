@@ -1,5 +1,7 @@
 package com.ranjan.somiq.core.data.network
 
+import kotlin.concurrent.Volatile
+
 interface TokenProvider {
     fun getAccessToken(): String?
     fun getRefreshToken(): String?
@@ -7,23 +9,38 @@ interface TokenProvider {
     fun clearToken()
 }
 
-class TokenProviderImpl(
+/**
+ * In-memory implementation of TokenProvider.
+ * 
+ * Note: This is a basic implementation that stores tokens in memory.
+ * For production use, consider implementing a platform-specific version
+ * that uses secure storage (e.g., EncryptedSharedPreferences on Android,
+ * Keychain on iOS, or secure storage on other platforms).
+ * 
+ * This implementation can be overridden in platform-specific modules.
+ */
+class TokenProviderImpl : TokenProvider {
+    @Volatile
+    private var accessToken: String? = null
 
-) : TokenProvider {
+    @Volatile
+    private var refreshToken: String? = null
 
     override fun getAccessToken(): String? {
-        return null
+        return accessToken
     }
 
     override fun getRefreshToken(): String? {
-        TODO("Not yet implemented")
+        return refreshToken
     }
 
     override fun saveToken(accessToken: String, refreshToken: String) {
-        TODO("Not yet implemented")
+        this.accessToken = accessToken
+        this.refreshToken = refreshToken
     }
 
     override fun clearToken() {
-        TODO("Not yet implemented")
+        accessToken = null
+        refreshToken = null
     }
 }

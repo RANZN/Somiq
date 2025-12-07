@@ -65,8 +65,18 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.ktor.client.cio)
         }
 
+        val iosMain by creating {
+            dependsOn(getByName("commonMain"))
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:${libs.versions.ktor.get()}")
+            }
+        }
+
+        getByName("iosArm64Main").dependsOn(iosMain)
+        getByName("iosSimulatorArm64Main").dependsOn(iosMain)
     }
 }
 

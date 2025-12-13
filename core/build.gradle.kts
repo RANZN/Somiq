@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
+    id("compose.res.ksp.setup")
 }
 
 kotlin {
@@ -104,20 +105,5 @@ dependencies {
 
     room {
         schemaDirectory("$projectDir/schemas")
-    }
-}
-
-afterEvaluate {
-    android.buildTypes.forEach { buildType ->
-        val buildTypeName = buildType.name.replaceFirstChar(Char::titlecase)
-        val kspTaskName = "ksp${buildTypeName}KotlinAndroid"
-        tasks.named(kspTaskName) {
-            dependsOn(tasks.named("generateResourceAccessorsForAndroid$buildTypeName"))
-            dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
-            dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
-            dependsOn(tasks.named("generateComposeResClass"))
-            dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
-            tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { dependsOn(it) }
-        }
     }
 }

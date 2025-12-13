@@ -32,6 +32,8 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+includeBuild("build-logic")
+
 include(":core")
 include(":auth")
 include(":home")

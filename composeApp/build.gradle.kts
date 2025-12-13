@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
+    id("compose.res.ksp.setup")
 }
 
 kotlin {
@@ -144,53 +145,6 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ranjan.somiq"
             packageVersion = "1.0.0"
-        }
-    }
-}
-
-afterEvaluate {
-    android.buildTypes.forEach { buildType ->
-        val buildTypeName = buildType.name.replaceFirstChar(Char::titlecase)
-        val kspTaskName = "ksp${buildTypeName}KotlinAndroid"
-        tasks.named(kspTaskName) {
-            dependsOn(tasks.named("generateResourceAccessorsForAndroid$buildTypeName"))
-            dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
-            dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
-            dependsOn(tasks.named("generateComposeResClass"))
-            dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
-            tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { dependsOn(it) }
-        }
-        
-        // Fix test KSP task dependencies
-        val testKspTaskName = "ksp${buildTypeName}UnitTestKotlinAndroid"
-        tasks.findByName(testKspTaskName)?.let { testKspTask ->
-            tasks.findByName("generateResourceAccessorsForAndroidUnitTest$buildTypeName")?.let { testKspTask.dependsOn(it) }
-            tasks.findByName("generateResourceAccessorsForAndroidUnitTest")?.let { testKspTask.dependsOn(it) }
-            tasks.findByName("generateResourceAccessorsForCommonTest")?.let { testKspTask.dependsOn(it) }
-            tasks.findByName("generateResourceAccessorsForCommonMain")?.let { testKspTask.dependsOn(it) }
-            tasks.findByName("generateComposeResClass")?.let { testKspTask.dependsOn(it) }
-            tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { testKspTask.dependsOn(it) }
-        }
-    }
-    
-    // iOS KSP task dependencies
-    listOf("IosSimulatorArm64", "IosArm64").forEach { iosTarget ->
-        val kspTaskName = "kspKotlin$iosTarget"
-        tasks.findByName(kspTaskName)?.let { kspTask ->
-            try {
-                kspTask.dependsOn(tasks.named("generateResourceAccessorsFor${iosTarget}Main"))
-            } catch (e: Exception) { }
-            try {
-                kspTask.dependsOn(tasks.named("generateActualResourceCollectorsFor${iosTarget}Main"))
-            } catch (e: Exception) { }
-            try {
-                kspTask.dependsOn(tasks.named("generateComposeResClass"))
-            } catch (e: Exception) { }
-            try {
-                kspTask.dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
-            } catch (e: Exception) { }
-            tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { kspTask.dependsOn(it) }
-            tasks.findByName("generateResourceAccessorsForIosMain")?.let { kspTask.dependsOn(it) }
         }
     }
 }

@@ -31,6 +31,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":core"))
+            api(project(":auth"))
+            api(project(":feed"))
+            api(project(":reels"))
+            api(project(":profile"))
+            api(project(":search"))
             
             implementation(compose.runtime)
             implementation(compose.foundation)

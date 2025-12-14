@@ -1,5 +1,7 @@
 package com.ranjan.somiq.core.di
 
+import com.ranjan.somiq.core.data.local.AuthStateManager
+import com.ranjan.somiq.core.data.local.AuthStateManagerImpl
 import com.ranjan.somiq.core.data.network.TokenProvider
 import com.ranjan.somiq.core.data.network.TokenProviderImpl
 import com.ranjan.somiq.core.data.network.TokenRefresher
@@ -18,9 +20,12 @@ val networkModule = module {
         provideNonAuthHttpClient()
     }
 
-    // TokenProvider can be overridden in platform-specific modules (e.g., AndroidModules)
     single<TokenProvider> {
         TokenProviderImpl()
+    }
+
+    single<AuthStateManager> {
+        AuthStateManagerImpl()
     }
 
     single<TokenRefresher> {

@@ -33,9 +33,15 @@ sealed interface Screen {
         data object Reels : Home
         
         @Serializable
-        data object Profile : Home
+        data class Profile(val userId: String? = null) : Home
     }
 
     @Serializable
-    data object PostDetail : Screen
+    data class PostDetail(val postId: String) : Screen
+    
+    @Serializable
+    data object Notifications : Screen
+    
+    @Serializable
+    data object Collections : Screen
 }

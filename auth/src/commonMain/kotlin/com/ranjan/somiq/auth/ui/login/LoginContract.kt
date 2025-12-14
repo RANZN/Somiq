@@ -2,8 +2,8 @@ package com.ranjan.somiq.auth.ui.login
 
 
 data class LoginUiState(
-    val email: String = "ranjan@yopmail.com",
-    val password: String = "Ranjan@123",
+    val email: String = "ranjan@example.com",
+    val password: String = "Pass@123",
     val isLoading: Boolean = false,
     val error: Errors? = null
 ) {

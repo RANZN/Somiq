@@ -56,6 +56,11 @@ kotlin {
             api(project(":core"))
             api(project(":auth"))
             api(project(":home"))
+            api(project(":feed"))
+            api(project(":reels"))
+            api(project(":profile"))
+            api(project(":search"))
+            api(project(":postDetail"))
             
             implementation(compose.runtime)
             implementation(compose.foundation)

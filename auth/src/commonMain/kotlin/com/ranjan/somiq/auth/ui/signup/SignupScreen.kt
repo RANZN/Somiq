@@ -16,24 +16,26 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Repartition
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.auth.ui.signup.SignUpUiState.Error
+import com.ranjan.somiq.auth.ui.signup.components.AddPhotoPlaceHolder
+import com.ranjan.somiq.auth.ui.signup.components.SignupHeader
+import com.ranjan.somiq.auth.ui.signup.mapper.getMessage
 import com.ranjan.somiq.core.presentation.component.CustomOutlinedButton
 import com.ranjan.somiq.core.presentation.component.CustomTextField
 import com.ranjan.somiq.core.presentation.component.OnboardingButton
-import com.ranjan.somiq.auth.ui.signup.SignUpUiState.Error
-import com.ranjan.somiq.auth.ui.signup.components.SignupHeader
-import com.ranjan.somiq.auth.ui.signup.mapper.getMessage
 import com.ranjan.somiq.core.presentation.util.defaultPadding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -59,6 +61,14 @@ fun SignupScreen(
                 .padding(vertical = 20.dp)
         )
 
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AddPhotoPlaceHolder(onClick = { action(SignUpAction.AddPictureClick) })
+        }
+
         val nameError by remember(uiState.error) {
             derivedStateOf {
                 uiState.error.find { it is Error.Name }
@@ -76,6 +86,28 @@ fun SignupScreen(
                 imeAction = ImeAction.Next,
             ),
             modifier = Modifier.semantics { contentType = ContentType.PersonFirstName },
+        )
+
+        val usernameError by remember(uiState.error) {
+            derivedStateOf {
+                uiState.error.find { it is Error.Username }
+            }
+        }
+        CustomTextField(
+            value = uiState.username,
+            onValueChange = { action(SignUpAction.OnUsernameChange(it)) },
+            placeholder = "Username",
+            leadingImageVector = Icons.Outlined.Person,
+            isError = usernameError != null,
+            errorMessage = usernameError?.getMessage(),
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Text
+            ),
+            modifier = Modifier.semantics {
+                contentType = ContentType.NewUsername
+            },
         )
 
         val emailError by remember(uiState.error) {
@@ -156,6 +188,6 @@ fun SignupScreen(
 private fun SignupScreenPrev() {
     SignupScreen(
         SignUpUiState(),
-        modifier = Modifier.background(Color.White)
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
     ) {}
 }

@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 
 fun NavHostController.navigateToHome() {
     navigate(Screen.HomeGraph) {
-        popUpTo(Screen.OnBoardingGraph) {
+        popUpTo(Screen.Splash) {
             inclusive = true
         }
     }

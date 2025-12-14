@@ -1,12 +1,13 @@
 package com.ranjan.somiq.auth.domain.usecase
 
-import kotlinx.coroutines.delay
+import com.ranjan.somiq.auth.domain.repository.AuthRepository
 
-class UserLoginStatus {
+class UserLoginStatus(
+    private val authRepository: AuthRepository
+) {
 
     suspend operator fun invoke(): Boolean {
-        delay(200)
-        return false
+        return authRepository.isUserLoggedIn()
     }
 
 }

@@ -8,6 +8,11 @@ fun SignUpUiState.Error.getMessage() = when (this) {
     SignUpUiState.Error.Name.Required -> "Name is required"
     SignUpUiState.Error.Name.TooShort -> "Name is too short"
 
+    SignUpUiState.Error.Username.Required -> "Username is required"
+    SignUpUiState.Error.Username.TooShort -> "Username must be at least 3 characters"
+    SignUpUiState.Error.Username.InvalidFormat -> "Username can only contain letters, numbers, and underscores"
+    SignUpUiState.Error.Username.AlreadyInUse -> "Username already taken"
+
     SignUpUiState.Error.Email.Required -> "Email is required"
     SignUpUiState.Error.Email.InvalidFormat -> "Invalid email address"
     SignUpUiState.Error.Email.AlreadyInUse -> "Email already in use"

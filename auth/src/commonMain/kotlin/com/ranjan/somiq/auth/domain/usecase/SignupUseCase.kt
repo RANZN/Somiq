@@ -8,12 +8,9 @@ class SignupUseCase(
     private val authRepository: AuthRepository
 ) {
 
-    suspend operator fun invoke(name: String, email: String, password: String): AuthResult {
-        val response = authRepository.signUpUser(name, email, password)
-        if (response is AuthResult.Success) {
-            authRepository.loginUser(email, password)
-        }
-        return response
+    suspend operator fun invoke(name: String, username: String, email: String, password: String): AuthResult {
+        // signUpUser now saves tokens directly, so no need to call loginUser
+        return authRepository.signUpUser(name, username, email, password)
     }
 
 }

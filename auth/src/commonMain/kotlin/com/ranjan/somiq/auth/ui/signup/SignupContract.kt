@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 @Stable
 data class SignUpUiState(
     val name: String = "",
+    val username: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
@@ -15,6 +16,13 @@ data class SignUpUiState(
         sealed interface Name : Error {
             object Required : Name
             object TooShort : Name
+        }
+
+        sealed interface Username : Error {
+            object Required : Username
+            object TooShort : Username
+            object InvalidFormat : Username
+            object AlreadyInUse : Username
         }
 
         sealed interface Email : Error {
@@ -39,7 +47,9 @@ data class SignUpUiState(
 }
 
 sealed interface SignUpAction {
+    data object AddPictureClick : SignUpAction
     data class OnNameChange(val name: String) : SignUpAction
+    data class OnUsernameChange(val username: String) : SignUpAction
     data class OnEmailChange(val email: String) : SignUpAction
     data class OnPasswordChange(val password: String) : SignUpAction
     data class OnConfirmPasswordChange(val confirmPassword: String) : SignUpAction

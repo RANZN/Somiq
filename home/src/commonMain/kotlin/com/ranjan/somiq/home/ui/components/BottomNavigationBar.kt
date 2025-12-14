@@ -21,6 +21,10 @@ fun BottomNavigationBar(
 ) {
     fun isSelected(route: Screen.Home): Boolean {
         val routeName = route::class.simpleName ?: ""
+        // For Profile, check if route contains "Profile" (with or without userId)
+        if (routeName == "Profile") {
+            return currentRoute?.contains("Profile", ignoreCase = true) == true
+        }
         return currentRoute?.contains(routeName, ignoreCase = true) == true
     }
 
@@ -41,13 +45,13 @@ fun BottomNavigationBar(
             icon = { Icon(Icons.Default.VideoLibrary, contentDescription = "Reels") },
             label = { Text("Reels") },
             selected = isSelected(Screen.Home.Reels),
-            onClick = { onNavigate(Screen.Splash) }
+            onClick = { onNavigate(Screen.Home.Reels) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text("Profile") },
-            selected = isSelected(Screen.Home.Profile),
-            onClick = { onNavigate(Screen.Home.Profile) }
+            selected = isSelected(Screen.Home.Profile(null)),
+            onClick = { onNavigate(Screen.Home.Profile(null)) }
         )
     }
 }

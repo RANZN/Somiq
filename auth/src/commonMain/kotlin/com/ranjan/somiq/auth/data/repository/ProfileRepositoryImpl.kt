@@ -3,13 +3,11 @@ package com.ranjan.somiq.auth.data.repository
 import com.ranjan.somiq.auth.data.model.ProfileResponse
 import com.ranjan.somiq.auth.domain.repository.ProfileRepository
 import com.ranjan.somiq.core.consts.BASE_URL
-import com.ranjan.somiq.core.data.network.NetworkException
+import com.ranjan.somiq.core.data.network.safeApiCall
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
-import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,30 +23,15 @@ class ProfileRepositoryImpl(
 ) : ProfileRepository {
 
     override suspend fun getProfile(userId: String?): Result<ProfileResponse> {
-        return try {
-            val url = if (userId != null) {
-                "$BASE_URL/v1/account/$userId"
-            } else {
-                "$BASE_URL/v1/account"
-            }
-            val response = httpClient.get(url)
-            if (response.status == HttpStatusCode.OK) {
-                try {
-                    val profile = response.body<ProfileResponse>()
-                    Result.success(profile)
-                } catch (e: kotlinx.serialization.SerializationException) {
-                    Result.failure(Exception("Failed to parse profile: ${e.message}"))
-                }
-            } else {
-                Result.failure(Exception("Failed to load profile: ${response.status}"))
-            }
-        } catch (e: NetworkException.NoNetwork) {
-            Result.failure(e)
-        } catch (e: NetworkException.Timeout) {
-            Result.failure(e)
-        } catch (e: Exception) {
-            Result.failure(Exception("Failed to load profile: ${e.message}"))
+        val url = if (userId != null) {
+            "$BASE_URL/v1/account/$userId"
+        } else {
+            "$BASE_URL/v1/account"
         }
+        return safeApiCall(
+            apiCall = { httpClient.get(url) },
+            errorMessage = "Failed to load profile"
+        )
     }
 
     override suspend fun updateProfile(
@@ -57,34 +40,21 @@ class ProfileRepositoryImpl(
         bio: String?,
         profilePictureUrl: String?
     ): Result<ProfileResponse> {
-        return try {
-            val response = httpClient.put("$BASE_URL/v1/account/profile") {
-                setBody(
-                    UpdateProfileRequest(
-                        name = name,
-                        username = username,
-                        bio = bio,
-                        profilePictureUrl = profilePictureUrl
+        return safeApiCall(
+            apiCall = {
+                httpClient.put("$BASE_URL/v1/account/profile") {
+                    setBody(
+                        UpdateProfileRequest(
+                            name = name,
+                            username = username,
+                            bio = bio,
+                            profilePictureUrl = profilePictureUrl
+                        )
                     )
-                )
-            }
-            if (response.status == HttpStatusCode.OK) {
-                try {
-                    val profile = response.body<ProfileResponse>()
-                    Result.success(profile)
-                } catch (e: kotlinx.serialization.SerializationException) {
-                    Result.failure(Exception("Failed to parse profile: ${e.message}"))
                 }
-            } else {
-                Result.failure(Exception("Failed to update profile: ${response.status}"))
-            }
-        } catch (e: NetworkException.NoNetwork) {
-            Result.failure(e)
-        } catch (e: NetworkException.Timeout) {
-            Result.failure(e)
-        } catch (e: Exception) {
-            Result.failure(Exception("Failed to update profile: ${e.message}"))
-        }
+            },
+            errorMessage = "Failed to update profile"
+        )
     }
 }
 

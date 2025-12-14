@@ -130,29 +130,50 @@ class FeedViewModel(
         // Actual API call - toggle like
         val result = toggleLikeUseCase(postId)
 
-        result.getOrElse {
-            // Revert on failure
-            _uiState.update { state ->
-                state.copy(
-                    posts = state.posts.map {
-                        if (it.id == postId) {
-                            it.copy(
-                                isLiked = wasLiked,
-                                likesCount = if (wasLiked) it.likesCount + 1 else it.likesCount - 1
-                            )
-                        } else {
-                            it
+        result.fold(
+            onSuccess = { toggleResponse ->
+                // Sync with server response to ensure accuracy
+                _uiState.update { state ->
+                    state.copy(
+                        posts = state.posts.map {
+                            if (it.id == postId) {
+                                it.copy(
+                                    isLiked = toggleResponse.isLiked,
+                                    isBookmarked = toggleResponse.isBookmarked,
+                                    likesCount = toggleResponse.likesCount,
+                                    bookmarksCount = toggleResponse.bookmarksCount
+                                )
+                            } else {
+                                it
+                            }
                         }
-                    }
-                )
+                    )
+                }
+            },
+            onFailure = {
+                // Revert on failure
+                _uiState.update { state ->
+                    state.copy(
+                        posts = state.posts.map {
+                            if (it.id == postId) {
+                                it.copy(
+                                    isLiked = wasLiked,
+                                    likesCount = if (wasLiked) it.likesCount + 1 else it.likesCount - 1
+                                )
+                            } else {
+                                it
+                            }
+                        }
+                    )
+                }
             }
-        }
+        )
     }
 
     private suspend fun toggleBookmark(postId: String) {
         val currentState = _uiState.value
         val post = currentState.posts.find { it.id == postId } ?: return
-        val wasSaved = post.isBookmarked
+        val wasBookmarked = post.isBookmarked
 
         // Optimistic update
         _uiState.update { state ->
@@ -170,19 +191,40 @@ class FeedViewModel(
         // Actual API call - toggle bookmark
         val result = toggleBookmarkUseCase(postId)
 
-        result.getOrElse {
-            // Revert on failure
-            _uiState.update { state ->
-                state.copy(
-                    posts = state.posts.map {
-                        if (it.id == postId) {
-                            it.copy(isBookmarked = wasSaved)
-                        } else {
-                            it
+        result.fold(
+            onSuccess = { toggleResponse ->
+                // Sync with server response to ensure accuracy
+                _uiState.update { state ->
+                    state.copy(
+                        posts = state.posts.map {
+                            if (it.id == postId) {
+                                it.copy(
+                                    isLiked = toggleResponse.isLiked,
+                                    isBookmarked = toggleResponse.isBookmarked,
+                                    likesCount = toggleResponse.likesCount,
+                                    bookmarksCount = toggleResponse.bookmarksCount
+                                )
+                            } else {
+                                it
+                            }
                         }
-                    }
-                )
+                    )
+                }
+            },
+            onFailure = {
+                // Revert on failure
+                _uiState.update { state ->
+                    state.copy(
+                        posts = state.posts.map {
+                            if (it.id == postId) {
+                                it.copy(isBookmarked = wasBookmarked)
+                            } else {
+                                it
+                            }
+                        }
+                    )
+                }
             }
-        }
+        )
     }
 }

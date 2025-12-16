@@ -1,23 +1,21 @@
 package com.ranjan.somiq.splash
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.usecase.UserLoginStatus
 import com.ranjan.somiq.common.checkForUpdate.CheckUpdateUseCase
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
+import com.ranjan.somiq.core.presentation.viewmodel.NoAction
+import com.ranjan.somiq.core.presentation.viewmodel.NoState
+import com.ranjan.somiq.splash.SplashContract.Effect
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 class SplashViewModel(
     private val checkUpdate: CheckUpdateUseCase,
     private val userLoginStatus: UserLoginStatus,
-) : ViewModel() {
-
-    private val _splashEvents = Channel<SplashEvents>(Channel.BUFFERED)
-    val splashEvents = _splashEvents.receiveAsFlow()
+) : BaseViewModel<NoState, NoAction, Effect>(NoState) {
 
     init {
         handleSplashTransition()
@@ -40,11 +38,15 @@ class SplashViewModel(
         val isUserLoggedIn = isUserLoggedInDeferred.await()
 
         val action = when {
-            isUserLoggedIn -> SplashEvents.NavigateToHome(isUpdateNeeded)
-            else -> SplashEvents.NavigateToLogin(isUpdateNeeded)
+            isUserLoggedIn -> Effect.NavigateToHome(isUpdateNeeded)
+            else -> Effect.NavigateToLogin(isUpdateNeeded)
         }
 
-        _splashEvents.send(action)
+        emitEffect(action)
+    }
+
+    override fun onAction(action: NoAction) {
+        // No actions needed for splash
     }
 
 }

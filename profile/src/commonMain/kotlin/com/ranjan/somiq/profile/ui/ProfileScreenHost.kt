@@ -3,7 +3,9 @@ package com.ranjan.somiq.profile.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.ranjan.somiq.core.presentation.util.ObserveAsEvent
+import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.profile.ui.ProfileContract.Action
+import com.ranjan.somiq.profile.ui.ProfileContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -15,20 +17,20 @@ fun ProfileScreenHost(
     onNavigateToFollowers: (String) -> Unit = {},
     onNavigateToFollowing: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.state.collectAsState()
 
     // Set userId when screen is first composed
     androidx.compose.runtime.LaunchedEffect(userId) {
         viewModel.setUserId(userId)
-        viewModel.handleAction(ProfileAction.LoadProfile)
+        viewModel.handleAction(Action.LoadProfile)
     }
 
-    ObserveAsEvent(viewModel.events) { event ->
-        when (event) {
-            is ProfileEvent.NavigateToEditProfile -> onNavigateToEditProfile(event.userId)
-            is ProfileEvent.NavigateToSettings -> onNavigateToSettings(event.userId)
-            is ProfileEvent.NavigateToFollowers -> onNavigateToFollowers(event.userId)
-            is ProfileEvent.NavigateToFollowing -> onNavigateToFollowing(event.userId)
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is Effect.NavigateToEditProfile -> onNavigateToEditProfile(effect.userId)
+            is Effect.NavigateToSettings -> onNavigateToSettings(effect.userId)
+            is Effect.NavigateToFollowers -> onNavigateToFollowers(effect.userId)
+            is Effect.NavigateToFollowing -> onNavigateToFollowing(effect.userId)
         }
     }
 

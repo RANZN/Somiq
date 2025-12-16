@@ -1,55 +1,58 @@
 package com.ranjan.somiq.auth.ui.login
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.model.AuthResult
 import com.ranjan.somiq.auth.domain.usecase.LoginUseCase
+import com.ranjan.somiq.auth.ui.login.LoginContract.Action
+import com.ranjan.somiq.auth.ui.login.LoginContract.Effect
+import com.ranjan.somiq.auth.ui.login.LoginContract.UiState
+import com.ranjan.somiq.auth.ui.login.mapper.getErrorMessage
+import com.ranjan.somiq.core.presentation.effect.GlobalEffectDispatcher
+import com.ranjan.somiq.core.presentation.effect.GlobalUiEffect
+import com.ranjan.somiq.core.presentation.effect.SnackbarDuration
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.util.isValidEmail
 import com.ranjan.somiq.core.util.isValidPassword
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val loginUseCase: com.ranjan.somiq.auth.domain.usecase.LoginUseCase,
-) : ViewModel() {
+    private val globalEffectDispatcher: GlobalEffectDispatcher,
+) : BaseViewModel<UiState, Action, Effect>(UiState()) {
 
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
-    private val _events = Channel<LoginEvent>(capacity = Channel.CONFLATED)
-    val events = _events.receiveAsFlow()
-
-    fun handleAction(action: LoginAction) {
+    override fun onAction(action: Action) {
         viewModelScope.launch {
             when (action) {
-                is LoginAction.OnEmailChange -> {
-                    _uiState.update { it.copy(email = action.it) }
+                is Action.OnEmailChange -> {
+                    setState { copy(email = action.it) }
                 }
 
-                is LoginAction.Login -> handleLogin()
+                is Action.Login -> handleLogin()
 
-                is LoginAction.NavigateToHome -> {
-                    _events.send(LoginEvent.NavigateToDashboard)
+                is Action.NavigateToHome -> {
+                    emitEffect(Effect.NavigateToDashboard)
                 }
 
-                is LoginAction.NavigateToSignUp -> {
-                    _events.send(LoginEvent.NavigateToSignUp)
+                is Action.NavigateToSignUp -> {
+                    emitEffect(Effect.NavigateToSignUp)
                 }
 
-                is LoginAction.ShowError -> {
-                    _uiState.update { it.copy(error = LoginUiState.Errors.LOGIN_FAILED) }
+                is Action.ShowError -> {
+                    val error = UiState.Errors.LOGIN_FAILED
+                    setState { copy(error = error) }
+                    globalEffectDispatcher.emit(
+                        GlobalUiEffect.ShowSnackbar(
+                            message = error.getErrorMessage(),
+                            duration = SnackbarDuration.Short
+                        )
+                    )
                 }
 
-                is LoginAction.OnPasswordChange -> {
-                    _uiState.update { it.copy(password = action.it) }
+                is Action.OnPasswordChange -> {
+                    setState { copy(password = action.it) }
                 }
 
-                LoginAction.OnGoogleLoginClick -> {
+                Action.OnGoogleLoginClick -> {
                     TODO()
                 }
             }
@@ -57,36 +60,49 @@ class LoginViewModel(
     }
 
     suspend fun handleLogin() {
-        val email = _uiState.value.email
-        val password = _uiState.value.password
+        val email = state.value.email
+        val password = state.value.password
 
         val isValidEmail = email.isValidEmail()
         val isValidPassword = password.isValidPassword()
         val error = when {
-            !isValidEmail && !isValidPassword -> LoginUiState.Errors.INVALID_CREDENTIALS
-            !isValidEmail -> LoginUiState.Errors.INVALID_EMAIL
-            !isValidPassword -> LoginUiState.Errors.INVALID_PASSWORD
+            !isValidEmail && !isValidPassword -> UiState.Errors.INVALID_CREDENTIALS
+            !isValidEmail -> UiState.Errors.INVALID_EMAIL
+            !isValidPassword -> UiState.Errors.INVALID_PASSWORD
             else -> null
         }
         if (error != null) {
-            _uiState.update { it.copy(error = error) }
+            setState { copy(error = error) }
+            globalEffectDispatcher.emit(
+                GlobalUiEffect.ShowSnackbar(
+                    message = error.getErrorMessage(),
+                    duration = SnackbarDuration.Short
+                )
+            )
             return
         }
 
-        _uiState.update { it.copy(isLoading = true, error = null) }
+        setState { copy(isLoading = true, error = null) }
 
         val result = loginUseCase(email, password)
         println("RANJAN : $result")
         when (result) {
             is AuthResult.Success -> handleAction(
-                LoginAction.NavigateToHome)
+                Action.NavigateToHome)
 
             is AuthResult.Failure -> {
-                _uiState.update {
-                    it.copy(
-                        error = LoginUiState.Errors.LOGIN_FAILED, isLoading = false
+                val error = UiState.Errors.LOGIN_FAILED
+                setState {
+                    copy(
+                        error = error, isLoading = false
                     )
                 }
+                globalEffectDispatcher.emit(
+                    GlobalUiEffect.ShowSnackbar(
+                        message = error.getErrorMessage(),
+                        duration = SnackbarDuration.Short
+                    )
+                )
             }
         }
     }

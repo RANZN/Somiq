@@ -29,6 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.postDetail.ui.PostDetailContract.Action
+import com.ranjan.somiq.postDetail.ui.PostDetailContract.Effect
 
 @Composable
 fun PostDetailScreen(
@@ -36,25 +39,22 @@ fun PostDetailScreen(
     viewModel: PostDetailViewModel,
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val events by viewModel.events.collectAsState()
+    val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(PostDetailAction.LoadPost)
-        viewModel.handleAction(PostDetailAction.LoadComments)
+        viewModel.handleAction(Action.LoadPost)
+        viewModel.handleAction(Action.LoadComments)
     }
 
-    LaunchedEffect(events) {
-        events?.let { event ->
-            when (event) {
-                is PostDetailEvent.ShowError -> {
-                    // Handle error (could show snackbar)
-                }
-                is PostDetailEvent.CommentPosted -> {
-                    // Handle success
-                }
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is Effect.ShowError -> {
+                // Handle error (could show snackbar)
             }
-            viewModel.clearEvent()
+
+            is Effect.CommentPosted -> {
+                // Handle success
+            }
         }
     }
 
@@ -82,7 +82,7 @@ fun PostDetailScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { viewModel.handleAction(PostDetailAction.Refresh) }) {
+                    Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
                         Text("Retry")
                     }
                 }
@@ -129,12 +129,12 @@ fun PostDetailScreen(
                 item {
                     OutlinedTextField(
                         value = uiState.commentText,
-                        onValueChange = { viewModel.handleAction(PostDetailAction.UpdateCommentText(it)) },
+                        onValueChange = { viewModel.handleAction(Action.UpdateCommentText(it)) },
                         label = { Text("Add a comment...") },
                         modifier = Modifier.fillMaxWidth(),
                         trailingIcon = {
                             IconButton(
-                                onClick = { viewModel.handleAction(PostDetailAction.PostComment) },
+                                onClick = { viewModel.handleAction(Action.PostComment) },
                                 enabled = uiState.commentText.isNotBlank()
                             ) {
                                 Text("Post")
@@ -160,7 +160,7 @@ fun PostDetailScreen(
                     items(uiState.comments) { comment ->
                         CommentItem(
                             comment = comment,
-                            onLikeClick = { viewModel.handleAction(PostDetailAction.ToggleCommentLike(comment.id)) }
+                            onLikeClick = { viewModel.handleAction(Action.ToggleCommentLike(comment.id)) }
                         )
                     }
                 }

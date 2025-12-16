@@ -3,6 +3,7 @@ package com.ranjan.somiq.feed.data.repository
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
+import com.ranjan.somiq.feed.data.model.CreatePostRequest
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.feed.data.model.Story
 import com.ranjan.somiq.feed.data.model.StoryResponse
@@ -12,6 +13,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
 class FeedRepositoryImpl(
     private val httpClient: HttpClient
@@ -51,6 +53,17 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") },
             errorMessage = "Failed to toggle bookmark"
+        )
+    }
+
+    override suspend fun createPost(request: CreatePostRequest): Result<Post> {
+        return safeApiCall(
+            apiCall = {
+                httpClient.post("$BASE_URL/v1/posts") {
+                    setBody(request)
+                }
+            },
+            errorMessage = "Failed to create post"
         )
     }
 }

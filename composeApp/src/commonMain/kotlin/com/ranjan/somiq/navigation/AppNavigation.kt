@@ -159,6 +159,56 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                         }
                     )
                 }
+                composable<Screen.Home.CreatePost> {
+                    HomeNavigationHost(
+                        currentRoute = currentRoute,
+                        onNavigate = { destination ->
+                            navController.navigate(destination) {
+                                popUpTo(Screen.Home.Feed) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        onNavigateToUser = { userId ->
+                            navController.navigate(Screen.Home.Profile(userId))
+                        },
+                        onNavigateToPost = { postId ->
+                            navController.navigate(Screen.PostDetail(postId))
+                        },
+                        onNavigateToComments = { postId ->
+                            navController.navigate(Screen.PostDetail(postId))
+                        },
+                        onNavigateToStory = { storyId ->
+                            // TODO: Navigate to story viewer when implemented
+                        },
+                        onNavigateToHashtag = { hashtag ->
+                            // TODO: Navigate to hashtag page when implemented
+                        },
+                        onShowShareDialog = { postId ->
+                            // TODO: Show share dialog
+                        },
+                        onShowMoreOptions = { postId ->
+                            // TODO: Show more options dialog
+                        },
+                        onNavigateToEditProfile = { userId ->
+                            // TODO: Navigate to edit profile screen when implemented
+                        },
+                        onNavigateToSettings = { userId ->
+                            // TODO: Navigate to settings screen when implemented
+                        },
+                        onNavigateToFollowers = { userId ->
+                            // TODO: Navigate to followers screen when implemented
+                        },
+                        onNavigateToFollowing = { userId ->
+                            // TODO: Navigate to following screen when implemented
+                        },
+                        onNavigateToLogin = {
+                            navController.navigateToOnBoarding()
+                        }
+                    )
+                }
                 composable<Screen.Home.Reels> {
                     HomeNavigationHost(
                         currentRoute = currentRoute,

@@ -12,6 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.collections.CollectionsContract.Action
+import com.ranjan.somiq.collections.CollectionsContract.Effect
+import com.ranjan.somiq.core.data.model.CollectionResponse
+import com.ranjan.somiq.core.presentation.util.CollectEffect
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,24 +24,21 @@ fun CollectionsScreen(
     viewModel: CollectionsViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val events by viewModel.events.collectAsState()
+    val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(CollectionsAction.LoadCollections)
+        viewModel.handleAction(Action.LoadCollections)
     }
 
-    LaunchedEffect(events) {
-        events?.let { event ->
-            when (event) {
-                is CollectionsEvent.ShowError -> {
-                    // Handle error
-                }
-                is CollectionsEvent.CollectionCreated -> {
-                    // Handle success
-                }
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is Effect.ShowError -> {
+                // Handle error
             }
-            viewModel.clearEvent()
+
+            is Effect.CollectionCreated -> {
+                // Handle success
+            }
         }
     }
 
@@ -83,7 +84,7 @@ fun CollectionsScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.handleAction(CollectionsAction.Refresh) }) {
+                        Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
                             Text("Retry")
                         }
                     }
@@ -108,7 +109,7 @@ fun CollectionsScreen(
 
 @Composable
 private fun CollectionItem(
-    collection: com.ranjan.somiq.core.data.model.CollectionResponse
+    collection: CollectionResponse
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),

@@ -1,38 +1,32 @@
 package com.ranjan.somiq.notifications
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.home.domain.repository.NotificationRepository
 import com.ranjan.somiq.home.domain.usecase.GetNotificationsUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.ranjan.somiq.notifications.NotificationsContract.Action
+import com.ranjan.somiq.notifications.NotificationsContract.Effect
+import com.ranjan.somiq.notifications.NotificationsContract.UiState
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class NotificationsViewModel : ViewModel(), KoinComponent {
+class NotificationsViewModel : BaseViewModel<UiState, Action, Effect>(UiState()), KoinComponent {
     private val getNotificationsUseCase: GetNotificationsUseCase by inject()
     private val notificationRepository: NotificationRepository by inject()
 
-    private val _uiState = MutableStateFlow(NotificationsUiState())
-    val uiState: StateFlow<NotificationsUiState> = _uiState.asStateFlow()
-
-    private val _events = MutableStateFlow<NotificationsEvent?>(null)
-    val events: StateFlow<NotificationsEvent?> = _events.asStateFlow()
-
     init {
-        handleAction(NotificationsAction.LoadNotifications)
-        handleAction(NotificationsAction.LoadUnreadCount)
+        handleAction(Action.LoadNotifications)
+        handleAction(Action.LoadUnreadCount)
     }
 
-    fun handleAction(action: NotificationsAction) {
+    override fun onAction(action: Action) {
         when (action) {
-            is NotificationsAction.LoadNotifications -> loadNotifications()
-            is NotificationsAction.LoadUnreadCount -> loadUnreadCount()
-            is NotificationsAction.MarkAsRead -> markAsRead(action.notificationId)
-            is NotificationsAction.MarkAllAsRead -> markAllAsRead()
-            is NotificationsAction.Refresh -> {
+            is Action.LoadNotifications -> loadNotifications()
+            is Action.LoadUnreadCount -> loadUnreadCount()
+            is Action.MarkAsRead -> markAsRead(action.notificationId)
+            is Action.MarkAllAsRead -> markAllAsRead()
+            is Action.Refresh -> {
                 loadNotifications()
                 loadUnreadCount()
             }
@@ -40,20 +34,20 @@ class NotificationsViewModel : ViewModel(), KoinComponent {
     }
 
     private fun loadNotifications() {
-        _uiState.update { it.copy(isLoading = true, error = null) }
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
+        setState { copy(isLoading = true, error = null) }
+        viewModelScope.launch {
             getNotificationsUseCase().fold(
                 onSuccess = { notifications ->
-                    _uiState.update {
-                        it.copy(
+                    setState {
+                        copy(
                             notifications = notifications,
                             isLoading = false
                         )
                     }
                 },
                 onFailure = { error ->
-                    _uiState.update {
-                        it.copy(
+                    setState {
+                        copy(
                             isLoading = false,
                             error = error.message ?: "Failed to load notifications"
                         )
@@ -64,10 +58,10 @@ class NotificationsViewModel : ViewModel(), KoinComponent {
     }
 
     private fun loadUnreadCount() {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
+        viewModelScope.launch {
             notificationRepository.getUnreadCount().fold(
                 onSuccess = { count ->
-                    _uiState.update { it.copy(unreadCount = count) }
+                    setState { copy(unreadCount = count) }
                 },
                 onFailure = { }
             )
@@ -75,39 +69,35 @@ class NotificationsViewModel : ViewModel(), KoinComponent {
     }
 
     private fun markAsRead(notificationId: String) {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
+        viewModelScope.launch {
             notificationRepository.markAsRead(notificationId).fold(
                 onSuccess = {
                     loadNotifications()
                     loadUnreadCount()
                 },
                 onFailure = { error ->
-                    _events.value = NotificationsEvent.ShowError(
+                    emitEffect(Effect.ShowError(
                         error.message ?: "Failed to mark as read"
-                    )
+                    ))
                 }
             )
         }
     }
 
     private fun markAllAsRead() {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
+        viewModelScope.launch {
             notificationRepository.markAllAsRead().fold(
                 onSuccess = {
                     loadNotifications()
                     loadUnreadCount()
                 },
                 onFailure = { error ->
-                    _events.value = NotificationsEvent.ShowError(
+                    emitEffect(Effect.ShowError(
                         error.message ?: "Failed to mark all as read"
-                    )
+                    ))
                 }
             )
         }
-    }
-
-    fun clearEvent() {
-        _events.value = null
     }
 }
 

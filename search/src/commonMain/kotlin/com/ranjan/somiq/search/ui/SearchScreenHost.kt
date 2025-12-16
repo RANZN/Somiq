@@ -3,7 +3,8 @@ package com.ranjan.somiq.search.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.ranjan.somiq.core.presentation.util.ObserveAsEvent
+import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.search.ui.SearchContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -13,13 +14,13 @@ fun SearchScreenHost(
     onNavigateToHashtag: (String) -> Unit = {},
     onNavigateToPost: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.state.collectAsState()
 
-    ObserveAsEvent(viewModel.events) { event ->
-        when (event) {
-            is SearchEvent.NavigateToUser -> onNavigateToUser(event.userId)
-            is SearchEvent.NavigateToHashtag -> onNavigateToHashtag(event.hashtag)
-            is SearchEvent.NavigateToPost -> onNavigateToPost(event.postId)
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is Effect.NavigateToUser -> onNavigateToUser(effect.userId)
+            is Effect.NavigateToHashtag -> onNavigateToHashtag(effect.hashtag)
+            is Effect.NavigateToPost -> onNavigateToPost(effect.postId)
         }
     }
 

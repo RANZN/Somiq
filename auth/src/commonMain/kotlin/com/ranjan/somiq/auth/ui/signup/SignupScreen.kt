@@ -29,7 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.auth.ui.signup.SignUpUiState.Error
+import com.ranjan.somiq.auth.ui.signup.SignUpContract
 import com.ranjan.somiq.auth.ui.signup.components.AddPhotoPlaceHolder
 import com.ranjan.somiq.auth.ui.signup.components.SignupHeader
 import com.ranjan.somiq.auth.ui.signup.mapper.getMessage
@@ -37,13 +37,15 @@ import com.ranjan.somiq.core.presentation.component.CustomOutlinedButton
 import com.ranjan.somiq.core.presentation.component.CustomTextField
 import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.defaultPadding
+import com.ranjan.somiq.auth.ui.signup.SignUpContract.Action
+import com.ranjan.somiq.auth.ui.signup.SignUpContract.UiState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SignupScreen(
-    uiState: SignUpUiState,
+    uiState: UiState,
     modifier: Modifier = Modifier,
-    action: (SignUpAction) -> Unit
+    action: (Action) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -66,17 +68,17 @@ fun SignupScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AddPhotoPlaceHolder(onClick = { action(SignUpAction.AddPictureClick) })
+            AddPhotoPlaceHolder(onClick = { action(Action.AddPictureClick) })
         }
 
         val nameError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is Error.Name }
+                uiState.error.find { it is SignUpContract.UiState.Error.Name }
             }
         }
         CustomTextField(
             value = uiState.name,
-            onValueChange = { action(SignUpAction.OnNameChange(it)) },
+            onValueChange = { action(Action.OnNameChange(it)) },
             placeholder = "Full Name",
             leadingImageVector = Icons.Outlined.Person,
             isError = nameError != null,
@@ -90,12 +92,12 @@ fun SignupScreen(
 
         val usernameError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is Error.Username }
+                uiState.error.find { it is SignUpContract.UiState.Error.Username }
             }
         }
         CustomTextField(
             value = uiState.username,
-            onValueChange = { action(SignUpAction.OnUsernameChange(it)) },
+            onValueChange = { action(Action.OnUsernameChange(it)) },
             placeholder = "Username",
             leadingImageVector = Icons.Outlined.Person,
             isError = usernameError != null,
@@ -112,12 +114,12 @@ fun SignupScreen(
 
         val emailError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is Error.Email }
+                uiState.error.find { it is SignUpContract.UiState.Error.Email }
             }
         }
         CustomTextField(
             value = uiState.email,
-            onValueChange = { action(SignUpAction.OnEmailChange(it)) },
+            onValueChange = { action(Action.OnEmailChange(it)) },
             placeholder = "Email or Phone",
             leadingImageVector = Icons.Outlined.Email,
             isError = emailError != null,
@@ -131,12 +133,12 @@ fun SignupScreen(
         )
         val passwordError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is Error.Password }
+                uiState.error.find { it is SignUpContract.UiState.Error.Password }
             }
         }
         CustomTextField(
             value = uiState.password,
-            onValueChange = { action(SignUpAction.OnPasswordChange(it)) },
+            onValueChange = { action(Action.OnPasswordChange(it)) },
             placeholder = "Password",
             leadingImageVector = Icons.Outlined.Password,
             isError = passwordError != null,
@@ -151,12 +153,12 @@ fun SignupScreen(
 
         val rePasswordError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is Error.ConfirmPassword }
+                uiState.error.find { it is SignUpContract.UiState.Error.ConfirmPassword }
             }
         }
         CustomTextField(
             value = uiState.confirmPassword,
-            onValueChange = { action(SignUpAction.OnConfirmPasswordChange(it)) },
+            onValueChange = { action(Action.OnConfirmPasswordChange(it)) },
             placeholder = "Confirm Password",
             leadingImageVector = Icons.Outlined.Repartition,
             isError = rePasswordError != null,
@@ -172,13 +174,13 @@ fun SignupScreen(
         OnboardingButton(
             text = "Sign Up",
             isLoading = uiState.isLoading,
-            onClick = { action(SignUpAction.Signup) }
+            onClick = { action(Action.Signup) }
         )
 
         CustomOutlinedButton(
             text = "Continue with Google",
             icon = Icons.Outlined.Email,
-            onClick = { action(SignUpAction.OnGoogleLoginClick) }
+            onClick = { action(Action.OnGoogleLoginClick) }
         )
     }
 }
@@ -187,7 +189,7 @@ fun SignupScreen(
 @Composable
 private fun SignupScreenPrev() {
     SignupScreen(
-        SignUpUiState(),
+        UiState(),
         modifier = Modifier.background(MaterialTheme.colorScheme.surface)
     ) {}
 }

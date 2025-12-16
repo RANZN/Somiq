@@ -1,31 +1,36 @@
 package com.ranjan.somiq.auth.ui.login
 
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
-data class LoginUiState(
-    val email: String = "ranjan@example.com",
-    val password: String = "Pass@123",
-    val isLoading: Boolean = false,
-    val error: Errors? = null
-) {
-    enum class Errors {
-        INVALID_EMAIL,
-        INVALID_PASSWORD,
-        INVALID_CREDENTIALS,
-        LOGIN_FAILED
+object LoginContract {
+    data class UiState(
+        val email: String = "ranjan@example.com",
+        val password: String = "Pass@123",
+        val isLoading: Boolean = false,
+        val error: Errors? = null
+    ) : BaseUiState {
+        enum class Errors {
+            INVALID_EMAIL,
+            INVALID_PASSWORD,
+            INVALID_CREDENTIALS,
+            LOGIN_FAILED
+        }
     }
-}
 
-sealed interface LoginAction {
-    data class OnEmailChange(val it: String) : LoginAction
-    data class OnPasswordChange(val it: String) : LoginAction
-    object Login : LoginAction
-    object NavigateToHome : LoginAction
-    object NavigateToSignUp : LoginAction
-    object ShowError : LoginAction
-    object OnGoogleLoginClick : LoginAction
-}
+    sealed interface Action : BaseUiAction {
+        data class OnEmailChange(val it: String) : Action
+        data class OnPasswordChange(val it: String) : Action
+        object Login : Action
+        object NavigateToHome : Action
+        object NavigateToSignUp : Action
+        object ShowError : Action
+        object OnGoogleLoginClick : Action
+    }
 
-sealed interface LoginEvent {
-    data object NavigateToDashboard : LoginEvent
-    data object NavigateToSignUp : LoginEvent
+    sealed interface Effect : BaseUiEffect {
+        data object NavigateToDashboard : Effect
+        data object NavigateToSignUp : Effect
+    }
 }

@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.reels.ui.ReelsContract.Action
+import com.ranjan.somiq.reels.ui.ReelsContract.UiState
 
 @Composable
 fun ReelsScreen(
-    uiState: ReelsUiState,
-    onAction: (ReelsAction) -> Unit,
+    uiState: UiState,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.isLoading && uiState.reels.isEmpty()) {
@@ -61,10 +63,10 @@ fun ReelsScreen(
             ) { reel ->
                 ReelItem(
                     reel = reel,
-                    onLikeClick = { onAction(ReelsAction.OnLikeClick(reel.id)) },
-                    onCommentClick = { onAction(ReelsAction.OnCommentClick(reel.id)) },
-                    onShareClick = { onAction(ReelsAction.OnShareClick(reel.id)) },
-                    onReelClick = { onAction(ReelsAction.OnReelClick(reel.id)) }
+                    onLikeClick = { onAction(Action.OnLikeClick(reel.id)) },
+                    onCommentClick = { onAction(Action.OnCommentClick(reel.id)) },
+                    onShareClick = { onAction(Action.OnShareClick(reel.id)) },
+                    onReelClick = { onAction(Action.OnReelClick(reel.id)) }
                 )
             }
         }

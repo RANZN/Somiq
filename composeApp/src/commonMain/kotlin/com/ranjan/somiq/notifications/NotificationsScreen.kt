@@ -12,6 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.notifications.NotificationsContract.Action
+import com.ranjan.somiq.notifications.NotificationsContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,22 +23,18 @@ fun NotificationsScreen(
     viewModel: NotificationsViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val events by viewModel.events.collectAsState()
+    val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(NotificationsAction.LoadNotifications)
-        viewModel.handleAction(NotificationsAction.LoadUnreadCount)
+        viewModel.handleAction(Action.LoadNotifications)
+        viewModel.handleAction(Action.LoadUnreadCount)
     }
 
-    LaunchedEffect(events) {
-        events?.let { event ->
-            when (event) {
-                is NotificationsEvent.ShowError -> {
-                    // Handle error
-                }
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is Effect.ShowError -> {
+                // Handle error
             }
-            viewModel.clearEvent()
         }
     }
 
@@ -46,7 +45,7 @@ fun NotificationsScreen(
                 actions = {
                     if (uiState.unreadCount > 0) {
                         TextButton(
-                            onClick = { viewModel.handleAction(NotificationsAction.MarkAllAsRead) }
+                            onClick = { viewModel.handleAction(Action.MarkAllAsRead) }
                         ) {
                             Text("Mark all read")
                         }
@@ -83,7 +82,7 @@ fun NotificationsScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.handleAction(NotificationsAction.Refresh) }) {
+                        Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
                             Text("Retry")
                         }
                     }
@@ -102,7 +101,7 @@ fun NotificationsScreen(
                             notification = notification,
                             onMarkAsRead = {
                                 if (!notification.isRead) {
-                                    viewModel.handleAction(NotificationsAction.MarkAsRead(notification.id))
+                                    viewModel.handleAction(Action.MarkAsRead(notification.id))
                                 }
                             }
                         )

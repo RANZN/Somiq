@@ -1,17 +1,14 @@
 package com.ranjan.somiq.feed.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.feed.domain.usecase.GetFeedUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetStoriesUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleLikeUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleBookmarkUseCase
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import com.ranjan.somiq.feed.ui.FeedContract.UiState
+import com.ranjan.somiq.feed.ui.FeedContract.Action
+import com.ranjan.somiq.feed.ui.FeedContract.Effect
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
@@ -19,36 +16,30 @@ class FeedViewModel(
     private val getStoriesUseCase: GetStoriesUseCase,
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(FeedUiState())
-    val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
-
-    private val _events = Channel<FeedEvent>(Channel.UNLIMITED)
-    val events = _events.receiveAsFlow()
+) : BaseViewModel<UiState, Action, Effect>(UiState()) {
 
     init {
-        handleAction(FeedAction.LoadFeed)
-        handleAction(FeedAction.LoadStories)
+        handleAction(Action.LoadFeed)
+        handleAction(Action.LoadStories)
     }
 
-    fun handleAction(action: FeedAction) {
+    override fun onAction(action: Action) {
         viewModelScope.launch {
             when (action) {
-                is FeedAction.LoadFeed -> loadFeed()
-                is FeedAction.RefreshFeed -> refreshFeed()
-                is FeedAction.LoadStories -> loadStories()
-                is FeedAction.ToggleLike -> toggleLike(action.postId)
-                is FeedAction.ToggleBookmark -> toggleBookmark(action.postId)
-                is FeedAction.OnPostClick -> _events.send(FeedEvent.NavigateToPost(action.postId))
-                is FeedAction.OnCommentClick -> _events.send(FeedEvent.NavigateToComments(action.postId))
-                is FeedAction.OnShareClick -> _events.send(FeedEvent.ShowShareDialog(action.postId))
-                is FeedAction.OnMoreClick -> _events.send(FeedEvent.ShowMoreOptions(action.postId))
-                is FeedAction.OnUserClick -> _events.send(FeedEvent.NavigateToUser(action.userId))
-                is FeedAction.OnStoryClick -> _events.send(FeedEvent.NavigateToStory(action.storyId))
-                is FeedAction.ClearError -> _uiState.update { it.copy(error = null) }
-                is FeedAction.Retry -> {
-                    _uiState.update { it.copy(error = null) }
+                is Action.LoadFeed -> loadFeed()
+                is Action.RefreshFeed -> refreshFeed()
+                is Action.LoadStories -> loadStories()
+                is Action.ToggleLike -> toggleLike(action.postId)
+                is Action.ToggleBookmark -> toggleBookmark(action.postId)
+                is Action.OnPostClick -> emitEffect(Effect.NavigateToPost(action.postId))
+                is Action.OnCommentClick -> emitEffect(Effect.NavigateToComments(action.postId))
+                is Action.OnShareClick -> emitEffect(Effect.ShowShareDialog(action.postId))
+                is Action.OnMoreClick -> emitEffect(Effect.ShowMoreOptions(action.postId))
+                is Action.OnUserClick -> emitEffect(Effect.NavigateToUser(action.userId))
+                is Action.OnStoryClick -> emitEffect(Effect.NavigateToStory(action.storyId))
+                is Action.ClearError -> setState { copy(error = null) }
+                is Action.Retry -> {
+                    setState { copy(error = null) }
                     loadFeed()
                 }
             }
@@ -56,18 +47,18 @@ class FeedViewModel(
     }
 
     private suspend fun loadFeed() {
-        _uiState.update { it.copy(isLoading = true, error = null) }
+        setState { copy(isLoading = true, error = null) }
         getFeedUseCase().getOrElse { error ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     isLoading = false,
                     error = error.message ?: "Failed to load feed"
                 )
             }
             return
         }.let { posts ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     posts = posts,
                     isLoading = false,
                     error = null
@@ -77,18 +68,18 @@ class FeedViewModel(
     }
 
     private suspend fun refreshFeed() {
-        _uiState.update { it.copy(refreshing = true, error = null) }
+        setState { copy(refreshing = true, error = null) }
         getFeedUseCase().getOrElse { error ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     refreshing = false,
                     error = error.message ?: "Failed to refresh feed"
                 )
             }
             return
         }.let { posts ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     posts = posts,
                     refreshing = false,
                     error = null
@@ -102,19 +93,19 @@ class FeedViewModel(
             // Stories are optional, don't show error
             return
         }.let { stories ->
-            _uiState.update { it.copy(stories = stories) }
+            setState { copy(stories = stories) }
         }
     }
 
     private suspend fun toggleLike(postId: String) {
-        val currentState = _uiState.value
+        val currentState = state.value
         val post = currentState.posts.find { it.id == postId } ?: return
         val wasLiked = post.isLiked
 
         // Optimistic update
-        _uiState.update { state ->
-            state.copy(
-                posts = state.posts.map {
+        setState {
+            copy(
+                posts = posts.map {
                     if (it.id == postId) {
                         it.copy(
                             isLiked = !it.isLiked,
@@ -133,9 +124,9 @@ class FeedViewModel(
         result.fold(
             onSuccess = { toggleResponse ->
                 // Sync with server response to ensure accuracy
-                _uiState.update { state ->
-                    state.copy(
-                        posts = state.posts.map {
+                setState {
+                    copy(
+                        posts = posts.map {
                             if (it.id == postId) {
                                 it.copy(
                                     isLiked = toggleResponse.isLiked,
@@ -152,9 +143,9 @@ class FeedViewModel(
             },
             onFailure = {
                 // Revert on failure
-                _uiState.update { state ->
-                    state.copy(
-                        posts = state.posts.map {
+                setState {
+                    copy(
+                        posts = posts.map {
                             if (it.id == postId) {
                                 it.copy(
                                     isLiked = wasLiked,
@@ -171,14 +162,14 @@ class FeedViewModel(
     }
 
     private suspend fun toggleBookmark(postId: String) {
-        val currentState = _uiState.value
+        val currentState = state.value
         val post = currentState.posts.find { it.id == postId } ?: return
         val wasBookmarked = post.isBookmarked
 
         // Optimistic update
-        _uiState.update { state ->
-            state.copy(
-                posts = state.posts.map {
+        setState {
+            copy(
+                posts = posts.map {
                     if (it.id == postId) {
                         it.copy(isBookmarked = !it.isBookmarked)
                     } else {
@@ -194,9 +185,9 @@ class FeedViewModel(
         result.fold(
             onSuccess = { toggleResponse ->
                 // Sync with server response to ensure accuracy
-                _uiState.update { state ->
-                    state.copy(
-                        posts = state.posts.map {
+                setState {
+                    copy(
+                        posts = posts.map {
                             if (it.id == postId) {
                                 it.copy(
                                     isLiked = toggleResponse.isLiked,
@@ -213,9 +204,9 @@ class FeedViewModel(
             },
             onFailure = {
                 // Revert on failure
-                _uiState.update { state ->
-                    state.copy(
-                        posts = state.posts.map {
+                setState {
+                    copy(
+                        posts = posts.map {
                             if (it.id == postId) {
                                 it.copy(isBookmarked = wasBookmarked)
                             } else {

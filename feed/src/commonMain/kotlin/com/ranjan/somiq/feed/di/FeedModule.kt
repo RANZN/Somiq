@@ -2,6 +2,7 @@ package com.ranjan.somiq.feed.di
 
 import com.ranjan.somiq.feed.data.repository.FeedRepositoryImpl
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
+import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetFeedUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetStoriesUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleBookmarkUseCase
@@ -20,4 +21,5 @@ val feedModule = module {
     factoryOf(::GetStoriesUseCase)
     factoryOf(::ToggleLikeUseCase)
     factoryOf(::ToggleBookmarkUseCase)
+    factoryOf(::CreatePostUseCase)
 }

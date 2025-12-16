@@ -1,6 +1,7 @@
 package com.ranjan.somiq.home.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -40,6 +41,12 @@ fun BottomNavigationBar(
             label = { Text("Search") },
             selected = isSelected(Screen.Home.Search),
             onClick = { onNavigate(Screen.Home.Search) }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Add, contentDescription = "Create Post") },
+            label = { Text("Create") },
+            selected = isSelected(Screen.Home.CreatePost),
+            onClick = { onNavigate(Screen.Home.CreatePost) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.VideoLibrary, contentDescription = "Reels") },

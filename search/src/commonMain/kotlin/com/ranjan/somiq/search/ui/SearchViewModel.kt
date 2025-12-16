@@ -1,58 +1,49 @@
 package com.ranjan.somiq.search.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.search.domain.usecase.SearchUseCase
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import com.ranjan.somiq.search.ui.SearchContract.Action
+import com.ranjan.somiq.search.ui.SearchContract.Effect
+import com.ranjan.somiq.search.ui.SearchContract.UiState
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase
-) : ViewModel() {
+) : BaseViewModel<UiState, Action, Effect>(UiState()) {
 
-    private val _uiState = MutableStateFlow(SearchUiState())
-    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
-
-    private val _events = Channel<SearchEvent>(Channel.UNLIMITED)
-    val events = _events.receiveAsFlow()
-
-    fun handleAction(action: SearchAction) {
+    override fun onAction(action: Action) {
         viewModelScope.launch {
             when (action) {
-                is SearchAction.OnQueryChange -> {
-                    _uiState.update { it.copy(searchQuery = action.query) }
+                is Action.OnQueryChange -> {
+                    setState { copy(searchQuery = action.query) }
                 }
-                is SearchAction.PerformSearch -> {
+                is Action.PerformSearch -> {
                     performSearch()
                 }
-                is SearchAction.ClearSearch -> {
-                    _uiState.update { 
-                        it.copy(
+                is Action.ClearSearch -> {
+                    setState { 
+                        copy(
                             searchQuery = "",
                             isSearchActive = false,
                             searchResults = null
                         )
                     }
                 }
-                is SearchAction.OnUserClick -> {
-                    _events.send(SearchEvent.NavigateToUser(action.userId))
+                is Action.OnUserClick -> {
+                    emitEffect(Effect.NavigateToUser(action.userId))
                 }
-                is SearchAction.OnHashtagClick -> {
-                    _events.send(SearchEvent.NavigateToHashtag(action.hashtag))
+                is Action.OnHashtagClick -> {
+                    emitEffect(Effect.NavigateToHashtag(action.hashtag))
                 }
-                is SearchAction.OnPostClick -> {
-                    _events.send(SearchEvent.NavigateToPost(action.postId))
+                is Action.OnPostClick -> {
+                    emitEffect(Effect.NavigateToPost(action.postId))
                 }
-                is SearchAction.ClearError -> {
-                    _uiState.update { it.copy(error = null) }
+                is Action.ClearError -> {
+                    setState { copy(error = null) }
                 }
-                is SearchAction.Retry -> {
-                    _uiState.update { it.copy(error = null) }
+                is Action.Retry -> {
+                    setState { copy(error = null) }
                     performSearch()
                 }
             }
@@ -60,11 +51,11 @@ class SearchViewModel(
     }
 
     private suspend fun performSearch() {
-        val query = _uiState.value.searchQuery
+        val query = state.value.searchQuery
         if (query.isBlank()) return
 
-        _uiState.update { 
-            it.copy(
+        setState { 
+            copy(
                 isLoading = true,
                 error = null,
                 isSearchActive = true
@@ -72,16 +63,16 @@ class SearchViewModel(
         }
         
         searchUseCase(query).getOrElse { error ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     isLoading = false,
                     error = error.message ?: "Failed to search"
                 )
             }
             return
         }.let { results ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     searchResults = results,
                     isLoading = false,
                     error = null

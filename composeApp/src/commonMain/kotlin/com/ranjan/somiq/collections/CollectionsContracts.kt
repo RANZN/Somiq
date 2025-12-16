@@ -1,21 +1,26 @@
 package com.ranjan.somiq.collections
 
 import com.ranjan.somiq.core.data.model.CollectionResponse
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
-data class CollectionsUiState(
-    val isLoading: Boolean = false,
-    val collections: List<CollectionResponse> = emptyList(),
-    val error: String? = null
-)
+object CollectionsContract {
+    data class UiState(
+        val isLoading: Boolean = false,
+        val collections: List<CollectionResponse> = emptyList(),
+        val error: String? = null
+    ) : BaseUiState
 
-sealed class CollectionsAction {
-    data object LoadCollections : CollectionsAction()
-    data class CreateCollection(val name: String, val description: String?) : CollectionsAction()
-    data object Refresh : CollectionsAction()
-}
+    sealed class Action : BaseUiAction {
+        data object LoadCollections : Action()
+        data class CreateCollection(val name: String, val description: String?) : Action()
+        data object Refresh : Action()
+    }
 
-sealed class CollectionsEvent {
-    data class ShowError(val message: String) : CollectionsEvent()
-    data object CollectionCreated : CollectionsEvent()
+    sealed class Effect : BaseUiEffect {
+        data class ShowError(val message: String) : Effect()
+        data object CollectionCreated : Effect()
+    }
 }
 

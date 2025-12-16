@@ -21,6 +21,7 @@ fun OnboardingButton(
     text: String,
     modifier: Modifier = Modifier,
     isLoading : Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -30,6 +31,7 @@ fun OnboardingButton(
             if (!isLoading) onClick()
         },
         modifier = modifier.fillMaxWidth(),
+        enabled = enabled && !isLoading,
         shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,

@@ -1,44 +1,35 @@
 package com.ranjan.somiq.reels.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.reels.domain.usecase.GetReelsUseCase
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import com.ranjan.somiq.reels.ui.ReelsContract.Action
+import com.ranjan.somiq.reels.ui.ReelsContract.Effect
+import com.ranjan.somiq.reels.ui.ReelsContract.UiState
 import kotlinx.coroutines.launch
 
 class ReelsViewModel(
     private val getReelsUseCase: GetReelsUseCase
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(ReelsUiState())
-    val uiState: StateFlow<ReelsUiState> = _uiState.asStateFlow()
-
-    private val _events = Channel<ReelsEvent>(Channel.UNLIMITED)
-    val events = _events.receiveAsFlow()
+) : BaseViewModel<UiState, Action, Effect>(UiState()) {
 
     init {
-        handleAction(ReelsAction.LoadReels)
+        handleAction(Action.LoadReels)
     }
 
-    fun handleAction(action: ReelsAction) {
+    override fun onAction(action: Action) {
         viewModelScope.launch {
             when (action) {
-                is ReelsAction.LoadReels -> loadReels()
-                is ReelsAction.RefreshReels -> refreshReels()
-                is ReelsAction.OnReelClick -> _events.send(ReelsEvent.NavigateToReel(action.reelId))
-                is ReelsAction.OnLikeClick -> {
+                is Action.LoadReels -> loadReels()
+                is Action.RefreshReels -> refreshReels()
+                is Action.OnReelClick -> emitEffect(Effect.NavigateToReel(action.reelId))
+                is Action.OnLikeClick -> {
                     // TODO: Implement like functionality
                 }
-                is ReelsAction.OnCommentClick -> _events.send(ReelsEvent.NavigateToComments(action.reelId))
-                is ReelsAction.OnShareClick -> _events.send(ReelsEvent.ShowShareDialog(action.reelId))
-                is ReelsAction.ClearError -> _uiState.update { it.copy(error = null) }
-                is ReelsAction.Retry -> {
-                    _uiState.update { it.copy(error = null) }
+                is Action.OnCommentClick -> emitEffect(Effect.NavigateToComments(action.reelId))
+                is Action.OnShareClick -> emitEffect(Effect.ShowShareDialog(action.reelId))
+                is Action.ClearError -> setState { copy(error = null) }
+                is Action.Retry -> {
+                    setState { copy(error = null) }
                     loadReels()
                 }
             }
@@ -46,18 +37,18 @@ class ReelsViewModel(
     }
 
     private suspend fun loadReels() {
-        _uiState.update { it.copy(isLoading = true, error = null) }
+        setState { copy(isLoading = true, error = null) }
         getReelsUseCase().getOrElse { error ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     isLoading = false,
                     error = error.message ?: "Failed to load reels"
                 )
             }
             return
         }.let { reels ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     reels = reels,
                     isLoading = false,
                     error = null
@@ -67,18 +58,18 @@ class ReelsViewModel(
     }
 
     private suspend fun refreshReels() {
-        _uiState.update { it.copy(refreshing = true, error = null) }
+        setState { copy(refreshing = true, error = null) }
         getReelsUseCase().getOrElse { error ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     refreshing = false,
                     error = error.message ?: "Failed to refresh reels"
                 )
             }
             return
         }.let { reels ->
-            _uiState.update {
-                it.copy(
+            setState {
+                copy(
                     reels = reels,
                     refreshing = false,
                     error = null

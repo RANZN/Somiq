@@ -31,13 +31,15 @@ import com.ranjan.somiq.core.presentation.component.CustomTextField
 import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.clickWithEffect
 import com.ranjan.somiq.core.presentation.util.defaultPadding
+import com.ranjan.somiq.auth.ui.login.LoginContract.Action
+import com.ranjan.somiq.auth.ui.login.LoginContract.UiState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LoginScreen(
-    uiState: LoginUiState,
+    uiState: UiState,
     modifier: Modifier = Modifier,
-    action: (LoginAction) -> Unit
+    action: (Action) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -53,11 +55,11 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
         )
-        val isEmailError = uiState.error == LoginUiState.Errors.INVALID_EMAIL ||
-                uiState.error == LoginUiState.Errors.INVALID_CREDENTIALS
+        val isEmailError = uiState.error == UiState.Errors.INVALID_EMAIL ||
+                uiState.error == UiState.Errors.INVALID_CREDENTIALS
         CustomTextField(
             value = uiState.email,
-            onValueChange = { action(LoginAction.OnEmailChange(it)) },
+            onValueChange = { action(Action.OnEmailChange(it)) },
             placeholder = "Email or Phone",
             leadingImageVector = Icons.Outlined.Email,
             isError = isEmailError,
@@ -69,11 +71,11 @@ fun LoginScreen(
             modifier = Modifier.semantics { contentType = ContentType.EmailAddress },
         )
         val isPasswordError =
-            uiState.error == LoginUiState.Errors.INVALID_PASSWORD ||
-                    uiState.error == LoginUiState.Errors.INVALID_CREDENTIALS
+            uiState.error == UiState.Errors.INVALID_PASSWORD ||
+                    uiState.error == UiState.Errors.INVALID_CREDENTIALS
         CustomTextField(
             value = uiState.password,
-            onValueChange = { action(LoginAction.OnPasswordChange(it)) },
+            onValueChange = { action(Action.OnPasswordChange(it)) },
             placeholder = "Password",
             leadingImageVector = Icons.Outlined.Lock,
             isError = isPasswordError,
@@ -93,13 +95,13 @@ fun LoginScreen(
         OnboardingButton(
             text = "Login",
             isLoading = uiState.isLoading,
-            onClick = { action(LoginAction.Login) }
+            onClick = { action(Action.Login) }
         )
 
         CustomOutlinedButton(
             text = "Continue with Google",
             icon = Icons.Outlined.Email,
-            onClick = { action(LoginAction.OnGoogleLoginClick) }
+            onClick = { action(Action.OnGoogleLoginClick) }
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -115,7 +117,7 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .clickWithEffect {
-                        action(LoginAction.NavigateToSignUp)
+                        action(Action.NavigateToSignUp)
                     }
                     .padding(start = 4.dp)
             )
@@ -126,5 +128,5 @@ fun LoginScreen(
 @Preview
 @Composable
 private fun LoginScreenPrev() {
-    LoginScreen(LoginUiState()) {}
+    LoginScreen(UiState()) {}
 }

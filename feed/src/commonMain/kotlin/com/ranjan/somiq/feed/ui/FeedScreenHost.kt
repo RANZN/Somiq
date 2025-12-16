@@ -3,7 +3,8 @@ package com.ranjan.somiq.feed.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.ranjan.somiq.core.presentation.util.ObserveAsEvent
+import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.feed.ui.FeedContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -16,16 +17,16 @@ fun FeedScreenHost(
     onShowShareDialog: (String) -> Unit = {},
     onShowMoreOptions: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.state.collectAsState()
 
-    ObserveAsEvent(viewModel.events) { event ->
-        when (event) {
-            is FeedEvent.NavigateToPost -> onNavigateToPost(event.postId)
-            is FeedEvent.NavigateToUser -> onNavigateToUser(event.userId)
-            is FeedEvent.NavigateToComments -> onNavigateToComments(event.postId)
-            is FeedEvent.ShowShareDialog -> onShowShareDialog(event.postId)
-            is FeedEvent.ShowMoreOptions -> onShowMoreOptions(event.postId)
-            is FeedEvent.NavigateToStory -> onNavigateToStory(event.storyId)
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is Effect.NavigateToPost -> onNavigateToPost(effect.postId)
+            is Effect.NavigateToUser -> onNavigateToUser(effect.userId)
+            is Effect.NavigateToComments -> onNavigateToComments(effect.postId)
+            is Effect.ShowShareDialog -> onShowShareDialog(effect.postId)
+            is Effect.ShowMoreOptions -> onShowMoreOptions(effect.postId)
+            is Effect.NavigateToStory -> onNavigateToStory(effect.storyId)
         }
     }
 

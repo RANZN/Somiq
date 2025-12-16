@@ -115,6 +115,12 @@ fun HomeNavigationHost(
                         onNavigateToPost = onNavigateToPost
                     )
                 }
+                currentRoute?.contains("CreatePost", ignoreCase = true) == true -> {
+                   /* CreatePostScreenHost(
+                        onNavigateBack = { onNavigate(Screen.Home.Feed) },
+                        onPostCreated = { onNavigate(Screen.Home.Feed) }
+                    )*/
+                }
                 currentRoute?.contains("Reels", ignoreCase = true) == true -> {
                     ReelsScreenHost(
                         onNavigateToReel = { reelId ->

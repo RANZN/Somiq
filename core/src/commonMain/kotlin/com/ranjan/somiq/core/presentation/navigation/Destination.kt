@@ -33,6 +33,9 @@ sealed interface Screen {
         data object Reels : Home
         
         @Serializable
+        data object CreatePost : Home
+        
+        @Serializable
         data class Profile(val userId: String? = null) : Home
     }
 

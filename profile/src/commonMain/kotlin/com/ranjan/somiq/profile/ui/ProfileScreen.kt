@@ -13,11 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.profile.ui.ProfileContract.Action
+import com.ranjan.somiq.profile.ui.ProfileContract.UiState
 
 @Composable
 fun ProfileScreen(
-    uiState: ProfileUiState,
-    onAction: (ProfileAction) -> Unit,
+    uiState: UiState,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.isLoading && uiState.profile == null) {

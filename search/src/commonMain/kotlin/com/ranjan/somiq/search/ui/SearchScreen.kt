@@ -20,11 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.search.data.model.User
+import com.ranjan.somiq.search.ui.SearchContract.Action
+import com.ranjan.somiq.search.ui.SearchContract.UiState
 
 @Composable
 fun SearchScreen(
-    uiState: SearchUiState,
-    onAction: (SearchAction) -> Unit,
+    uiState: UiState,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -32,7 +34,7 @@ fun SearchScreen(
     ) {
         OutlinedTextField(
             value = uiState.searchQuery,
-            onValueChange = { onAction(SearchAction.OnQueryChange(it)) },
+            onValueChange = { onAction(Action.OnQueryChange(it)) },
             label = { Text("Search") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,7 +83,7 @@ fun SearchScreen(
                     items(results.users) { user ->
                         UserSearchItem(
                             user = user,
-                            onClick = { onAction(SearchAction.OnUserClick(user.id)) }
+                            onClick = { onAction(Action.OnUserClick(user.id)) }
                         )
                     }
                 }
@@ -98,7 +100,7 @@ fun SearchScreen(
                     items(results.posts) { post ->
                         PostSearchItem(
                             post = post,
-                            onClick = { onAction(SearchAction.OnPostClick(post.id)) }
+                            onClick = { onAction(Action.OnPostClick(post.id)) }
                         )
                     }
                 }
@@ -115,7 +117,7 @@ fun SearchScreen(
                     items(results.reels) { reel ->
                         ReelSearchItem(
                             reel = reel,
-                            onClick = { onAction(SearchAction.OnPostClick(reel.id)) }
+                            onClick = { onAction(Action.OnPostClick(reel.id)) }
                         )
                     }
                 }

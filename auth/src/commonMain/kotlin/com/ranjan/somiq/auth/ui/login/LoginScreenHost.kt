@@ -5,7 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.ranjan.somiq.core.presentation.util.ObserveAsEvent
+import com.ranjan.somiq.auth.ui.login.LoginContract.Effect
+import com.ranjan.somiq.core.presentation.util.CollectEffect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -14,12 +15,12 @@ fun LoginScreenHost(
     navigateToDashboard: () -> Unit,
     navigateToSignUp: () -> Unit,
 ) {
-    val uiState by viewmodel.uiState.collectAsState()
+    val uiState by viewmodel.state.collectAsState()
 
-    ObserveAsEvent(viewmodel.events) {
+    CollectEffect(viewmodel.effect) {
         when (it) {
-            LoginEvent.NavigateToDashboard -> navigateToDashboard()
-            LoginEvent.NavigateToSignUp -> navigateToSignUp()
+            Effect.NavigateToDashboard -> navigateToDashboard()
+            Effect.NavigateToSignUp -> navigateToSignUp()
         }
     }
 

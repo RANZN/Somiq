@@ -16,13 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.feed.ui.FeedContract.Action
+import com.ranjan.somiq.feed.ui.FeedContract.UiState
 import com.ranjan.somiq.feed.ui.components.PostItem
 import com.ranjan.somiq.feed.ui.components.StoriesSection
 
 @Composable
 fun FeedScreen(
-    uiState: FeedUiState,
-    onAction: (FeedAction) -> Unit,
+    uiState: UiState,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -70,7 +72,7 @@ fun FeedScreen(
                         StoriesSection(
                             stories = uiState.stories,
                             modifier = Modifier.fillMaxWidth(),
-                            onStoryClick = { storyId -> onAction(FeedAction.OnStoryClick(storyId)) }
+                            onStoryClick = { storyId -> onAction(Action.OnStoryClick(storyId)) }
                         )
                     }
                 }
@@ -81,12 +83,12 @@ fun FeedScreen(
                 ) { post ->
                     PostItem(
                         post = post,
-                        onLikeClick = { onAction(FeedAction.ToggleLike(post.id)) },
-                        onCommentClick = { onAction(FeedAction.OnCommentClick(post.id)) },
-                        onShareClick = { onAction(FeedAction.OnShareClick(post.id)) },
-                        onSaveClick = { onAction(FeedAction.ToggleBookmark(post.id)) },
-                        onMoreClick = { onAction(FeedAction.OnMoreClick(post.id)) },
-                        onUserClick = { onAction(FeedAction.OnUserClick(post.authorId)) }
+                        onLikeClick = { onAction(Action.ToggleLike(post.id)) },
+                        onCommentClick = { onAction(Action.OnCommentClick(post.id)) },
+                        onShareClick = { onAction(Action.OnShareClick(post.id)) },
+                        onSaveClick = { onAction(Action.ToggleBookmark(post.id)) },
+                        onMoreClick = { onAction(Action.OnMoreClick(post.id)) },
+                        onUserClick = { onAction(Action.OnUserClick(post.authorId)) }
                     )
                 }
             }

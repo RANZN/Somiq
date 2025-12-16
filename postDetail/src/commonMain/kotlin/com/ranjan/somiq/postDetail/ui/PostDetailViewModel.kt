@@ -1,15 +1,14 @@
 package com.ranjan.somiq.postDetail.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import com.ranjan.somiq.postDetail.domain.usecase.CreateCommentUseCase
 import com.ranjan.somiq.postDetail.domain.usecase.GetCommentsUseCase
 import com.ranjan.somiq.postDetail.domain.usecase.ToggleCommentLikeUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.ranjan.somiq.postDetail.ui.PostDetailContract.Action
+import com.ranjan.somiq.postDetail.ui.PostDetailContract.Effect
+import com.ranjan.somiq.postDetail.ui.PostDetailContract.UiState
 import kotlinx.coroutines.launch
 
 class PostDetailViewModel(
@@ -18,29 +17,23 @@ class PostDetailViewModel(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val createCommentUseCase: CreateCommentUseCase,
     private val toggleCommentLikeUseCase: ToggleCommentLikeUseCase
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(PostDetailUiState())
-    val uiState: StateFlow<PostDetailUiState> = _uiState.asStateFlow()
-
-    private val _events = MutableStateFlow<PostDetailEvent?>(null)
-    val events: StateFlow<PostDetailEvent?> = _events.asStateFlow()
+) : BaseViewModel<UiState, Action, Effect>(UiState()) {
 
     init {
-        handleAction(PostDetailAction.LoadPost)
-        handleAction(PostDetailAction.LoadComments)
+        handleAction(Action.LoadPost)
+        handleAction(Action.LoadComments)
     }
 
-    fun handleAction(action: PostDetailAction) {
+    override fun onAction(action: Action) {
         when (action) {
-            is PostDetailAction.LoadPost -> loadPost()
-            is PostDetailAction.LoadComments -> loadComments()
-            is PostDetailAction.UpdateCommentText -> {
-                _uiState.update { it.copy(commentText = action.text) }
+            is Action.LoadPost -> loadPost()
+            is Action.LoadComments -> loadComments()
+            is Action.UpdateCommentText -> {
+                setState { copy(commentText = action.text) }
             }
-            is PostDetailAction.PostComment -> postComment()
-            is PostDetailAction.ToggleCommentLike -> toggleCommentLike(action.commentId)
-            is PostDetailAction.Refresh -> {
+            is Action.PostComment -> postComment()
+            is Action.ToggleCommentLike -> toggleCommentLike(action.commentId)
+            is Action.Refresh -> {
                 loadPost()
                 loadComments()
             }
@@ -48,15 +41,15 @@ class PostDetailViewModel(
     }
 
     private fun loadPost() {
-        _uiState.update { it.copy(isLoading = true, error = null) }
+        setState { copy(isLoading = true, error = null) }
         viewModelScope.launch {
             feedRepository.getPost(postId).fold(
                 onSuccess = { post ->
-                    _uiState.update { it.copy(post = post, isLoading = false) }
+                    setState { copy(post = post, isLoading = false) }
                 },
                 onFailure = { error ->
-                    _uiState.update {
-                        it.copy(
+                    setState {
+                        copy(
                             isLoading = false,
                             error = error.message ?: "Failed to load post"
                         )
@@ -67,15 +60,15 @@ class PostDetailViewModel(
     }
 
     private fun loadComments() {
-        _uiState.update { it.copy(isLoadingComments = true) }
+        setState { copy(isLoadingComments = true) }
         viewModelScope.launch {
             getCommentsUseCase(postId = postId).fold(
                 onSuccess = { comments ->
-                    _uiState.update { it.copy(comments = comments, isLoadingComments = false) }
+                    setState { copy(comments = comments, isLoadingComments = false) }
                 },
                 onFailure = { error ->
-                    _uiState.update {
-                        it.copy(
+                    setState {
+                        copy(
                             isLoadingComments = false,
                             error = error.message ?: "Failed to load comments"
                         )
@@ -86,20 +79,20 @@ class PostDetailViewModel(
     }
 
     private fun postComment() {
-        val commentText = _uiState.value.commentText.trim()
+        val commentText = state.value.commentText.trim()
         if (commentText.isEmpty()) return
 
         viewModelScope.launch {
             createCommentUseCase(postId = postId, content = commentText).fold(
                 onSuccess = {
-                    _uiState.update { it.copy(commentText = "") }
-                    _events.value = PostDetailEvent.CommentPosted
+                    setState { copy(commentText = "") }
+                    emitEffect(Effect.CommentPosted)
                     loadComments()
                 },
                 onFailure = { error ->
-                    _events.value = PostDetailEvent.ShowError(
+                    emitEffect(Effect.ShowError(
                         error.message ?: "Failed to post comment"
-                    )
+                    ))
                 }
             )
         }
@@ -112,15 +105,11 @@ class PostDetailViewModel(
                     loadComments()
                 },
                 onFailure = { error ->
-                    _events.value = PostDetailEvent.ShowError(
+                    emitEffect(Effect.ShowError(
                         error.message ?: "Failed to toggle like"
-                    )
+                    ))
                 }
             )
         }
-    }
-
-    fun clearEvent() {
-        _events.value = null
     }
 }

@@ -1,7 +1,8 @@
 package com.ranjan.somiq.splash
 
 import androidx.compose.runtime.Composable
-import com.ranjan.somiq.core.presentation.util.ObserveAsEvent
+import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.splash.SplashContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -10,10 +11,10 @@ fun SplashScreenHost(
     navigateToHome: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    ObserveAsEvent(viewmodel.splashEvents) {
+    CollectEffect(viewmodel.effect) {
         when (it) {
-            is SplashEvents.NavigateToHome -> navigateToHome()
-            is SplashEvents.NavigateToLogin -> navigateToLogin()
+            is Effect.NavigateToHome -> navigateToHome()
+            is Effect.NavigateToLogin -> navigateToLogin()
         }
     }
 

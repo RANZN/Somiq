@@ -22,11 +22,12 @@ class SplashViewModel(
     }
 
     fun handleSplashTransition() = viewModelScope.launch {
-        val splashDelay = async { delay(3.seconds) }
         val updateCheckDeferred = async { checkUpdate.invoke() }
         val isUserLoggedInDeferred = async { userLoginStatus() }
 
-        splashDelay.await()
+        delay(3.seconds)
+
+        val isUserLoggedIn = isUserLoggedInDeferred.await()
 
         val isUpdateNeeded = if (updateCheckDeferred.isCompleted) {
             updateCheckDeferred.await()
@@ -34,8 +35,6 @@ class SplashViewModel(
             updateCheckDeferred.cancel()
             false
         }
-
-        val isUserLoggedIn = isUserLoggedInDeferred.await()
 
         val action = when {
             isUserLoggedIn -> Effect.NavigateToHome(isUpdateNeeded)

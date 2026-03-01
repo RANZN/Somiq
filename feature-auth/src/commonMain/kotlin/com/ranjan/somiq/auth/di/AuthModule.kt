@@ -6,10 +6,10 @@ import com.ranjan.somiq.auth.domain.repository.AuthRepository
 import com.ranjan.somiq.auth.domain.repository.ProfileRepository
 import com.ranjan.somiq.auth.domain.usecase.GetProfileUseCase
 import com.ranjan.somiq.auth.domain.usecase.LoginUseCase
+import com.ranjan.somiq.auth.domain.usecase.LogoutUseCase
 import com.ranjan.somiq.auth.domain.usecase.SignupUseCase
 import com.ranjan.somiq.auth.domain.usecase.UserLoginStatus
 import com.ranjan.somiq.core.di.NonAuthClient
-import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -27,5 +27,6 @@ val authModule = module {
     factoryOf(::UserLoginStatus)
     factoryOf(::SignupUseCase)
     factoryOf(::LoginUseCase)
+    factoryOf(::LogoutUseCase)
     factoryOf(::GetProfileUseCase)
 }

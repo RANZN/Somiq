@@ -1,8 +1,9 @@
 package com.ranjan.somiq.app.home.di
 
+import com.ranjan.somiq.app.home.ui.HomeViewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-// Home module no longer has ViewModels - they are in feed, reels, profile, search modules
 val homeViewModelModule = module {
-    // Empty - home module is now just for navigation orchestration
+    viewModelOf(::HomeViewModel)
 }

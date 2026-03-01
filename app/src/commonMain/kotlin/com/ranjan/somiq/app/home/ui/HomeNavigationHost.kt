@@ -3,38 +3,26 @@ package com.ranjan.somiq.app.home.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation3.runtime.NavKey
 import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
-import com.ranjan.somiq.auth.domain.repository.AuthRepository
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
 import com.ranjan.somiq.core.presentation.navigation.Home
+import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.feed.ui.FeedScreenHost
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
 import com.ranjan.somiq.reels.ui.ReelsScreenHost
 import com.ranjan.somiq.app.search.ui.SearchScreenHost
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeNavigationHost(
-    currentKey: NavKey?,
-    onNavigate: (NavKey) -> Unit,
     onNavigateToUser: (String) -> Unit,
     onNavigateToPost: (String) -> Unit,
     onNavigateToComments: (String) -> Unit,
@@ -48,59 +36,38 @@ fun HomeNavigationHost(
     onNavigateToFollowing: (String) -> Unit,
     onNavigateToConversation: (String) -> Unit = {},
     onNavigateToLogin: () -> Unit,
+    onNavigateToNotifications: () -> Unit = {},
+    onNavigateToCreatePost: () -> Unit = {},
+    onNavigateToChatList: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val authRepository: AuthRepository = koinInject()
-    val coroutineScope = rememberCoroutineScope()
-    val homeKey = currentKey as? Home
+    val viewModel: HomeViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    CollectEffect(viewModel.effect) { effect ->
+        when (effect) {
+            HomeContract.Effect.NavigateToLogin -> onNavigateToLogin()
+        }
+    }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "SomiQ",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        coroutineScope.launch {
-                            authRepository.logoutUser()
-                            onNavigateToLogin()
-                        }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.ExitToApp,
-                            contentDescription = "Logout",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                )
-            )
-        },
         bottomBar = {
             BottomNavigationBar(
-                currentKey = currentKey,
-                onNavigate = onNavigate,
+                currentTab = state.selectedTab,
+                onTabSelected = { viewModel.handleAction(HomeContract.Action.SelectTab(it)) },
                 modifier = Modifier.navigationBarsPadding()
             )
         }
     ) {
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .statusBarsPadding()
+            modifier = modifier.fillMaxSize()
         ) {
-            when (homeKey) {
+            when (val selectedTab = state.selectedTab) {
                 Home.Feed -> {
                     FeedScreenHost(
+                        onCreatePost = onNavigateToCreatePost,
+                        onNavigateToNotifications = onNavigateToNotifications,
+                        onNavigateToChat = onNavigateToChatList,
                         onNavigateToUser = onNavigateToUser,
                         onNavigateToPost = onNavigateToPost,
                         onNavigateToComments = onNavigateToComments,
@@ -109,19 +76,18 @@ fun HomeNavigationHost(
                         onShowMoreOptions = onShowMoreOptions
                     )
                 }
+
                 Home.Search -> {
                     SearchScreenHost(
+                        externalSearchQuery = state.searchQuery,
+                        onExternalQueryChange = { viewModel.handleAction(HomeContract.Action.SearchQueryChange(it)) },
+                        showSearchFieldInContent = false,
                         onNavigateToUser = onNavigateToUser,
                         onNavigateToHashtag = onNavigateToHashtag,
                         onNavigateToPost = onNavigateToPost
                     )
                 }
-                Home.CreatePost -> {
-                    /* CreatePostScreenHost(
-                        onNavigateBack = { onNavigate(Home.Feed) },
-                        onPostCreated = { onNavigate(Home.Feed) }
-                    ) */
-                }
+
                 Home.Reels -> {
                     ReelsScreenHost(
                         onNavigateToReel = { reelId -> /* TODO */ },
@@ -129,19 +95,18 @@ fun HomeNavigationHost(
                         onShowShareDialog = onShowShareDialog
                     )
                 }
-                Home.Chat -> {
-                    ChatListScreenHost(onNavigateToConversation = onNavigateToConversation)
-                }
+
                 is Home.Profile -> {
                     ProfileScreenHost(
-                        userId = homeKey.userId,
+                        userId = (selectedTab as Home.Profile).userId,
+                        appBarTitle = state.currentUserName,
+                        onLogout = { viewModel.handleAction(HomeContract.Action.Logout) },
                         onNavigateToEditProfile = onNavigateToEditProfile,
                         onNavigateToSettings = onNavigateToSettings,
                         onNavigateToFollowers = onNavigateToFollowers,
                         onNavigateToFollowing = onNavigateToFollowing
                     )
                 }
-                null -> { /* Not in Home tab */ }
             }
         }
     }

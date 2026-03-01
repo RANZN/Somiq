@@ -27,11 +27,7 @@ fun FeedScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-    ) {
+    Column(modifier = modifier.fillMaxSize()) {
         if (uiState.isLoading && uiState.posts.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),

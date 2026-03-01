@@ -2,6 +2,8 @@ package com.ranjan.somiq.core.di
 
 import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.data.local.AuthStateManagerImpl
+import com.ranjan.somiq.core.data.local.createTokenStorage
+import com.ranjan.somiq.core.data.local.TokenStorage
 import com.ranjan.somiq.core.data.network.TokenProvider
 import com.ranjan.somiq.core.data.network.TokenProviderImpl
 import com.ranjan.somiq.core.data.network.TokenRefresher
@@ -20,8 +22,12 @@ val networkModule = module {
         provideNonAuthHttpClient()
     }
 
+    single<TokenStorage> {
+        createTokenStorage()
+    }
+
     single<TokenProvider> {
-        TokenProviderImpl()
+        TokenProviderImpl(get())
     }
 
     single<AuthStateManager> {

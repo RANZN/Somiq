@@ -2,7 +2,7 @@ package com.ranjan.somiq.core.data.local
 
 import platform.Foundation.NSUserDefaults
 
-class AuthStateManagerImpl : AuthStateManager {
+actual class AuthStateManagerImpl : AuthStateManager {
     private val userDefaults = NSUserDefaults.standardUserDefaults
     
     private companion object {

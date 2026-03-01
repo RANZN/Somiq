@@ -3,7 +3,7 @@ package com.ranjan.somiq.core.data.local
 import java.io.File
 import java.util.Properties
 
-class AuthStateManagerImpl : AuthStateManager {
+actual class AuthStateManagerImpl : AuthStateManager {
     private val stateFile = File(System.getProperty("user.home"), ".somiq_auth_state.properties")
     private val properties = Properties()
     

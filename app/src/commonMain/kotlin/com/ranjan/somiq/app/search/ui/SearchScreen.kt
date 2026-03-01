@@ -27,20 +27,21 @@ import com.ranjan.somiq.app.search.ui.SearchContract.UiState
 fun SearchScreen(
     uiState: UiState,
     onAction: (Action) -> Unit,
+    showSearchFieldInContent: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        OutlinedTextField(
-            value = uiState.searchQuery,
-            onValueChange = { onAction(Action.OnQueryChange(it)) },
-            label = { Text("Search") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            singleLine = true
-        )
+    Column(modifier = modifier.fillMaxSize()) {
+        if (showSearchFieldInContent) {
+            OutlinedTextField(
+                value = uiState.searchQuery,
+                onValueChange = { onAction(Action.OnQueryChange(it)) },
+                label = { Text("Search") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                singleLine = true
+            )
+        }
 
         if (uiState.isLoading) {
             Box(

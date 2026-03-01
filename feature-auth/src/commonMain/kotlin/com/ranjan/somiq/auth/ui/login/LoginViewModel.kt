@@ -2,7 +2,6 @@ package com.ranjan.somiq.auth.ui.login
 
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.model.AuthResult
-import com.ranjan.somiq.auth.domain.usecase.LoginUseCase
 import com.ranjan.somiq.auth.ui.login.LoginContract.Action
 import com.ranjan.somiq.auth.ui.login.LoginContract.Effect
 import com.ranjan.somiq.auth.ui.login.LoginContract.UiState

@@ -19,9 +19,9 @@ import kotlinx.coroutines.launch
  * @param E The UI Effect type that extends [BaseUiEffect]
  * @param initialState The initial state for the ViewModel
  */
-abstract class BaseViewModel<S : BaseUiState, A : BaseUiAction, E : BaseUiEffect>(
-    initialState: S
-) : ViewModel() {
+abstract class BaseViewModel<S : BaseUiState, A : BaseUiAction, E : BaseUiEffect>() : ViewModel() {
+
+    abstract val initialState: S
 
     // ---- STATE ----
     private val _state = MutableStateFlow(initialState)

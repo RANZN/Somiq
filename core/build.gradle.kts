@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
+    id("compose.res.ksp.setup")
 }
 
 kotlin {
@@ -34,6 +35,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.chucker)
+            implementation(libs.androidx.datastore.preferences)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -46,7 +48,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             implementation(compose.materialIconsExtended)
-            implementation(libs.compose.navigation)
+            implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.core)
@@ -58,6 +60,13 @@ kotlin {
             implementation(libs.ktor.ktor.client.content.negotiation)
             implementation(libs.ktor.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.logging)
+            
+            // Coil for image loading
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+
+            implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.androidx.datastore.core.okio)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -104,20 +113,5 @@ dependencies {
 
     room {
         schemaDirectory("$projectDir/schemas")
-    }
-}
-
-afterEvaluate {
-    android.buildTypes.forEach { buildType ->
-        val buildTypeName = buildType.name.replaceFirstChar(Char::titlecase)
-        val kspTaskName = "ksp${buildTypeName}KotlinAndroid"
-        tasks.named(kspTaskName) {
-            dependsOn(tasks.named("generateResourceAccessorsForAndroid$buildTypeName"))
-            dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
-            dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
-            dependsOn(tasks.named("generateComposeResClass"))
-            dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
-            tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { dependsOn(it) }
-        }
     }
 }

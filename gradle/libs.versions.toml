@@ -9,6 +9,7 @@ androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.5"
 androidx-testExt = "1.3.0"
+androidx-security-crypto = "1.1.0-alpha06"
 composeHotReload = "1.0.0-rc02"
 composeMultiplatform = "1.9.1"
 junit = "4.13.2"
@@ -26,7 +27,12 @@ kotlinx-serialization = "1.9.0"
 kmp-viewmodel = "2.9.3"
 firebase = "2.4.0"
 ksp = "2.2.20-2.0.3"
-composeNav = "2.9.0-rc02"
+nav3Core = "1.0.0"
+lifecycleViewmodelNav3 = "2.10.0-rc01"
+multiplatform-nav3-ui = "1.0.0-alpha01"
+compose-multiplatform-lifecycle = "2.10.0-alpha01"
+coil = "3.3.0"
+datastore = "1.1.1"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -42,6 +48,7 @@ androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecyc
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidx-security-crypto" }
 
 #koin
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
@@ -57,7 +64,12 @@ androidx-room-runtime-jvm = { group = "androidx.room", name = "room-runtime-jvm"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase" }
 firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebase" }
-compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeNav" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+# KMP Navigation 3 (same API on all platforms)
+jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "multiplatform-nav3-ui" }
+jetbrains-lifecycle-viewmodel-navigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "compose-multiplatform-lifecycle" }
 
 #Ktor Client
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -73,7 +85,14 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 chucker = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
+# Coil
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 
+# DataStore (KMP)
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+androidx-datastore-core-okio = { module = "androidx.datastore:datastore-core-okio", version.ref = "datastore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

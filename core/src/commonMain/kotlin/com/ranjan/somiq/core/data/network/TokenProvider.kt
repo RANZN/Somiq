@@ -3,29 +3,25 @@ package com.ranjan.somiq.core.data.network
 import com.ranjan.somiq.core.data.local.TokenStorage
 
 interface TokenProvider {
-    fun getAccessToken(): String?
-    fun getRefreshToken(): String?
-    fun saveToken(accessToken: String, refreshToken: String)
-    fun clearToken()
+    suspend fun getAccessToken(): String?
+    suspend fun getRefreshToken(): String?
+    suspend fun saveToken(accessToken: String, refreshToken: String)
+    suspend fun clearToken()
 }
 
-/**
- * TokenProvider that persists tokens via [TokenStorage] so login state
- * survives app restarts and [isUserLoggedIn] returns true after login/signup.
- */
 class TokenProviderImpl(
     private val storage: TokenStorage,
 ) : TokenProvider {
 
-    override fun getAccessToken(): String? = storage.getAccessToken()
+    override suspend fun getAccessToken(): String? = storage.getAccessToken()
 
-    override fun getRefreshToken(): String? = storage.getRefreshToken()
+    override suspend fun getRefreshToken(): String? = storage.getRefreshToken()
 
-    override fun saveToken(accessToken: String, refreshToken: String) {
+    override suspend fun saveToken(accessToken: String, refreshToken: String) {
         storage.setTokens(accessToken, refreshToken)
     }
 
-    override fun clearToken() {
+    override suspend fun clearToken() {
         storage.clear()
     }
 }

@@ -11,19 +11,19 @@ actual fun createTokenStorage(): TokenStorage = TokenStorageImpl()
 private class TokenStorageImpl : TokenStorage {
     private val userDefaults = NSUserDefaults.standardUserDefaults
 
-    override fun getAccessToken(): String? =
+    override suspend fun getAccessToken(): String? =
         userDefaults.stringForKey(KEY_ACCESS_TOKEN)?.takeIf { it.isNotEmpty() }
 
-    override fun getRefreshToken(): String? =
+    override suspend fun getRefreshToken(): String? =
         userDefaults.stringForKey(KEY_REFRESH_TOKEN)?.takeIf { it.isNotEmpty() }
 
-    override fun setTokens(accessToken: String, refreshToken: String) {
+    override suspend fun setTokens(accessToken: String, refreshToken: String) {
         userDefaults.setObject(accessToken, forKey = KEY_ACCESS_TOKEN)
         userDefaults.setObject(refreshToken, forKey = KEY_REFRESH_TOKEN)
         userDefaults.synchronize()
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         userDefaults.removeObjectForKey(KEY_ACCESS_TOKEN)
         userDefaults.removeObjectForKey(KEY_REFRESH_TOKEN)
         userDefaults.synchronize()

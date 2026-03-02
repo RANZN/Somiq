@@ -98,8 +98,7 @@ fun provideAuthHttpClient(
 
             refreshTokens {
                 val newTokens = tokenRefresher.tryRefresh(oldRefreshToken = oldTokens?.refreshToken)
-
-                newTokens ?: return@refreshTokens null
+                    ?: return@refreshTokens null
                 return@refreshTokens BearerTokens(newTokens.accessToken, newTokens.refreshToken)
             }
             sendWithoutRequest { request ->

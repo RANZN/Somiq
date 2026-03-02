@@ -38,6 +38,7 @@ class TokenRefresherImpl(
     
     override suspend fun tryRefresh(oldRefreshToken: String?): TokenPair? {
         return mutex.withLock {
+            if (oldRefreshToken == null) return@withLock null
             val currentAccessToken = tokenProvider.getAccessToken()
             val currentRefreshToken = tokenProvider.getRefreshToken()
 

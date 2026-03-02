@@ -4,63 +4,45 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.map
 
-/**
- * Persistent storage for auth tokens so they survive app restarts.
- * Uses DataStore (KMP) — single implementation in commonMain.
- */
 interface TokenStorage {
-    fun getAccessToken(): String?
-    fun getRefreshToken(): String?
-    fun setTokens(accessToken: String, refreshToken: String)
-    fun clear()
+    suspend fun getAccessToken(): String?
+    suspend fun getRefreshToken(): String?
+    suspend fun setTokens(accessToken: String, refreshToken: String)
+    suspend fun clear()
 }
 
 private val KEY_ACCESS_TOKEN = stringPreferencesKey("access_token")
 private val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
 
-/**
- * DataStore-backed token storage. Reads are served from an in-memory cache (loaded at init);
- * writes update cache and persist asynchronously so the API stays synchronous for callers.
- */
 class TokenStorageImpl(
-    dataStore: DataStore<Preferences>,
+    private val dataStore: DataStore<Preferences>,
 ) : TokenStorage {
 
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    private var cacheAccessToken: String? = null
+    override suspend fun getAccessToken(): String? {
+        if (cacheAccessToken != null) return cacheAccessToken
+        cacheAccessToken = dataStore.data.map { it[KEY_ACCESS_TOKEN] }.first()
+        return cacheAccessToken
+    }
 
-    private var accessToken: String? = runBlocking { dataStore.data.first().let { it[KEY_ACCESS_TOKEN]?.takeIf { s -> s.isNotEmpty() } } }
+    private var cacheRefreshToken: String? = null
+    override suspend fun getRefreshToken(): String? {
+        if (cacheRefreshToken != null) return cacheRefreshToken
+        cacheRefreshToken = dataStore.data.map { it[KEY_REFRESH_TOKEN] }.first()
+        return cacheRefreshToken
+    }
 
-    private var refreshToken: String? = runBlocking { dataStore.data.first().let { it[KEY_REFRESH_TOKEN]?.takeIf { s -> s.isNotEmpty() } } }
-
-    private val store = dataStore
-
-    override fun getAccessToken(): String? = accessToken
-
-    override fun getRefreshToken(): String? = refreshToken
-
-    override fun setTokens(accessToken: String, refreshToken: String) {
-        this.accessToken = accessToken
-        this.refreshToken = refreshToken
-        scope.launch {
-            store.edit { prefs ->
-                prefs[KEY_ACCESS_TOKEN] = accessToken
-                prefs[KEY_REFRESH_TOKEN] = refreshToken
-            }
+    override suspend fun setTokens(accessToken: String, refreshToken: String) {
+        dataStore.edit {
+            it[KEY_ACCESS_TOKEN] = accessToken
+            it[KEY_REFRESH_TOKEN] = refreshToken
         }
     }
 
-    override fun clear() {
-        accessToken = null
-        refreshToken = null
-        scope.launch {
-            store.edit { it.clear() }
-        }
+    override suspend fun clear() {
+        dataStore.edit { it.clear() }
     }
 }

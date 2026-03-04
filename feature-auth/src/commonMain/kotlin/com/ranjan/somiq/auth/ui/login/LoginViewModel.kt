@@ -2,7 +2,7 @@ package com.ranjan.somiq.auth.ui.login
 
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.model.AuthResult
-import com.ranjan.somiq.auth.ui.login.LoginContract.Action
+import com.ranjan.somiq.auth.ui.login.LoginContract.Intent
 import com.ranjan.somiq.auth.ui.login.LoginContract.Effect
 import com.ranjan.somiq.auth.ui.login.LoginContract.UiState
 import com.ranjan.somiq.auth.ui.login.mapper.getErrorMessage
@@ -17,29 +17,29 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val loginUseCase: com.ranjan.somiq.auth.domain.usecase.LoginUseCase,
     private val globalEffectDispatcher: GlobalEffectDispatcher,
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-                is Action.OnEmailChange -> {
-                    setState { copy(email = action.it) }
+            when (intent) {
+                is Intent.OnEmailChange -> {
+                    setState { copy(email = intent.it) }
                 }
 
-                is Action.Login -> handleLogin()
+                is Intent.Login -> handleLogin()
 
-                is Action.NavigateToHome -> {
+                is Intent.NavigateToHome -> {
                     emitEffect(Effect.NavigateToDashboard)
                 }
 
-                is Action.NavigateToSignUp -> {
+                is Intent.NavigateToSignUp -> {
                     emitEffect(Effect.NavigateToSignUp)
                 }
 
-                is Action.ShowError -> {
+                is Intent.ShowError -> {
                     val error = UiState.Errors.LOGIN_FAILED
                     setState { copy(error = error) }
                     globalEffectDispatcher.emit(
@@ -50,11 +50,11 @@ class LoginViewModel(
                     )
                 }
 
-                is Action.OnPasswordChange -> {
-                    setState { copy(password = action.it) }
+                is Intent.OnPasswordChange -> {
+                    setState { copy(password = intent.it) }
                 }
 
-                Action.OnGoogleLoginClick -> {
+                Intent.OnGoogleLoginClick -> {
                     TODO()
                 }
             }
@@ -89,8 +89,8 @@ class LoginViewModel(
         val result = loginUseCase(email, password)
         println("RANJAN : $result")
         when (result) {
-            is AuthResult.Success -> handleAction(
-                Action.NavigateToHome)
+            is AuthResult.Success -> handleIntent(
+                Intent.NavigateToHome)
 
             is AuthResult.Failure -> {
                 val error = UiState.Errors.LOGIN_FAILED

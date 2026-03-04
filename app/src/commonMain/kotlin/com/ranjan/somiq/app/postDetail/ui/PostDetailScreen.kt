@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Action
+import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Intent
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Effect
 
 @Composable
@@ -42,8 +42,8 @@ fun PostDetailScreen(
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(Action.LoadPost)
-        viewModel.handleAction(Action.LoadComments)
+        viewModel.handleIntent(Intent.LoadPost)
+        viewModel.handleIntent(Intent.LoadComments)
     }
 
     CollectEffect(viewModel.effect) { effect ->
@@ -82,7 +82,7 @@ fun PostDetailScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
+                    Button(onClick = { viewModel.handleIntent(Intent.Refresh) }) {
                         Text("Retry")
                     }
                 }
@@ -129,12 +129,12 @@ fun PostDetailScreen(
                 item {
                     OutlinedTextField(
                         value = uiState.commentText,
-                        onValueChange = { viewModel.handleAction(Action.UpdateCommentText(it)) },
+                        onValueChange = { viewModel.handleIntent(Intent.UpdateCommentText(it)) },
                         label = { Text("Add a comment...") },
                         modifier = Modifier.fillMaxWidth(),
                         trailingIcon = {
                             IconButton(
-                                onClick = { viewModel.handleAction(Action.PostComment) },
+                                onClick = { viewModel.handleIntent(Intent.PostComment) },
                                 enabled = uiState.commentText.isNotBlank()
                             ) {
                                 Text("Post")
@@ -160,7 +160,7 @@ fun PostDetailScreen(
                     items(uiState.comments) { comment ->
                         CommentItem(
                             comment = comment,
-                            onLikeClick = { viewModel.handleAction(Action.ToggleCommentLike(comment.id)) }
+                            onLikeClick = { viewModel.handleIntent(Intent.ToggleCommentLike(comment.id)) }
                         )
                     }
                 }

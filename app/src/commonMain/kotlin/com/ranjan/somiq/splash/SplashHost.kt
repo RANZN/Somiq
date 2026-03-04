@@ -7,11 +7,11 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SplashScreenHost(
-    viewmodel: SplashViewModel = koinViewModel(),
     navigateToHome: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    CollectEffect(viewmodel.effect) {
+    val viewModel: SplashViewModel = koinViewModel()
+    CollectEffect(viewModel.effect) {
         when (it) {
             is Effect.NavigateToHome -> navigateToHome()
             is Effect.NavigateToLogin -> navigateToLogin()

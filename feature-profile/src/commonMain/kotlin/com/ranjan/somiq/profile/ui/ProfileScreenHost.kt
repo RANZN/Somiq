@@ -1,30 +1,14 @@
 package com.ranjan.somiq.profile.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.profile.ui.ProfileContract.Action
 import com.ranjan.somiq.profile.ui.ProfileContract.Effect
+import com.ranjan.somiq.profile.ui.ProfileContract.Intent
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreenHost(
     userId: String? = null,
@@ -40,7 +24,11 @@ fun ProfileScreenHost(
 
     LaunchedEffect(userId) {
         viewModel.setUserId(userId)
-        viewModel.handleAction(Action.LoadProfile)
+        viewModel.handleIntent(Intent.LoadProfile)
+    }
+
+    LaunchedEffect(appBarTitle) {
+        viewModel.handleIntent(Intent.SetAppBarConfig(appBarTitle != null, appBarTitle))
     }
 
     CollectEffect(viewModel.effect) { effect ->
@@ -49,52 +37,12 @@ fun ProfileScreenHost(
             is Effect.NavigateToSettings -> onNavigateToSettings(effect.userId)
             is Effect.NavigateToFollowers -> onNavigateToFollowers(effect.userId)
             is Effect.NavigateToFollowing -> onNavigateToFollowing(effect.userId)
+            Effect.Logout -> onLogout()
         }
     }
 
-    if (appBarTitle != null) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = appBarTitle,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    },
-                    actions = {
-                        IconButton(onClick = onLogout) {
-                            Icon(
-                                imageVector = Icons.Default.ExitToApp,
-                                contentDescription = "Logout",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface
-                    )
-                )
-            }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                ProfileScreen(
-                    uiState = uiState,
-                    onAction = viewModel::handleAction
-                )
-            }
-        }
-    } else {
-        ProfileScreen(
-            uiState = uiState,
-            onAction = viewModel::handleAction
-        )
-    }
+    ProfileScreen(
+        uiState = uiState,
+        onIntent = viewModel::handleIntent
+    )
 }

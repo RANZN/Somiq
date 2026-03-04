@@ -3,14 +3,13 @@ package com.ranjan.somiq.app.home.ui
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.usecase.LogoutUseCase
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.core.presentation.navigation.Home
 import com.ranjan.somiq.profile.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val getProfileUseCase: GetProfileUseCase
-) : BaseViewModel<HomeContract.UiState, HomeContract.Action, HomeContract.Effect>() {
+) : BaseViewModel<HomeContract.UiState, HomeContract.Intent, HomeContract.Effect>() {
 
     override val initialState: HomeContract.UiState
         get() = HomeContract.UiState()
@@ -19,20 +18,20 @@ class HomeViewModel(
         loadCurrentUserProfile()
     }
 
-    override fun onAction(action: HomeContract.Action) {
+    override fun onIntent(intent: HomeContract.Intent) {
         viewModelScope.launch {
-            when (action) {
-                is HomeContract.Action.SelectTab -> {
-                    setState { copy(selectedTab = action.tab) }
+            when (intent) {
+                is HomeContract.Intent.SelectTab -> {
+                    setState { copy(selectedTab = intent.tab) }
                 }
-                is HomeContract.Action.SearchQueryChange -> {
-                    setState { copy(searchQuery = action.query) }
+                is HomeContract.Intent.SearchQueryChange -> {
+                    setState { copy(searchQuery = intent.query) }
                 }
-                HomeContract.Action.Logout -> {
+                HomeContract.Intent.Logout -> {
                     logoutUseCase()
                     emitEffect(HomeContract.Effect.NavigateToLogin)
                 }
-                HomeContract.Action.LoadCurrentUserProfile -> {
+                HomeContract.Intent.LoadCurrentUserProfile -> {
                     loadCurrentUserProfile()
                 }
             }
@@ -42,7 +41,7 @@ class HomeViewModel(
     private fun loadCurrentUserProfile() {
         viewModelScope.launch {
             setState { copy(isLoadingProfile = true) }
-            getProfileUseCase(userId = null)
+            getProfileUseCase()
                 .onSuccess { response ->
                     setState {
                         copy(

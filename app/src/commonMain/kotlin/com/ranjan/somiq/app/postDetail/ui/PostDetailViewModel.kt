@@ -6,7 +6,7 @@ import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import com.ranjan.somiq.app.postDetail.domain.usecase.CreateCommentUseCase
 import com.ranjan.somiq.app.postDetail.domain.usecase.GetCommentsUseCase
 import com.ranjan.somiq.app.postDetail.domain.usecase.ToggleCommentLikeUseCase
-import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Action
+import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Intent
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Effect
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.UiState
 import kotlinx.coroutines.launch
@@ -17,27 +17,27 @@ class PostDetailViewModel(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val createCommentUseCase: CreateCommentUseCase,
     private val toggleCommentLikeUseCase: ToggleCommentLikeUseCase
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
 
     init {
-        handleAction(Action.LoadPost)
-        handleAction(Action.LoadComments)
+        handleIntent(Intent.LoadPost)
+        handleIntent(Intent.LoadComments)
     }
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-            is Action.LoadPost -> loadPost()
-            is Action.LoadComments -> loadComments()
-            is Action.UpdateCommentText -> {
-                setState { copy(commentText = action.text) }
+            when (intent) {
+            is Intent.LoadPost -> loadPost()
+            is Intent.LoadComments -> loadComments()
+            is Intent.UpdateCommentText -> {
+                setState { copy(commentText = intent.text) }
             }
-            is Action.PostComment -> postComment()
-            is Action.ToggleCommentLike -> toggleCommentLike(action.commentId)
-            is Action.Refresh -> {
+            is Intent.PostComment -> postComment()
+            is Intent.ToggleCommentLike -> toggleCommentLike(intent.commentId)
+            is Intent.Refresh -> {
                 loadPost()
                 loadComments()
             }

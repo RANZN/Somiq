@@ -19,13 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.chat.ui.voicecall.VoiceCallContract.Action
+import com.ranjan.somiq.chat.ui.voicecall.VoiceCallContract.Intent
 import com.ranjan.somiq.chat.ui.voicecall.VoiceCallContract.UiState
 
 @Composable
 fun VoiceCallScreen(
     uiState: UiState,
-    onAction: (Action) -> Unit,
+    onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -48,11 +48,11 @@ fun VoiceCallScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (!uiState.isActive && !uiState.isConnecting) {
-                IconButton(onClick = { onAction(Action.StartCall) }) {
+                IconButton(onClick = { onIntent(Intent.StartCall) }) {
                     Icon(Icons.Default.Call, contentDescription = "Start call")
                 }
             }
-            IconButton(onClick = { onAction(Action.EndCall) }) {
+            IconButton(onClick = { onIntent(Intent.EndCall) }) {
                 Icon(Icons.Default.CallEnd, contentDescription = "End call", tint = MaterialTheme.colorScheme.error)
             }
         }

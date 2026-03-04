@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.notifications.NotificationsContract.Action
+import com.ranjan.somiq.notifications.NotificationsContract.Intent
 import com.ranjan.somiq.notifications.NotificationsContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -26,8 +26,8 @@ fun NotificationsScreen(
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(Action.LoadNotifications)
-        viewModel.handleAction(Action.LoadUnreadCount)
+        viewModel.handleIntent(Intent.LoadNotifications)
+        viewModel.handleIntent(Intent.LoadUnreadCount)
     }
 
     CollectEffect(viewModel.effect) { effect ->
@@ -45,7 +45,7 @@ fun NotificationsScreen(
                 actions = {
                     if (uiState.unreadCount > 0) {
                         TextButton(
-                            onClick = { viewModel.handleAction(Action.MarkAllAsRead) }
+                            onClick = { viewModel.handleIntent(Intent.MarkAllAsRead) }
                         ) {
                             Text("Mark all read")
                         }
@@ -82,7 +82,7 @@ fun NotificationsScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
+                        Button(onClick = { viewModel.handleIntent(Intent.Refresh) }) {
                             Text("Retry")
                         }
                     }
@@ -101,7 +101,7 @@ fun NotificationsScreen(
                             notification = notification,
                             onMarkAsRead = {
                                 if (!notification.isRead) {
-                                    viewModel.handleAction(Action.MarkAsRead(notification.id))
+                                    viewModel.handleIntent(Intent.MarkAsRead(notification.id))
                                 }
                             }
                         )

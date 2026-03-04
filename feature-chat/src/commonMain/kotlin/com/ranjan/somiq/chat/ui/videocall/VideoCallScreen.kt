@@ -22,13 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.chat.ui.videocall.VideoCallContract.Action
+import com.ranjan.somiq.chat.ui.videocall.VideoCallContract.Intent
 import com.ranjan.somiq.chat.ui.videocall.VideoCallContract.UiState
 
 @Composable
 fun VideoCallScreen(
     uiState: UiState,
-    onAction: (Action) -> Unit,
+    onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -58,7 +58,7 @@ fun VideoCallScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (uiState.isActive) {
-                    IconButton(onClick = { onAction(Action.ToggleCamera) }) {
+                    IconButton(onClick = { onIntent(Intent.ToggleCamera) }) {
                         Icon(
                             if (uiState.isCameraOn) Icons.Default.Videocam else Icons.Default.VideocamOff,
                             contentDescription = if (uiState.isCameraOn) "Turn off camera" else "Turn on camera"
@@ -66,11 +66,11 @@ fun VideoCallScreen(
                     }
                 }
                 if (!uiState.isActive && !uiState.isConnecting) {
-                    IconButton(onClick = { onAction(Action.StartCall) }) {
+                    IconButton(onClick = { onIntent(Intent.StartCall) }) {
                         Icon(Icons.Default.Call, contentDescription = "Start video call")
                     }
                 }
-                IconButton(onClick = { onAction(Action.EndCall) }) {
+                IconButton(onClick = { onIntent(Intent.EndCall) }) {
                     Icon(Icons.Default.CallEnd, contentDescription = "End call", tint = MaterialTheme.colorScheme.error)
                 }
             }

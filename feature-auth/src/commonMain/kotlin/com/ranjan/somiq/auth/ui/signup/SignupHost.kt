@@ -9,20 +9,19 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignupScreenHost(
-    viewmodel: SignupViewModel = koinViewModel(),
     navigateToHome: () -> Unit
 ) {
+    val viewModel: SignupViewModel = koinViewModel()
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    CollectEffect(viewmodel.effect) {
+    CollectEffect(viewModel.effect) {
         when (it) {
             is Effect.NavigateToHome -> navigateToHome()
         }
     }
 
-    val uiState by viewmodel.state.collectAsStateWithLifecycle()
-
     SignupScreen(
         uiState = uiState,
-        action = viewmodel::handleAction,
+        intent = viewModel::handleIntent,
     )
 }

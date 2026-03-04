@@ -3,14 +3,14 @@ package com.ranjan.somiq.profile.ui
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.profile.domain.usecase.GetProfileUseCase
-import com.ranjan.somiq.profile.ui.ProfileContract.Action
+import com.ranjan.somiq.profile.ui.ProfileContract.Intent
 import com.ranjan.somiq.profile.ui.ProfileContract.Effect
 import com.ranjan.somiq.profile.ui.ProfileContract.UiState
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val getProfileUseCase: GetProfileUseCase
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
@@ -22,16 +22,18 @@ class ProfileViewModel(
     }
 
     init {
-        handleAction(Action.LoadProfile)
+        handleIntent(Intent.LoadProfile)
     }
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-                is Action.LoadProfile -> loadProfile()
-                is Action.RefreshProfile -> refreshProfile()
-                is Action.ClearError -> setState { copy(error = null) }
-                is Action.Retry -> {
+            when (intent) {
+                is Intent.LoadProfile -> loadProfile()
+                is Intent.RefreshProfile -> refreshProfile()
+                is Intent.SetAppBarConfig -> setState { copy(showAppBar = intent.show, appBarTitle = intent.title) }
+                is Intent.OnLogoutClick -> emitEffect(Effect.Logout)
+                is Intent.ClearError -> setState { copy(error = null) }
+                is Intent.Retry -> {
                     setState { copy(error = null) }
                     loadProfile()
                 }

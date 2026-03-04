@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,8 @@ import com.ranjan.somiq.feed.data.model.Story
 fun StoriesSection(
     stories: List<Story>,
     modifier: Modifier = Modifier,
+    showAddStoryItem: Boolean = true,
+    onAddStoryClick: () -> Unit = {},
     onStoryClick: (String) -> Unit = {}
 ) {
     LazyRow(
@@ -33,12 +38,58 @@ fun StoriesSection(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 8.dp)
     ) {
+        if (showAddStoryItem) {
+            item(key = "add_story") {
+                AddStoryItem(onClick = onAddStoryClick)
+            }
+        }
         items(stories) { story ->
             StoryItem(
                 story = story,
                 onClick = { onStoryClick(story.id) }
             )
         }
+    }
+}
+
+@Composable
+private fun AddStoryItem(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(70.dp)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(70.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add story",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+        Text(
+            text = "Your story",
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 

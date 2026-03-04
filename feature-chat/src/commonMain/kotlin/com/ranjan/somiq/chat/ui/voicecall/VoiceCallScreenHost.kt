@@ -12,10 +12,10 @@ import org.koin.core.parameter.parametersOf
 fun VoiceCallScreenHost(
     otherUserId: String,
     otherUserName: String,
-    viewModel: VoiceCallViewModel = koinViewModel(parameters = { parametersOf(otherUserId, otherUserName) }),
     onCallEnded: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val viewModel: VoiceCallViewModel = koinViewModel(parameters = { parametersOf(otherUserId, otherUserName) })
     val uiState by viewModel.state.collectAsState()
 
     CollectEffect(viewModel.effect) { effect ->
@@ -24,5 +24,5 @@ fun VoiceCallScreenHost(
         }
     }
 
-    VoiceCallScreen(uiState = uiState, onAction = viewModel::handleAction, modifier = modifier)
+    VoiceCallScreen(uiState = uiState, onIntent = viewModel::handleIntent, modifier = modifier)
 }

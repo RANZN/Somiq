@@ -37,7 +37,7 @@ import com.ranjan.somiq.core.presentation.component.CustomOutlinedButton
 import com.ranjan.somiq.core.presentation.component.CustomTextField
 import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.defaultPadding
-import com.ranjan.somiq.auth.ui.signup.SignUpContract.Action
+import com.ranjan.somiq.auth.ui.signup.SignUpContract.Intent
 import com.ranjan.somiq.auth.ui.signup.SignUpContract.UiState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -45,7 +45,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun SignupScreen(
     uiState: UiState,
     modifier: Modifier = Modifier,
-    action: (Action) -> Unit
+    intent: (Intent) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -68,7 +68,7 @@ fun SignupScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AddPhotoPlaceHolder(onClick = { action(Action.AddPictureClick) })
+            AddPhotoPlaceHolder(onClick = { intent(Intent.AddPictureClick) })
         }
 
         val nameError by remember(uiState.error) {
@@ -78,7 +78,7 @@ fun SignupScreen(
         }
         CustomTextField(
             value = uiState.name,
-            onValueChange = { action(Action.OnNameChange(it)) },
+            onValueChange = { intent(Intent.OnNameChange(it)) },
             placeholder = "Full Name",
             leadingImageVector = Icons.Outlined.Person,
             isError = nameError != null,
@@ -97,7 +97,7 @@ fun SignupScreen(
         }
         CustomTextField(
             value = uiState.username,
-            onValueChange = { action(Action.OnUsernameChange(it)) },
+            onValueChange = { intent(Intent.OnUsernameChange(it)) },
             placeholder = "Username",
             leadingImageVector = Icons.Outlined.Person,
             isError = usernameError != null,
@@ -119,7 +119,7 @@ fun SignupScreen(
         }
         CustomTextField(
             value = uiState.email,
-            onValueChange = { action(Action.OnEmailChange(it)) },
+            onValueChange = { intent(Intent.OnEmailChange(it)) },
             placeholder = "Email or Phone",
             leadingImageVector = Icons.Outlined.Email,
             isError = emailError != null,
@@ -138,7 +138,7 @@ fun SignupScreen(
         }
         CustomTextField(
             value = uiState.password,
-            onValueChange = { action(Action.OnPasswordChange(it)) },
+            onValueChange = { intent(Intent.OnPasswordChange(it)) },
             placeholder = "Password",
             leadingImageVector = Icons.Outlined.Password,
             isError = passwordError != null,
@@ -158,7 +158,7 @@ fun SignupScreen(
         }
         CustomTextField(
             value = uiState.confirmPassword,
-            onValueChange = { action(Action.OnConfirmPasswordChange(it)) },
+            onValueChange = { intent(Intent.OnConfirmPasswordChange(it)) },
             placeholder = "Confirm Password",
             leadingImageVector = Icons.Outlined.Repartition,
             isError = rePasswordError != null,
@@ -174,13 +174,13 @@ fun SignupScreen(
         OnboardingButton(
             text = "Sign Up",
             isLoading = uiState.isLoading,
-            onClick = { action(Action.Signup) }
+            onClick = { intent(Intent.Signup) }
         )
 
         CustomOutlinedButton(
             text = "Continue with Google",
             icon = Icons.Outlined.Email,
-            onClick = { action(Action.OnGoogleLoginClick) }
+            onClick = { intent(Intent.OnGoogleLoginClick) }
         )
     }
 }

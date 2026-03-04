@@ -1,7 +1,7 @@
 package com.ranjan.somiq.reels.ui
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.reels.data.model.Reel
@@ -21,15 +21,15 @@ object ReelsContract {
             get() = reels.isEmpty() && !isLoading && error == null
     }
 
-    sealed interface Action : BaseUiAction {
-        object LoadReels : Action
-        object RefreshReels : Action
-        data class OnReelClick(val reelId: String) : Action
-        data class OnLikeClick(val reelId: String) : Action
-        data class OnCommentClick(val reelId: String) : Action
-        data class OnShareClick(val reelId: String) : Action
-        object ClearError : Action
-        object Retry : Action
+    sealed interface Intent : BaseUiIntent {
+        object LoadReels : Intent
+        object RefreshReels : Intent
+        data class OnReelClick(val reelId: String) : Intent
+        data class OnLikeClick(val reelId: String) : Intent
+        data class OnCommentClick(val reelId: String) : Intent
+        data class OnShareClick(val reelId: String) : Intent
+        object ClearError : Intent
+        object Retry : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

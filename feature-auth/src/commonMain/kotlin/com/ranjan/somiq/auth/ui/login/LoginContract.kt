@@ -1,6 +1,6 @@
 package com.ranjan.somiq.auth.ui.login
 
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
@@ -19,14 +19,14 @@ object LoginContract {
         }
     }
 
-    sealed interface Action : BaseUiAction {
-        data class OnEmailChange(val it: String) : Action
-        data class OnPasswordChange(val it: String) : Action
-        object Login : Action
-        object NavigateToHome : Action
-        object NavigateToSignUp : Action
-        object ShowError : Action
-        object OnGoogleLoginClick : Action
+    sealed interface Intent : BaseUiIntent {
+        data class OnEmailChange(val it: String) : Intent
+        data class OnPasswordChange(val it: String) : Intent
+        object Login : Intent
+        object NavigateToHome : Intent
+        object NavigateToSignUp : Intent
+        object ShowError : Intent
+        object OnGoogleLoginClick : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

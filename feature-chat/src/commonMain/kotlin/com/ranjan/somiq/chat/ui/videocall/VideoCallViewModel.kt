@@ -8,25 +8,25 @@ import kotlinx.coroutines.launch
 class VideoCallViewModel(
     private val otherUserId: String,
     private val otherUserName: String
-) : BaseViewModel<VideoCallContract.UiState, VideoCallContract.Action, VideoCallContract.Effect>() {
+) : BaseViewModel<VideoCallContract.UiState, VideoCallContract.Intent, VideoCallContract.Effect>() {
 
     override val initialState: VideoCallContract.UiState
         get() = VideoCallContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
 
-    override fun onAction(action: VideoCallContract.Action) {
+    override fun onIntent(intent: VideoCallContract.Intent) {
         viewModelScope.launch {
-            when (action) {
-                is VideoCallContract.Action.StartCall -> {
+            when (intent) {
+                is VideoCallContract.Intent.StartCall -> {
                     setState { copy(isConnecting = true) }
                     // TODO: Integrate WebRTC for real video call
                     delay(1500)
                     setState { copy(isConnecting = false, isActive = true) }
                 }
-                is VideoCallContract.Action.EndCall -> {
+                is VideoCallContract.Intent.EndCall -> {
                     emitEffect(VideoCallContract.Effect.CallEnded)
                 }
-                is VideoCallContract.Action.ToggleCamera -> setState { copy(isCameraOn = !isCameraOn) }
-                is VideoCallContract.Action.ToggleMic -> setState { copy(isMicOn = !isMicOn) }
+                is VideoCallContract.Intent.ToggleCamera -> setState { copy(isCameraOn = !isCameraOn) }
+                is VideoCallContract.Intent.ToggleMic -> setState { copy(isMicOn = !isMicOn) }
             }
         }
     }

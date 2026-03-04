@@ -31,7 +31,7 @@ import com.ranjan.somiq.core.presentation.component.CustomTextField
 import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.clickWithEffect
 import com.ranjan.somiq.core.presentation.util.defaultPadding
-import com.ranjan.somiq.auth.ui.login.LoginContract.Action
+import com.ranjan.somiq.auth.ui.login.LoginContract.Intent
 import com.ranjan.somiq.auth.ui.login.LoginContract.UiState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -39,7 +39,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun LoginScreen(
     uiState: UiState,
     modifier: Modifier = Modifier,
-    action: (Action) -> Unit
+    intent: (Intent) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -59,7 +59,7 @@ fun LoginScreen(
                 uiState.error == UiState.Errors.INVALID_CREDENTIALS
         CustomTextField(
             value = uiState.email,
-            onValueChange = { action(Action.OnEmailChange(it)) },
+            onValueChange = { intent(Intent.OnEmailChange(it)) },
             placeholder = "Email or Phone",
             leadingImageVector = Icons.Outlined.Email,
             isError = isEmailError,
@@ -75,7 +75,7 @@ fun LoginScreen(
                     uiState.error == UiState.Errors.INVALID_CREDENTIALS
         CustomTextField(
             value = uiState.password,
-            onValueChange = { action(Action.OnPasswordChange(it)) },
+            onValueChange = { intent(Intent.OnPasswordChange(it)) },
             placeholder = "Password",
             leadingImageVector = Icons.Outlined.Lock,
             isError = isPasswordError,
@@ -95,13 +95,13 @@ fun LoginScreen(
         OnboardingButton(
             text = "Login",
             isLoading = uiState.isLoading,
-            onClick = { action(Action.Login) }
+            onClick = { intent(Intent.Login) }
         )
 
         CustomOutlinedButton(
             text = "Continue with Google",
             icon = Icons.Outlined.Email,
-            onClick = { action(Action.OnGoogleLoginClick) }
+            onClick = { intent(Intent.OnGoogleLoginClick) }
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -117,7 +117,7 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .clickWithEffect {
-                        action(Action.NavigateToSignUp)
+                        intent(Intent.NavigateToSignUp)
                     }
                     .padding(start = 4.dp)
             )

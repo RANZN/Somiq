@@ -3,28 +3,29 @@ package com.ranjan.somiq.app.search.ui
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.app.search.domain.usecase.SearchUseCase
-import com.ranjan.somiq.app.search.ui.SearchContract.Action
+import com.ranjan.somiq.app.search.ui.SearchContract.Intent
 import com.ranjan.somiq.app.search.ui.SearchContract.Effect
 import com.ranjan.somiq.app.search.ui.SearchContract.UiState
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-                is Action.OnQueryChange -> {
-                    setState { copy(searchQuery = action.query) }
+            when (intent) {
+                is Intent.SetShowSearchFieldInContent -> setState { copy(showSearchFieldInContent = intent.show) }
+                is Intent.OnQueryChange -> {
+                    setState { copy(searchQuery = intent.query) }
                 }
-                is Action.PerformSearch -> {
+                is Intent.PerformSearch -> {
                     performSearch()
                 }
-                is Action.ClearSearch -> {
+                is Intent.ClearSearch -> {
                     setState { 
                         copy(
                             searchQuery = "",
@@ -33,19 +34,19 @@ class SearchViewModel(
                         )
                     }
                 }
-                is Action.OnUserClick -> {
-                    emitEffect(Effect.NavigateToUser(action.userId))
+                is Intent.OnUserClick -> {
+                    emitEffect(Effect.NavigateToUser(intent.userId))
                 }
-                is Action.OnHashtagClick -> {
-                    emitEffect(Effect.NavigateToHashtag(action.hashtag))
+                is Intent.OnHashtagClick -> {
+                    emitEffect(Effect.NavigateToHashtag(intent.hashtag))
                 }
-                is Action.OnPostClick -> {
-                    emitEffect(Effect.NavigateToPost(action.postId))
+                is Intent.OnPostClick -> {
+                    emitEffect(Effect.NavigateToPost(intent.postId))
                 }
-                is Action.ClearError -> {
+                is Intent.ClearError -> {
                     setState { copy(error = null) }
                 }
-                is Action.Retry -> {
+                is Intent.Retry -> {
                     setState { copy(error = null) }
                     performSearch()
                 }

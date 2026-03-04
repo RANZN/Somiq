@@ -3,35 +3,35 @@ package com.ranjan.somiq.reels.ui
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.reels.domain.usecase.GetReelsUseCase
-import com.ranjan.somiq.reels.ui.ReelsContract.Action
 import com.ranjan.somiq.reels.ui.ReelsContract.Effect
+import com.ranjan.somiq.reels.ui.ReelsContract.Intent
 import com.ranjan.somiq.reels.ui.ReelsContract.UiState
 import kotlinx.coroutines.launch
 
 class ReelsViewModel(
     private val getReelsUseCase: GetReelsUseCase
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
 
     init {
-        handleAction(Action.LoadReels)
+        handleIntent(Intent.LoadReels)
     }
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-                is Action.LoadReels -> loadReels()
-                is Action.RefreshReels -> refreshReels()
-                is Action.OnReelClick -> emitEffect(Effect.NavigateToReel(action.reelId))
-                is Action.OnLikeClick -> {
+            when (intent) {
+                is Intent.LoadReels -> loadReels()
+                is Intent.RefreshReels -> refreshReels()
+                is Intent.OnReelClick -> emitEffect(Effect.NavigateToReel(intent.reelId))
+                is Intent.OnLikeClick -> {
                     // TODO: Implement like functionality
                 }
-                is Action.OnCommentClick -> emitEffect(Effect.NavigateToComments(action.reelId))
-                is Action.OnShareClick -> emitEffect(Effect.ShowShareDialog(action.reelId))
-                is Action.ClearError -> setState { copy(error = null) }
-                is Action.Retry -> {
+                is Intent.OnCommentClick -> emitEffect(Effect.NavigateToComments(intent.reelId))
+                is Intent.OnShareClick -> emitEffect(Effect.ShowShareDialog(intent.reelId))
+                is Intent.ClearError -> setState { copy(error = null) }
+                is Intent.Retry -> {
                     setState { copy(error = null) }
                     loadReels()
                 }

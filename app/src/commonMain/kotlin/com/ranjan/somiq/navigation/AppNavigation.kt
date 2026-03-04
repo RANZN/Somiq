@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.ranjan.somiq.app.createpost.CreatePostPlaceholderScreen
+import com.ranjan.somiq.app.createstory.CreateStoryPlaceholderScreen
 import com.ranjan.somiq.app.home.ui.HomeNavigationHost
 import com.ranjan.somiq.app.postDetail.ui.PostDetailScreen
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
@@ -31,6 +32,7 @@ import com.ranjan.somiq.core.presentation.navigation.ChatListScreen
 import com.ranjan.somiq.core.presentation.navigation.Collections
 import com.ranjan.somiq.core.presentation.navigation.Conversation
 import com.ranjan.somiq.core.presentation.navigation.CreatePostScreen
+import com.ranjan.somiq.core.presentation.navigation.CreateStoryScreen
 import com.ranjan.somiq.core.presentation.navigation.Home
 import com.ranjan.somiq.core.presentation.navigation.HomeGraph
 import com.ranjan.somiq.core.presentation.navigation.Notifications
@@ -105,12 +107,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     },
                     onNavigateToNotifications = { backStack.add(Notifications) },
                     onNavigateToCreatePost = { backStack.add(CreatePostScreen) },
+                    onNavigateToCreateStory = { backStack.add(CreateStoryScreen) },
                     onNavigateToChatList = { backStack.add(ChatListScreen) }
                 )
             }
 
             entry<CreatePostScreen> {
                 CreatePostPlaceholderScreen(onBack = { backStack.removeLastOrNull() })
+            }
+
+            entry<CreateStoryScreen> {
+                CreateStoryPlaceholderScreen(onBack = { backStack.removeLastOrNull() })
             }
 
             entry<ChatListScreen> {

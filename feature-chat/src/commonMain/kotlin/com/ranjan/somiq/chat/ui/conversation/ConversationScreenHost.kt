@@ -13,11 +13,11 @@ import org.koin.core.parameter.parametersOf
 fun ConversationScreenHost(
     otherUserId: String,
     otherUserName: String,
-    viewModel: ConversationViewModel = koinViewModel(parameters = { parametersOf(otherUserId, otherUserName) }),
     onStartVoiceCall: (String) -> Unit = {},
     onStartVideoCall: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val viewModel: ConversationViewModel = koinViewModel(parameters = { parametersOf(otherUserId, otherUserName) })
     val uiState by viewModel.state.collectAsState()
 
     CollectEffect(viewModel.effect) { effect ->
@@ -30,7 +30,7 @@ fun ConversationScreenHost(
 
     ConversationScreen(
         uiState = uiState,
-        onAction = viewModel::handleAction,
+        onIntent = viewModel::handleIntent,
         modifier = modifier
     )
 }

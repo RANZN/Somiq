@@ -4,14 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.app.home.domain.repository.NotificationRepository
 import com.ranjan.somiq.app.home.domain.usecase.GetNotificationsUseCase
-import com.ranjan.somiq.notifications.NotificationsContract.Action
+import com.ranjan.somiq.notifications.NotificationsContract.Intent
 import com.ranjan.somiq.notifications.NotificationsContract.Effect
 import com.ranjan.somiq.notifications.NotificationsContract.UiState
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class NotificationsViewModel : BaseViewModel<UiState, Action, Effect>(), KoinComponent {
+class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(), KoinComponent {
     private val getNotificationsUseCase: GetNotificationsUseCase by inject()
     private val notificationRepository: NotificationRepository by inject()
 
@@ -19,18 +19,18 @@ class NotificationsViewModel : BaseViewModel<UiState, Action, Effect>(), KoinCom
         get() = UiState()
 
     init {
-        handleAction(Action.LoadNotifications)
-        handleAction(Action.LoadUnreadCount)
+        handleIntent(Intent.LoadNotifications)
+        handleIntent(Intent.LoadUnreadCount)
     }
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-            is Action.LoadNotifications -> loadNotifications()
-            is Action.LoadUnreadCount -> loadUnreadCount()
-            is Action.MarkAsRead -> markAsRead(action.notificationId)
-            is Action.MarkAllAsRead -> markAllAsRead()
-            is Action.Refresh -> {
+            when (intent) {
+            is Intent.LoadNotifications -> loadNotifications()
+            is Intent.LoadUnreadCount -> loadUnreadCount()
+            is Intent.MarkAsRead -> markAsRead(intent.notificationId)
+            is Intent.MarkAllAsRead -> markAllAsRead()
+            is Intent.Refresh -> {
                 loadNotifications()
                 loadUnreadCount()
             }

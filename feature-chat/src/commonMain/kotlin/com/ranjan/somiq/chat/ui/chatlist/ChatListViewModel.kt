@@ -7,24 +7,25 @@ import kotlinx.coroutines.launch
 
 class ChatListViewModel(
     private val getConversationsUseCase: GetConversationsUseCase
-) : BaseViewModel<ChatListContract.UiState, ChatListContract.Action, ChatListContract.Effect>() {
+) : BaseViewModel<ChatListContract.UiState, ChatListContract.Intent, ChatListContract.Effect>() {
 
     override val initialState: ChatListContract.UiState
         get() = ChatListContract.UiState()
 
     init {
-        handleAction(ChatListContract.Action.LoadConversations)
+        handleIntent(ChatListContract.Intent.LoadConversations)
     }
 
-    override fun onAction(action: ChatListContract.Action) {
+    override fun onIntent(intent: ChatListContract.Intent) {
         viewModelScope.launch {
-            when (action) {
-                is ChatListContract.Action.LoadConversations -> loadConversations()
-                is ChatListContract.Action.Refresh -> refresh()
-                is ChatListContract.Action.OnConversationClick ->
-                    emitEffect(ChatListContract.Effect.NavigateToConversation(action.userId))
-                is ChatListContract.Action.ClearError -> setState { copy(error = null) }
-                is ChatListContract.Action.Retry -> {
+            when (intent) {
+                is ChatListContract.Intent.LoadConversations -> loadConversations()
+                is ChatListContract.Intent.Refresh -> refresh()
+                is ChatListContract.Intent.SetShowTopBar -> setState { copy(showTopBar = intent.show) }
+                is ChatListContract.Intent.OnConversationClick ->
+                    emitEffect(ChatListContract.Effect.NavigateToConversation(intent.userId))
+                is ChatListContract.Intent.ClearError -> setState { copy(error = null) }
+                is ChatListContract.Intent.Retry -> {
                     setState { copy(error = null) }
                     loadConversations()
                 }

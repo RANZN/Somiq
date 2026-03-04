@@ -48,6 +48,9 @@ data object Notifications : NavKey
 data object CreatePostScreen : NavKey
 
 @Serializable
+data object CreateStoryScreen : NavKey
+
+@Serializable
 data object ChatListScreen : NavKey
 
 @Serializable

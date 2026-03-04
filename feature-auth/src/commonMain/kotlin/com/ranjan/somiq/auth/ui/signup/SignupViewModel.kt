@@ -3,7 +3,7 @@ package com.ranjan.somiq.auth.ui.signup
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.model.AuthResult
 import com.ranjan.somiq.auth.domain.usecase.SignupUseCase
-import com.ranjan.somiq.auth.ui.signup.SignUpContract.Action
+import com.ranjan.somiq.auth.ui.signup.SignUpContract.Intent
 import com.ranjan.somiq.auth.ui.signup.SignUpContract.Effect
 import com.ranjan.somiq.auth.ui.signup.SignUpContract.UiState
 import com.ranjan.somiq.auth.ui.signup.mapper.getMessage
@@ -18,40 +18,40 @@ import kotlinx.coroutines.launch
 class SignupViewModel(
     private val signupUseCase: SignupUseCase,
     private val globalEffectDispatcher: GlobalEffectDispatcher,
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-                Action.AddPictureClick -> {}
+            when (intent) {
+                Intent.AddPictureClick -> {}
 
-                is Action.OnNameChange -> {
-                    setState { copy(name = action.name) }
+                is Intent.OnNameChange -> {
+                    setState { copy(name = intent.name) }
                 }
 
-                is Action.OnUsernameChange -> {
-                    setState { copy(username = action.username) }
+                is Intent.OnUsernameChange -> {
+                    setState { copy(username = intent.username) }
                 }
 
-                is Action.OnEmailChange -> {
-                    setState { copy(email = action.email) }
+                is Intent.OnEmailChange -> {
+                    setState { copy(email = intent.email) }
                 }
 
-                is Action.OnPasswordChange -> {
-                    setState { copy(password = action.password) }
+                is Intent.OnPasswordChange -> {
+                    setState { copy(password = intent.password) }
                 }
 
-                is Action.OnConfirmPasswordChange -> {
-                    setState { copy(confirmPassword = action.confirmPassword) }
+                is Intent.OnConfirmPasswordChange -> {
+                    setState { copy(confirmPassword = intent.confirmPassword) }
                 }
 
-                is Action.Signup -> handleLogin()
+                is Intent.Signup -> handleLogin()
 
-                is Action.ShowError -> {
-                    val error = UiState.Error.GenericError(action.error)
+                is Intent.ShowError -> {
+                    val error = UiState.Error.GenericError(intent.error)
                     setState {
                         copy(
                             error = listOf(error),
@@ -66,11 +66,11 @@ class SignupViewModel(
                     )
                 }
 
-                is Action.OnGoogleLoginClick -> {
+                is Intent.OnGoogleLoginClick -> {
                     // Handle Google login click
                 }
 
-                is Action.NavigateToHome -> {
+                is Intent.NavigateToHome -> {
                     emitEffect(Effect.NavigateToHome)
                 }
 
@@ -196,7 +196,7 @@ class SignupViewModel(
             }
 
             is AuthResult.Success -> {
-                handleAction(Action.NavigateToHome)
+                handleIntent(Intent.NavigateToHome)
             }
 
             else -> {}

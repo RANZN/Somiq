@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -65,15 +66,14 @@ fun PostItem(
         if (post.mediaUrls.isNotEmpty()) {
             DoubleTapToLikeBox(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
+                    .fillMaxWidth(),
                 onDoubleTap = onLikeClick
             ) {
                 AppAsyncImage(
                     imageUrl = post.mediaUrls.first(),
                     contentDescription = "Post image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                 placeholder = {
                     Box(
                         modifier = Modifier
@@ -181,7 +181,7 @@ private fun PostHeader(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape),
-                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                    contentScale = ContentScale.Crop,
                     placeholder = {
                         Box(
                             modifier = Modifier

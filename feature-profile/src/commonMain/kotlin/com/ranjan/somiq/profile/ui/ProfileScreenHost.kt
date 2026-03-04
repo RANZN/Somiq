@@ -17,7 +17,8 @@ fun ProfileScreenHost(
     onNavigateToEditProfile: (String) -> Unit = {},
     onNavigateToSettings: (String) -> Unit = {},
     onNavigateToFollowers: (String) -> Unit = {},
-    onNavigateToFollowing: (String) -> Unit = {}
+    onNavigateToFollowing: (String) -> Unit = {},
+    onNavigateToPost: (String) -> Unit = {}
 ) {
     val viewModel: ProfileViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
@@ -43,6 +44,7 @@ fun ProfileScreenHost(
 
     ProfileScreen(
         uiState = uiState,
-        onIntent = viewModel::handleIntent
+        onIntent = viewModel::handleIntent,
+        onPostClick = onNavigateToPost
     )
 }

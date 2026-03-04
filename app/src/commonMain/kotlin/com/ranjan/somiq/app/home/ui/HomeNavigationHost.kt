@@ -98,13 +98,14 @@ fun HomeNavigationHost(
 
                 is Home.Profile -> {
                     ProfileScreenHost(
-                        userId = (selectedTab as Home.Profile).userId,
+                        userId = selectedTab.userId,
                         appBarTitle = state.currentUserName,
                         onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },
                         onNavigateToEditProfile = onNavigateToEditProfile,
                         onNavigateToSettings = onNavigateToSettings,
                         onNavigateToFollowers = onNavigateToFollowers,
-                        onNavigateToFollowing = onNavigateToFollowing
+                        onNavigateToFollowing = onNavigateToFollowing,
+                        onNavigateToPost = onNavigateToPost
                     )
                 }
             }

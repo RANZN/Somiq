@@ -31,6 +31,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":core"))
             api(project(":feature-auth"))
+            api(project(":feature-feed"))
             
             implementation(compose.runtime)
             implementation(compose.foundation)

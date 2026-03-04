@@ -51,6 +51,9 @@ data object CreatePostScreen : NavKey
 data object CreateStoryScreen : NavKey
 
 @Serializable
+data class StoryView(val storyId: String) : NavKey
+
+@Serializable
 data object ChatListScreen : NavKey
 
 @Serializable

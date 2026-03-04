@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,15 +61,19 @@ fun PostItem(
             onMoreClick = onMoreClick
         )
 
-        // Display post image
+        // Display post image with double-tap to like
         if (post.mediaUrls.isNotEmpty()) {
-            AppAsyncImage(
-                imageUrl = post.mediaUrls.first(),
-                contentDescription = "Post image",
+            DoubleTapToLikeBox(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                onDoubleTap = onLikeClick
+            ) {
+                AppAsyncImage(
+                    imageUrl = post.mediaUrls.first(),
+                    contentDescription = "Post image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                 placeholder = {
                     Box(
                         modifier = Modifier
@@ -96,7 +100,8 @@ fun PostItem(
                         )
                     }
                 }
-            )
+                )
+            }
         } else {
             Box(
                 modifier = Modifier
@@ -283,7 +288,7 @@ private fun PostActions(
             }
             IconButton(onClick = onShareClick) {
                 Icon(
-                    imageVector = Icons.Default.Send,
+                    imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Share",
                     tint = MaterialTheme.colorScheme.onSurface
                 )

@@ -61,7 +61,8 @@ kotlin {
             api(project(":feature-profile"))
             api(project(":feature-chat"))
             api(project(":feature-media"))
-            
+            api(project(":feature-content-creation"))
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

@@ -1,5 +1,6 @@
 package com.ranjan.somiq.feed.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
@@ -103,15 +106,17 @@ fun FeedScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clickable { onIntent(Intent.Retry) }
                         ) {
                             Text(
-                                text = uiState.error!!,
+                                text = uiState.error,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error
                             )
                             Text(
-                                text = "Pull to refresh",
+                                text = "Tap to retry or pull to refresh",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -120,32 +125,40 @@ fun FeedScreen(
                     }
                 }
                 else -> {
-                    LazyColumn(
+                    val pullToRefreshState = rememberPullToRefreshState()
+                    PullToRefreshBox(
+                        isRefreshing = uiState.refreshing,
+                        onRefresh = { onIntent(Intent.RefreshFeed) },
+                        state = pullToRefreshState,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        item {
-                            StoriesSection(
-                                stories = uiState.stories,
-                                modifier = Modifier.fillMaxWidth(),
-                                showAddStoryItem = true,
-                                onAddStoryClick = { onIntent(Intent.OnAddStoryClick) },
-                                onStoryClick = { storyId -> onIntent(Intent.OnStoryClick(storyId)) }
-                            )
-                        }
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            item {
+                                StoriesSection(
+                                    stories = uiState.stories,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    showAddStoryItem = true,
+                                    onAddStoryClick = { onIntent(Intent.OnAddStoryClick) },
+                                    onStoryClick = { storyId -> onIntent(Intent.OnStoryClick(storyId)) }
+                                )
+                            }
 
-                        items(
-                            items = uiState.posts,
-                            key = { it.id }
-                        ) { post ->
-                            PostItem(
-                                post = post,
-                                onLikeClick = { onIntent(Intent.ToggleLike(post.id)) },
-                                onCommentClick = { onIntent(Intent.OnCommentClick(post.id)) },
-                                onShareClick = { onIntent(Intent.OnShareClick(post.id)) },
-                                onSaveClick = { onIntent(Intent.ToggleBookmark(post.id)) },
-                                onMoreClick = { onIntent(Intent.OnMoreClick(post.id)) },
-                                onUserClick = { onIntent(Intent.OnUserClick(post.authorId)) }
-                            )
+                            items(
+                                items = uiState.posts,
+                                key = { it.id }
+                            ) { post ->
+                                PostItem(
+                                    post = post,
+                                    onLikeClick = { onIntent(Intent.ToggleLike(post.id)) },
+                                    onCommentClick = { onIntent(Intent.OnCommentClick(post.id)) },
+                                    onShareClick = { onIntent(Intent.OnShareClick(post.id)) },
+                                    onSaveClick = { onIntent(Intent.ToggleBookmark(post.id)) },
+                                    onMoreClick = { onIntent(Intent.OnMoreClick(post.id)) },
+                                    onUserClick = { onIntent(Intent.OnUserClick(post.authorId)) }
+                                )
+                            }
                         }
                     }
                 }

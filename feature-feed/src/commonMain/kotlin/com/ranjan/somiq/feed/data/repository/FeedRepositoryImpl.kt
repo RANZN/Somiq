@@ -4,16 +4,22 @@ import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.feed.data.model.CreatePostRequest
+import com.ranjan.somiq.feed.data.model.CreateStoryRequest
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.feed.data.model.Story
 import com.ranjan.somiq.feed.data.model.StoryResponse
 import com.ranjan.somiq.feed.data.model.ToggleResponse
+import com.ranjan.somiq.feed.data.model.UploadResponse
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 
 class FeedRepositoryImpl(
     private val httpClient: HttpClient
@@ -24,6 +30,22 @@ class FeedRepositoryImpl(
             apiCall = { httpClient.get("$BASE_URL/v1/posts") },
             onSuccess = { response -> response.body<PaginationResult<Post>>().data },
             errorMessage = "Failed to load feed"
+        )
+    }
+
+    override suspend fun getPostsByUser(userId: String): Result<List<Post>> {
+        return safeApiCall(
+            apiCall = { httpClient.get("$BASE_URL/v1/posts?authorId=$userId") },
+            onSuccess = { response -> response.body<PaginationResult<Post>>().data },
+            errorMessage = "Failed to load user posts"
+        )
+    }
+
+    override suspend fun getBookmarkedPosts(): Result<List<Post>> {
+        return safeApiCall(
+            apiCall = { httpClient.get("$BASE_URL/v1/posts/bookmarks") },
+            onSuccess = { response -> response.body<PaginationResult<Post>>().data },
+            errorMessage = "Failed to load saved posts"
         )
     }
 
@@ -39,6 +61,40 @@ class FeedRepositoryImpl(
             apiCall = { httpClient.get("$BASE_URL/v1/stories") },
             onSuccess = { response -> response.body<StoryResponse>().data },
             errorMessage = "Failed to load stories"
+        )
+    }
+
+    override suspend fun getMyStories(): Result<List<Story>> {
+        return safeApiCall(
+            apiCall = { httpClient.get("$BASE_URL/v1/stories/me") },
+            onSuccess = { response -> response.body<List<Story>>() },
+            errorMessage = "Failed to load my stories"
+        )
+    }
+
+    override suspend fun getUserStories(userId: String): Result<List<Story>> {
+        return safeApiCall(
+            apiCall = { httpClient.get("$BASE_URL/v1/stories/user/$userId") },
+            onSuccess = { response -> response.body<List<Story>>() },
+            errorMessage = "Failed to load user stories"
+        )
+    }
+
+    override suspend fun getStory(storyId: String): Result<Story> {
+        return safeApiCall(
+            apiCall = { httpClient.get("$BASE_URL/v1/stories/$storyId") },
+            errorMessage = "Failed to load story"
+        )
+    }
+
+    override suspend fun createStory(request: CreateStoryRequest): Result<Story> {
+        return safeApiCall(
+            apiCall = {
+                httpClient.post("$BASE_URL/v1/stories") {
+                    setBody(request)
+                }
+            },
+            errorMessage = "Failed to create story"
         )
     }
 
@@ -64,6 +120,28 @@ class FeedRepositoryImpl(
                 }
             },
             errorMessage = "Failed to create post"
+        )
+    }
+
+    override suspend fun uploadImage(imageBytes: ByteArray, fileName: String): Result<String> {
+        return safeApiCall(
+            apiCall = {
+                httpClient.submitFormWithBinaryData(
+                    url = "$BASE_URL/v1/media/upload",
+                    formData = formData {
+                        append(
+                            key = "file",
+                            value = imageBytes,
+                            headers = Headers.build {
+                                append(HttpHeaders.ContentType, "image/jpeg")
+                                append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
+                            }
+                        )
+                    }
+                )
+            },
+            onSuccess = { response -> response.body<UploadResponse>().url },
+            errorMessage = "Failed to upload image"
         )
     }
 }

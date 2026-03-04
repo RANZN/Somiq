@@ -4,12 +4,18 @@ import androidx.compose.runtime.Stable
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.profile.data.model.ProfileResponse
+
+enum class ProfileTab { Posts, Saved }
 
 object ProfileContract {
     @Stable
     data class UiState(
         val profile: ProfileResponse? = null,
+        val myPosts: List<Post> = emptyList(),
+        val savedPosts: List<Post> = emptyList(),
+        val selectedTab: ProfileTab = ProfileTab.Posts,
         val isLoading: Boolean = false,
         val error: String? = null,
         val refreshing: Boolean = false,
@@ -18,12 +24,15 @@ object ProfileContract {
     ) : BaseUiState {
         val hasError: Boolean
             get() = error != null && profile == null
+        val isOwnProfile: Boolean
+            get() = profile != null && appBarTitle == null
     }
 
     sealed interface Intent : BaseUiIntent {
         object LoadProfile : Intent
         object RefreshProfile : Intent
         data class SetAppBarConfig(val show: Boolean, val title: String?) : Intent
+        data class SelectTab(val tab: ProfileTab) : Intent
         object OnLogoutClick : Intent
         object ClearError : Intent
         object Retry : Intent

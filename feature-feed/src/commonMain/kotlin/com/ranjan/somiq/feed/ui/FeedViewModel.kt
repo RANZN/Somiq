@@ -48,6 +48,7 @@ class FeedViewModel(
                 is Intent.Retry -> {
                     setState { copy(error = null) }
                     loadFeed()
+                    loadStories()
                 }
             }
         }
@@ -88,11 +89,13 @@ class FeedViewModel(
             setState {
                 copy(
                     posts = posts,
-                    refreshing = false,
                     error = null
                 )
             }
         }
+        // Also refresh stories when pulling to refresh
+        loadStories()
+        setState { copy(refreshing = false) }
     }
 
     private suspend fun loadStories() {

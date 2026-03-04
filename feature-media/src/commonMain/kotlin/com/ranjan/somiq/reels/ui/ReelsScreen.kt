@@ -1,5 +1,6 @@
 package com.ranjan.somiq.reels.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.reels.ui.ReelsContract.Intent
 import com.ranjan.somiq.reels.ui.ReelsContract.UiState
 
@@ -68,10 +72,12 @@ fun ReelsScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clickable { onIntent(Intent.Retry) }
                         ) {
                             Text(
-                                text = uiState.error!!,
+                                text = uiState.error,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error
                             )
@@ -85,20 +91,28 @@ fun ReelsScreen(
                     }
                 }
                 else -> {
-                    LazyColumn(
+                    val pullToRefreshState = rememberPullToRefreshState()
+                    PullToRefreshBox(
+                        isRefreshing = uiState.refreshing,
+                        onRefresh = { onIntent(Intent.RefreshReels) },
+                        state = pullToRefreshState,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(
-                            items = uiState.reels,
-                            key = { it.id }
-                        ) { reel ->
-                            ReelItem(
-                                reel = reel,
-                                onLikeClick = { onIntent(Intent.OnLikeClick(reel.id)) },
-                                onCommentClick = { onIntent(Intent.OnCommentClick(reel.id)) },
-                                onShareClick = { onIntent(Intent.OnShareClick(reel.id)) },
-                                onReelClick = { onIntent(Intent.OnReelClick(reel.id)) }
-                            )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(
+                                items = uiState.reels,
+                                key = { it.id }
+                            ) { reel ->
+                                ReelItem(
+                                    reel = reel,
+                                    onLikeClick = { onIntent(Intent.OnLikeClick(reel.id)) },
+                                    onCommentClick = { onIntent(Intent.OnCommentClick(reel.id)) },
+                                    onShareClick = { onIntent(Intent.OnShareClick(reel.id)) },
+                                    onReelClick = { onIntent(Intent.OnReelClick(reel.id)) }
+                                )
+                            }
                         }
                     }
                 }
@@ -109,7 +123,7 @@ fun ReelsScreen(
 
 @Composable
 private fun ReelItem(
-    reel: com.ranjan.somiq.reels.data.model.Reel,
+    reel: Reel,
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit,
     onShareClick: () -> Unit,

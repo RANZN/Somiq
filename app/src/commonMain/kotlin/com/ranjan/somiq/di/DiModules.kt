@@ -4,6 +4,8 @@ import com.ranjan.somiq.auth.di.authModule
 import com.ranjan.somiq.auth.di.authViewModelModule
 import com.ranjan.somiq.feed.di.feedModule
 import com.ranjan.somiq.feed.di.feedViewModelModule
+import com.ranjan.somiq.createpost.di.createPostViewModelModule
+import com.ranjan.somiq.createstory.di.createStoryViewModelModule
 import com.ranjan.somiq.app.home.di.homeModule
 import com.ranjan.somiq.app.home.di.homeViewModelModule
 import com.ranjan.somiq.app.postDetail.di.postDetailModule
@@ -35,6 +37,8 @@ fun getAllAppModules(): List<Module> = listOf(
     searchViewModelModule,
     postDetailModule,
     postDetailViewModelModule,
+    createPostViewModelModule,
+    createStoryViewModelModule,
     homeModule,
     homeViewModelModule,
     chatModule,

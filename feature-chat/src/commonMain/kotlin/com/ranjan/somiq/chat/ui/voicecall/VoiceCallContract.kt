@@ -1,10 +1,12 @@
 package com.ranjan.somiq.chat.ui.voicecall
 
+import androidx.compose.runtime.Stable
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
 object VoiceCallContract {
+    @Stable
     data class UiState(
         val otherUserId: String = "",
         val otherUserName: String = "",

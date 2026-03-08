@@ -62,7 +62,7 @@ class ProfileViewModel(
                 )
             }
             if (userId == null) {
-                loadOwnPostsAndSaved(profile.user.id)
+                loadOwnPostsStoriesAndSaved(profile.user.id)
             } else {
                 loadUserPosts(profile.user.id)
             }
@@ -75,14 +75,6 @@ class ProfileViewModel(
         }
     }
 
-    private suspend fun loadOwnPostsAndSaved(profileUserId: String) {
-        feedRepository.getPostsByUser(profileUserId).getOrElse { emptyList() }.let { posts ->
-            setState { copy(myPosts = posts) }
-        }
-        feedRepository.getBookmarkedPosts().getOrElse { emptyList() }.let { saved ->
-            setState { copy(savedPosts = saved) }
-        }
-    }
 
     private suspend fun refreshProfile() {
         setState { copy(refreshing = true, error = null) }
@@ -103,10 +95,22 @@ class ProfileViewModel(
                 )
             }
             if (userId == null) {
-                loadOwnPostsAndSaved(profile.user.id)
+                loadOwnPostsStoriesAndSaved(profile.user.id)
             } else {
                 loadUserPosts(profile.user.id)
             }
+        }
+    }
+
+    private suspend fun loadOwnPostsStoriesAndSaved(profileUserId: String) {
+        feedRepository.getPostsByUser(profileUserId).getOrElse { emptyList() }.let { posts ->
+            setState { copy(myPosts = posts) }
+        }
+        feedRepository.getMyStories().getOrElse { emptyList() }.let { stories ->
+            setState { copy(myStories = stories) }
+        }
+        feedRepository.getBookmarkedPosts().getOrElse { emptyList() }.let { saved ->
+            setState { copy(savedPosts = saved) }
         }
     }
 }

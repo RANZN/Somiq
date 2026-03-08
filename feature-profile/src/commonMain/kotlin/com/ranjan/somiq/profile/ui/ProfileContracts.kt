@@ -5,25 +5,25 @@ import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.feed.data.model.Post
+import com.ranjan.somiq.feed.data.model.Story
 import com.ranjan.somiq.profile.data.model.ProfileResponse
 
-enum class ProfileTab { Posts, Saved }
+enum class ProfileTab { MyStories, Saved }
 
 object ProfileContract {
     @Stable
     data class UiState(
         val profile: ProfileResponse? = null,
         val myPosts: List<Post> = emptyList(),
+        val myStories: List<Story> = emptyList(),
         val savedPosts: List<Post> = emptyList(),
-        val selectedTab: ProfileTab = ProfileTab.Posts,
+        val selectedTab: ProfileTab = ProfileTab.MyStories,
         val isLoading: Boolean = false,
         val error: String? = null,
         val refreshing: Boolean = false,
         val showAppBar: Boolean = false,
         val appBarTitle: String? = null
     ) : BaseUiState {
-        val hasError: Boolean
-            get() = error != null && profile == null
         val isOwnProfile: Boolean
             get() = profile != null && appBarTitle == null
     }

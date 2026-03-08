@@ -2,7 +2,7 @@ package com.ranjan.somiq.feed.ui
 
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.feed.domain.usecase.GetFeedUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetFeedPageUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetStoriesUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleBookmarkUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleLikeUseCase
@@ -12,7 +12,7 @@ import com.ranjan.somiq.feed.ui.FeedContract.UiState
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
-    private val getFeedUseCase: GetFeedUseCase,
+    private val getFeedPageUseCase: GetFeedPageUseCase,
     private val getStoriesUseCase: GetStoriesUseCase,
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase
@@ -30,6 +30,7 @@ class FeedViewModel(
         viewModelScope.launch {
             when (intent) {
                 is Intent.LoadFeed -> loadFeed()
+                is Intent.LoadMore -> loadMore()
                 is Intent.RefreshFeed -> refreshFeed()
                 is Intent.LoadStories -> loadStories()
                 is Intent.ToggleLike -> toggleLike(intent.postId)
@@ -56,7 +57,7 @@ class FeedViewModel(
 
     private suspend fun loadFeed() {
         setState { copy(isLoading = true, error = null) }
-        getFeedUseCase().getOrElse { error ->
+        getFeedPageUseCase(after = null).getOrElse { error ->
             setState {
                 copy(
                     isLoading = false,
@@ -64,10 +65,11 @@ class FeedViewModel(
                 )
             }
             return
-        }.let { posts ->
+        }.let { result ->
             setState {
                 copy(
-                    posts = posts,
+                    posts = result.data,
+                    nextCursor = result.nextCursor,
                     isLoading = false,
                     error = null
                 )
@@ -75,9 +77,27 @@ class FeedViewModel(
         }
     }
 
+    private suspend fun loadMore() {
+        val cursor = state.value.nextCursor ?: return
+        if (state.value.loadingMore) return
+        setState { copy(loadingMore = true) }
+        getFeedPageUseCase(after = cursor).getOrElse { error ->
+            setState { copy(loadingMore = false) }
+            return
+        }.let { result ->
+            setState {
+                copy(
+                    posts = posts + result.data,
+                    nextCursor = result.nextCursor,
+                    loadingMore = false
+                )
+            }
+        }
+    }
+
     private suspend fun refreshFeed() {
         setState { copy(refreshing = true, error = null) }
-        getFeedUseCase().getOrElse { error ->
+        getFeedPageUseCase(after = null).getOrElse { error ->
             setState {
                 copy(
                     refreshing = false,
@@ -85,15 +105,15 @@ class FeedViewModel(
                 )
             }
             return
-        }.let { posts ->
+        }.let { result ->
             setState {
                 copy(
-                    posts = posts,
+                    posts = result.data,
+                    nextCursor = result.nextCursor,
                     error = null
                 )
             }
         }
-        // Also refresh stories when pulling to refresh
         loadStories()
         setState { copy(refreshing = false) }
     }

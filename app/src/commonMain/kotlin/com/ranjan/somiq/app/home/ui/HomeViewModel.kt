@@ -22,7 +22,13 @@ class HomeViewModel(
         viewModelScope.launch {
             when (intent) {
                 is HomeContract.Intent.SelectTab -> {
-                    setState { copy(selectedTab = intent.tab) }
+                    val currentTab = state.value.selectedTab
+                    setState {
+                        copy(
+                            selectedTab = intent.tab,
+                            scrollToTopKey = if (intent.tab == currentTab) scrollToTopKey + 1 else scrollToTopKey
+                        )
+                    }
                 }
                 is HomeContract.Intent.SearchQueryChange -> {
                     setState { copy(searchQuery = intent.query) }

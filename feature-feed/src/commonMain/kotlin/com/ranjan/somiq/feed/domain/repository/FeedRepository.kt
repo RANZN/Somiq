@@ -4,10 +4,11 @@ import com.ranjan.somiq.feed.data.model.CreatePostRequest
 import com.ranjan.somiq.feed.data.model.CreateStoryRequest
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.feed.data.model.Story
+import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.feed.data.model.ToggleResponse
 
 interface FeedRepository {
-    suspend fun getFeed(): Result<List<Post>>
+    suspend fun getFeedPage(after: String? = null, limit: Int = 20): Result<PaginationResult<Post>>
     suspend fun getPostsByUser(userId: String): Result<List<Post>>
     suspend fun getBookmarkedPosts(): Result<List<Post>>
     suspend fun getPost(postId: String): Result<Post>

@@ -7,32 +7,37 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
 import com.ranjan.somiq.feed.data.model.Post
+import com.ranjan.somiq.feed.data.model.Story
 import com.ranjan.somiq.profile.ui.ProfileContract.Intent
 import com.ranjan.somiq.profile.ui.ProfileContract.UiState
 
@@ -50,8 +56,20 @@ fun ProfileScreen(
     uiState: UiState,
     onIntent: (Intent) -> Unit,
     onPostClick: (String) -> Unit = {},
+    scrollToTopTrigger: Int = 0,
     modifier: Modifier = Modifier
 ) {
+    val storiesRowState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
+    LaunchedEffect(scrollToTopTrigger) {
+        if (scrollToTopTrigger > 0) {
+            if (uiState.isOwnProfile && uiState.selectedTab == ProfileTab.MyStories) {
+                storiesRowState.animateScrollToItem(0)
+            } else {
+                gridState.animateScrollToItem(0)
+            }
+        }
+    }
     Scaffold(
         topBar = when {
             uiState.showAppBar && uiState.appBarTitle != null -> {
@@ -81,7 +99,10 @@ fun ProfileScreen(
                     )
                 }
             }
-            else -> { {} }
+
+            else -> {
+                {}
+            }
         }
     ) { paddingValues ->
         Box(
@@ -98,6 +119,7 @@ fun ProfileScreen(
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
+
                 uiState.error != null && uiState.profile == null -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -123,6 +145,7 @@ fun ProfileScreen(
                         }
                     }
                 }
+
                 uiState.profile != null -> {
                     val profile = uiState.profile
                     Column(
@@ -203,28 +226,31 @@ fun ProfileScreen(
                         }
 
                         if (uiState.isOwnProfile) {
-                            TabRow(
-                                selectedTabIndex = when (uiState.selectedTab) {
-                                    ProfileTab.Posts -> 0
-                                    ProfileTab.Saved -> 1
-                                },
+                            val selectedTabIndex = when (uiState.selectedTab) {
+                                ProfileTab.MyStories -> 0
+                                ProfileTab.Saved -> 1
+                            }
+                            SecondaryTabRow(
+                                selectedTabIndex = selectedTabIndex,
                                 modifier = Modifier.padding(top = 24.dp),
                                 containerColor = MaterialTheme.colorScheme.surface,
-                                contentColor = MaterialTheme.colorScheme.primary
+                                contentColor = MaterialTheme.colorScheme.primary,
                             ) {
                                 Tab(
-                                    selected = uiState.selectedTab == ProfileTab.Posts,
-                                    onClick = { onIntent(Intent.SelectTab(ProfileTab.Posts)) },
+                                    selected = uiState.selectedTab == ProfileTab.MyStories,
+                                    onClick = { onIntent(Intent.SelectTab(ProfileTab.MyStories)) },
+                                    text = { Text("My Stories") },
                                     icon = {
                                         Icon(
-                                            imageVector = Icons.Default.GridOn,
-                                            contentDescription = "Posts"
+                                            imageVector = Icons.Default.PhotoCamera,
+                                            contentDescription = "My Stories"
                                         )
                                     }
                                 )
                                 Tab(
                                     selected = uiState.selectedTab == ProfileTab.Saved,
                                     onClick = { onIntent(Intent.SelectTab(ProfileTab.Saved)) },
+                                    text = { Text("Saved") },
                                     icon = {
                                         Icon(
                                             imageVector = Icons.Default.BookmarkBorder,
@@ -234,33 +260,73 @@ fun ProfileScreen(
                                 )
                             }
 
-                            val posts = when (uiState.selectedTab) {
-                                ProfileTab.Posts -> uiState.myPosts
-                                ProfileTab.Saved -> uiState.savedPosts
-                            }
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(3),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .padding(top = 8.dp),
-                                contentPadding = PaddingValues(vertical = 8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                items(
-                                    items = posts,
-                                    key = { it.id }
-                                ) { post ->
-                                    PostGridThumbnail(
-                                        post = post,
-                                        onClick = { onPostClick(post.id) }
-                                    )
+                            when (uiState.selectedTab) {
+                                ProfileTab.MyStories -> {
+                                    if (uiState.myStories.isEmpty()) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                                .padding(24.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "No stories yet",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    } else {
+                                        LazyRow(
+                                            state = storiesRowState,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                                .padding(top = 8.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            contentPadding = PaddingValues(
+                                                horizontal = 8.dp,
+                                                vertical = 8.dp
+                                            )
+                                        ) {
+                                            items(
+                                                items = uiState.myStories,
+                                                key = { it.id }
+                                            ) { story ->
+                                                StoryThumbnail(story = story)
+                                            }
+                                        }
+                                    }
+                                }
+
+                                ProfileTab.Saved -> {
+                                    LazyVerticalGrid(
+                                        state = gridState,
+                                        columns = GridCells.Fixed(3),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .padding(top = 8.dp),
+                                        contentPadding = PaddingValues(vertical = 8.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                                    ) {
+                                        items(
+                                            items = uiState.savedPosts,
+                                            key = { it.id }
+                                        ) { post ->
+                                            PostGridThumbnail(
+                                                post = post,
+                                                onClick = { onPostClick(post.id) }
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         } else {
                             val posts = uiState.myPosts
                             LazyVerticalGrid(
+                                state = gridState,
                                 columns = GridCells.Fixed(3),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -298,6 +364,25 @@ private fun ProfileStat(count: String, label: String) {
             text = label,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun StoryThumbnail(
+    story: Story,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(72.dp)
+            .clip(CircleShape)
+    ) {
+        AppAsyncImage(
+            imageUrl = story.mediaUrl,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
     }
 }

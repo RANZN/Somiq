@@ -64,6 +64,7 @@ fun HomeNavigationHost(
             when (val selectedTab = state.selectedTab) {
                 Home.Feed -> {
                     FeedScreenHost(
+                        scrollToTopTrigger = state.scrollToTopKey,
                         onCreatePost = onNavigateToCreatePost,
                         onNavigateToNotifications = onNavigateToNotifications,
                         onNavigateToChat = onNavigateToChatList,
@@ -98,6 +99,7 @@ fun HomeNavigationHost(
 
                 is Home.Profile -> {
                     ProfileScreenHost(
+                        scrollToTopTrigger = state.scrollToTopKey,
                         userId = selectedTab.userId,
                         appBarTitle = state.currentUserName,
                         onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },

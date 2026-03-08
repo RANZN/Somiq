@@ -12,7 +12,8 @@ object HomeContract {
         val selectedTab: Home = Home.Feed,
         val searchQuery: String = "",
         val currentUserName: String = "Profile",
-        val isLoadingProfile: Boolean = false
+        val isLoadingProfile: Boolean = false,
+        val scrollToTopKey: Int = 0
     ) : BaseUiState
 
     sealed interface Intent : BaseUiIntent {

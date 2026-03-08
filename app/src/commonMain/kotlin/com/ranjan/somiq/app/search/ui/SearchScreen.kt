@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -27,8 +29,15 @@ import com.ranjan.somiq.app.search.ui.SearchContract.UiState
 fun SearchScreen(
     uiState: UiState,
     onIntent: (Intent) -> Unit,
+    scrollToTopTrigger: Int = 0,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(scrollToTopTrigger) {
+        if (scrollToTopTrigger > 0) {
+            listState.animateScrollToItem(0)
+        }
+    }
     Column(modifier = modifier.fillMaxSize()) {
         when {
             uiState.showSearchFieldInContent -> {
@@ -63,7 +72,7 @@ fun SearchScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = uiState.error!!,
+                            text = uiState.error,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -73,6 +82,7 @@ fun SearchScreen(
             uiState.hasResults -> {
                 val results = uiState.searchResults!!
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (results.users.isNotEmpty()) {

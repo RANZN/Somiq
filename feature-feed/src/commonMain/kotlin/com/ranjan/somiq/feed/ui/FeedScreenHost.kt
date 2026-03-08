@@ -9,6 +9,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedScreenHost(
+    scrollToTopTrigger: Int = 0,
     onCreatePost: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
@@ -40,6 +41,7 @@ fun FeedScreenHost(
 
     FeedScreen(
         uiState = uiState,
-        onIntent = viewModel::handleIntent
+        onIntent = viewModel::handleIntent,
+        scrollToTopTrigger = scrollToTopTrigger
     )
 }

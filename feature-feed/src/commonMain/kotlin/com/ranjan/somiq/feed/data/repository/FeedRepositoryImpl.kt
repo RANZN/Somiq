@@ -25,10 +25,13 @@ class FeedRepositoryImpl(
     private val httpClient: HttpClient
 ) : FeedRepository {
 
-    override suspend fun getFeed(): Result<List<Post>> {
+    override suspend fun getFeedPage(after: String?, limit: Int): Result<PaginationResult<Post>> {
+        val url = buildString {
+            append("$BASE_URL/v1/posts?limit=$limit")
+            if (!after.isNullOrBlank()) append("&after=$after")
+        }
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/posts") },
-            onSuccess = { response -> response.body<PaginationResult<Post>>().data },
+            apiCall = { httpClient.get(url) },
             errorMessage = "Failed to load feed"
         )
     }

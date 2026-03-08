@@ -12,20 +12,20 @@ object FeedContract {
     data class UiState(
         val posts: List<Post> = emptyList(),
         val stories: List<Story> = emptyList(),
+        val nextCursor: String? = null,
         val isLoading: Boolean = false,
+        val loadingMore: Boolean = false,
         val error: String? = null,
         val refreshing: Boolean = false
-    ): BaseUiState {
-        val isEmpty: Boolean
-            get() = posts.isEmpty() && !isLoading && error == null
-
-        val hasError: Boolean
-            get() = error != null && posts.isEmpty()
+    ) : BaseUiState {
+        val hasMore: Boolean
+            get() = nextCursor != null
     }
 
     sealed interface Intent : BaseUiIntent {
         // Feed intents
         object LoadFeed : Intent
+        object LoadMore : Intent
         object RefreshFeed : Intent
         object LoadStories : Intent
 

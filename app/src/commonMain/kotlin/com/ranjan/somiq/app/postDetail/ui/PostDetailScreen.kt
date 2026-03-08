@@ -88,39 +88,38 @@ fun PostDetailScreen(
                 }
             }
         }
-        else -> {
+        uiState.post != null -> {
             LazyColumn(
                 modifier = modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Post content
-                uiState.post?.let { post ->
-                    item {
-                        Column {
+                // Post content (post is non-null when this branch is shown)
+                item(key = "post") {
+                    val post = uiState.post!!
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = post.title,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = post.content,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
                             Text(
-                                text = post.title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
+                                text = "❤️ ${post.likesCount}",
+                                style = MaterialTheme.typography.bodyMedium
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = post.content,
-                                style = MaterialTheme.typography.bodyLarge
+                                text = "💬 ${uiState.comments.size}",
+                                style = MaterialTheme.typography.bodyMedium
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                Text(
-                                    text = "❤️ ${post.likesCount}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "💬 ${uiState.comments.size}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
                         }
                     }
                 }

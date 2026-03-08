@@ -11,6 +11,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProfileScreenHost(
+    scrollToTopTrigger: Int = 0,
     userId: String? = null,
     appBarTitle: String? = null,
     onLogout: () -> Unit = {},
@@ -45,6 +46,7 @@ fun ProfileScreenHost(
     ProfileScreen(
         uiState = uiState,
         onIntent = viewModel::handleIntent,
-        onPostClick = onNavigateToPost
+        onPostClick = onNavigateToPost,
+        scrollToTopTrigger = scrollToTopTrigger
     )
 }

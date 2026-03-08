@@ -19,15 +19,24 @@ fun MyApplicationTheme(
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
-            primary = ColorD8AF4C,
-            secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3),
+            primary = SomiqGold,
+            onPrimary = Color.Black,
+            primaryContainer = Color(0xFF2D2A36),
+            secondary = SomiqLavender,
+            tertiary = SomiqCoral,
+            surface = Color(0xFF1C1B1F),
+            surfaceVariant = Color(0xFF2D2A36),
         )
     } else {
         lightColorScheme(
-            primary = ColorD8AF4C,
-            secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3),
+            primary = SomiqGold,
+            onPrimary = Color.Black,
+            primaryContainer = Color(0xFFFFF4D6),
+            secondary = SomiqLavender,
+            tertiary = SomiqCoral,
+            surface = Color.White,
+            surfaceVariant = SomiqSurfaceVariantSoft,
+            outlineVariant = Color(0xFFE8E5ED),
         )
     }
     // Font resources should be provided by the app module
@@ -52,9 +61,9 @@ fun MyApplicationTheme(
         labelSmall = defaultTypography.labelSmall.copy(fontFamily = fontFamily),
     )
     val shapes = Shapes(
-        small = RoundedCornerShape(4.dp),
-        medium = RoundedCornerShape(8.dp),
-        large = RoundedCornerShape(16.dp)
+        small = RoundedCornerShape(12.dp),
+        medium = RoundedCornerShape(20.dp),
+        large = RoundedCornerShape(28.dp)
     )
 
     MaterialTheme(

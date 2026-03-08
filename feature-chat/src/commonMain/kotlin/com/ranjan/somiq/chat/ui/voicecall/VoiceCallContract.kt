@@ -1,10 +1,12 @@
 package com.ranjan.somiq.chat.ui.voicecall
 
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import androidx.compose.runtime.Stable
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
 object VoiceCallContract {
+    @Stable
     data class UiState(
         val otherUserId: String = "",
         val otherUserName: String = "",
@@ -13,11 +15,11 @@ object VoiceCallContract {
         val error: String? = null
     ) : BaseUiState
 
-    sealed interface Action : BaseUiAction {
-        data object StartCall : Action
-        data object EndCall : Action
-        data object MuteToggle : Action
-        data object SpeakerToggle : Action
+    sealed interface Intent : BaseUiIntent {
+        data object StartCall : Intent
+        data object EndCall : Intent
+        data object MuteToggle : Intent
+        data object SpeakerToggle : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

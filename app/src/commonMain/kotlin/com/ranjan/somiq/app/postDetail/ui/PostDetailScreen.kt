@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Action
+import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Intent
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Effect
 
 @Composable
@@ -42,8 +42,8 @@ fun PostDetailScreen(
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(Action.LoadPost)
-        viewModel.handleAction(Action.LoadComments)
+        viewModel.handleIntent(Intent.LoadPost)
+        viewModel.handleIntent(Intent.LoadComments)
     }
 
     CollectEffect(viewModel.effect) { effect ->
@@ -82,45 +82,44 @@ fun PostDetailScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
+                    Button(onClick = { viewModel.handleIntent(Intent.Refresh) }) {
                         Text("Retry")
                     }
                 }
             }
         }
-        else -> {
+        uiState.post != null -> {
             LazyColumn(
                 modifier = modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Post content
-                uiState.post?.let { post ->
-                    item {
-                        Column {
+                // Post content (post is non-null when this branch is shown)
+                item(key = "post") {
+                    val post = uiState.post!!
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = post.title,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = post.content,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
                             Text(
-                                text = post.title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
+                                text = "❤️ ${post.likesCount}",
+                                style = MaterialTheme.typography.bodyMedium
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = post.content,
-                                style = MaterialTheme.typography.bodyLarge
+                                text = "💬 ${uiState.comments.size}",
+                                style = MaterialTheme.typography.bodyMedium
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                Text(
-                                    text = "❤️ ${post.likesCount}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "💬 ${uiState.comments.size}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
                         }
                     }
                 }
@@ -129,12 +128,12 @@ fun PostDetailScreen(
                 item {
                     OutlinedTextField(
                         value = uiState.commentText,
-                        onValueChange = { viewModel.handleAction(Action.UpdateCommentText(it)) },
+                        onValueChange = { viewModel.handleIntent(Intent.UpdateCommentText(it)) },
                         label = { Text("Add a comment...") },
                         modifier = Modifier.fillMaxWidth(),
                         trailingIcon = {
                             IconButton(
-                                onClick = { viewModel.handleAction(Action.PostComment) },
+                                onClick = { viewModel.handleIntent(Intent.PostComment) },
                                 enabled = uiState.commentText.isNotBlank()
                             ) {
                                 Text("Post")
@@ -160,7 +159,7 @@ fun PostDetailScreen(
                     items(uiState.comments) { comment ->
                         CommentItem(
                             comment = comment,
-                            onLikeClick = { viewModel.handleAction(Action.ToggleCommentLike(comment.id)) }
+                            onLikeClick = { viewModel.handleIntent(Intent.ToggleCommentLike(comment.id)) }
                         )
                     }
                 }

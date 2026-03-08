@@ -1,6 +1,6 @@
 package com.ranjan.somiq.notifications
 
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.app.home.data.model.NotificationResponse
@@ -13,12 +13,12 @@ object NotificationsContract {
         val error: String? = null
     ) : BaseUiState
 
-    sealed class Action : BaseUiAction {
-        data object LoadNotifications : Action()
-        data object LoadUnreadCount : Action()
-        data class MarkAsRead(val notificationId: String) : Action()
-        data object MarkAllAsRead : Action()
-        data object Refresh : Action()
+    sealed class Intent : BaseUiIntent {
+        data object LoadNotifications : Intent()
+        data object LoadUnreadCount : Intent()
+        data class MarkAsRead(val notificationId: String) : Intent()
+        data object MarkAllAsRead : Intent()
+        data object Refresh : Intent()
     }
 
     sealed class Effect : BaseUiEffect {

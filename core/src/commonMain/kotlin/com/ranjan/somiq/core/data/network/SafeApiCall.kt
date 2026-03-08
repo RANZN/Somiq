@@ -3,6 +3,7 @@ package com.ranjan.somiq.core.data.network
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.SerializationException
 
 /**
  * Wraps an API call with consistent error handling for common scenarios:
@@ -27,7 +28,7 @@ suspend inline fun <T> safeApiCall(
         if (response.status == HttpStatusCode.OK || response.status == HttpStatusCode.Created) {
             try {
                 Result.success(onSuccess(response))
-            } catch (e: kotlinx.serialization.SerializationException) {
+            } catch (e: SerializationException) {
                 Result.failure(Exception("Failed to parse response: ${e.message}"))
             } catch (e: Exception) {
                 Result.failure(Exception("Failed to process response: ${e.message}"))

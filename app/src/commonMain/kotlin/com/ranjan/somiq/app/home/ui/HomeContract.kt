@@ -1,7 +1,7 @@
 package com.ranjan.somiq.app.home.ui
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.presentation.navigation.Home
@@ -12,14 +12,15 @@ object HomeContract {
         val selectedTab: Home = Home.Feed,
         val searchQuery: String = "",
         val currentUserName: String = "Profile",
-        val isLoadingProfile: Boolean = false
+        val isLoadingProfile: Boolean = false,
+        val scrollToTopKey: Int = 0
     ) : BaseUiState
 
-    sealed interface Action : BaseUiAction {
-        data class SelectTab(val tab: Home) : Action
-        data class SearchQueryChange(val query: String) : Action
-        object Logout : Action
-        object LoadCurrentUserProfile : Action
+    sealed interface Intent : BaseUiIntent {
+        data class SelectTab(val tab: Home) : Intent
+        data class SearchQueryChange(val query: String) : Intent
+        object Logout : Intent
+        object LoadCurrentUserProfile : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

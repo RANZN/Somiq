@@ -3,7 +3,6 @@ package com.ranjan.somiq.app.home.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -11,13 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
-import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
+import com.ranjan.somiq.app.search.ui.SearchScreenHost
 import com.ranjan.somiq.core.presentation.navigation.Home
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.feed.ui.FeedScreenHost
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
 import com.ranjan.somiq.reels.ui.ReelsScreenHost
-import com.ranjan.somiq.app.search.ui.SearchScreenHost
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +36,7 @@ fun HomeNavigationHost(
     onNavigateToLogin: () -> Unit,
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToCreatePost: () -> Unit = {},
+    onNavigateToCreateStory: () -> Unit = {},
     onNavigateToChatList: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -54,7 +53,7 @@ fun HomeNavigationHost(
         bottomBar = {
             BottomNavigationBar(
                 currentTab = state.selectedTab,
-                onTabSelected = { viewModel.handleAction(HomeContract.Action.SelectTab(it)) },
+                onTabSelected = { viewModel.handleIntent(HomeContract.Intent.SelectTab(it)) },
                 modifier = Modifier.navigationBarsPadding()
             )
         }
@@ -65,9 +64,11 @@ fun HomeNavigationHost(
             when (val selectedTab = state.selectedTab) {
                 Home.Feed -> {
                     FeedScreenHost(
+                        scrollToTopTrigger = state.scrollToTopKey,
                         onCreatePost = onNavigateToCreatePost,
                         onNavigateToNotifications = onNavigateToNotifications,
                         onNavigateToChat = onNavigateToChatList,
+                        onNavigateToCreateStory = onNavigateToCreateStory,
                         onNavigateToUser = onNavigateToUser,
                         onNavigateToPost = onNavigateToPost,
                         onNavigateToComments = onNavigateToComments,
@@ -80,7 +81,7 @@ fun HomeNavigationHost(
                 Home.Search -> {
                     SearchScreenHost(
                         externalSearchQuery = state.searchQuery,
-                        onExternalQueryChange = { viewModel.handleAction(HomeContract.Action.SearchQueryChange(it)) },
+                        onExternalQueryChange = { viewModel.handleIntent(HomeContract.Intent.SearchQueryChange(it)) },
                         showSearchFieldInContent = false,
                         onNavigateToUser = onNavigateToUser,
                         onNavigateToHashtag = onNavigateToHashtag,
@@ -98,13 +99,15 @@ fun HomeNavigationHost(
 
                 is Home.Profile -> {
                     ProfileScreenHost(
-                        userId = (selectedTab as Home.Profile).userId,
+                        scrollToTopTrigger = state.scrollToTopKey,
+                        userId = selectedTab.userId,
                         appBarTitle = state.currentUserName,
-                        onLogout = { viewModel.handleAction(HomeContract.Action.Logout) },
+                        onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },
                         onNavigateToEditProfile = onNavigateToEditProfile,
                         onNavigateToSettings = onNavigateToSettings,
                         onNavigateToFollowers = onNavigateToFollowers,
-                        onNavigateToFollowing = onNavigateToFollowing
+                        onNavigateToFollowing = onNavigateToFollowing,
+                        onNavigateToPost = onNavigateToPost
                     )
                 }
             }

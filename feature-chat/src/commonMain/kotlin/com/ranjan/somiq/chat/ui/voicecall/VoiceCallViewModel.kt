@@ -8,25 +8,25 @@ import kotlinx.coroutines.launch
 class VoiceCallViewModel(
     private val otherUserId: String,
     private val otherUserName: String
-) : BaseViewModel<VoiceCallContract.UiState, VoiceCallContract.Action, VoiceCallContract.Effect>() {
+) : BaseViewModel<VoiceCallContract.UiState, VoiceCallContract.Intent, VoiceCallContract.Effect>() {
 
     override val initialState: VoiceCallContract.UiState
         get() = VoiceCallContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
 
-    override fun onAction(action: VoiceCallContract.Action) {
+    override fun onIntent(intent: VoiceCallContract.Intent) {
         viewModelScope.launch {
-            when (action) {
-                is VoiceCallContract.Action.StartCall -> {
+            when (intent) {
+                is VoiceCallContract.Intent.StartCall -> {
                     setState { copy(isConnecting = true) }
                     // TODO: Integrate WebRTC / Call Kit for real voice call
                     delay(1500)
                     setState { copy(isConnecting = false, isActive = true) }
                 }
-                is VoiceCallContract.Action.EndCall -> {
+                is VoiceCallContract.Intent.EndCall -> {
                     emitEffect(VoiceCallContract.Effect.CallEnded)
                 }
-                is VoiceCallContract.Action.MuteToggle -> { /* TODO: mute/unmute */ }
-                is VoiceCallContract.Action.SpeakerToggle -> { /* TODO: speaker on/off */ }
+                is VoiceCallContract.Intent.MuteToggle -> { /* TODO: mute/unmute */ }
+                is VoiceCallContract.Intent.SpeakerToggle -> { /* TODO: speaker on/off */ }
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.ranjan.somiq.collections
 
 import com.ranjan.somiq.core.data.model.CollectionResponse
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
@@ -12,10 +12,10 @@ object CollectionsContract {
         val error: String? = null
     ) : BaseUiState
 
-    sealed class Action : BaseUiAction {
-        data object LoadCollections : Action()
-        data class CreateCollection(val name: String, val description: String?) : Action()
-        data object Refresh : Action()
+    sealed class Intent : BaseUiIntent {
+        data object LoadCollections : Intent()
+        data class CreateCollection(val name: String, val description: String?) : Intent()
+        data object Refresh : Intent()
     }
 
     sealed class Effect : BaseUiEffect {

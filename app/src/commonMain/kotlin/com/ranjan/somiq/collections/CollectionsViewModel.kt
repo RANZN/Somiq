@@ -1,7 +1,7 @@
 package com.ranjan.somiq.collections
 
 import androidx.lifecycle.viewModelScope
-import com.ranjan.somiq.collections.CollectionsContract.Action
+import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
 import com.ranjan.somiq.collections.CollectionsContract.UiState
 import com.ranjan.somiq.core.domain.repository.CollectionRepository
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class CollectionsViewModel : BaseViewModel<UiState, Action, Effect>(), KoinComponent {
+class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(), KoinComponent {
     private val getCollectionsUseCase: GetCollectionsUseCase by inject()
     private val collectionRepository: CollectionRepository by inject()
 
@@ -19,15 +19,15 @@ class CollectionsViewModel : BaseViewModel<UiState, Action, Effect>(), KoinCompo
         get() = UiState()
 
     init {
-        handleAction(Action.LoadCollections)
+        handleIntent(Intent.LoadCollections)
     }
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-            is Action.LoadCollections -> loadCollections()
-            is Action.CreateCollection -> createCollection(action.name, action.description)
-            is Action.Refresh -> loadCollections()
+            when (intent) {
+            is Intent.LoadCollections -> loadCollections()
+            is Intent.CreateCollection -> createCollection(intent.name, intent.description)
+            is Intent.Refresh -> loadCollections()
             }
         }
     }

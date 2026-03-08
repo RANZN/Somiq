@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.collections.CollectionsContract.Action
+import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
 import com.ranjan.somiq.core.data.model.CollectionResponse
 import com.ranjan.somiq.core.presentation.util.CollectEffect
@@ -27,7 +27,7 @@ fun CollectionsScreen(
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.handleAction(Action.LoadCollections)
+        viewModel.handleIntent(Intent.LoadCollections)
     }
 
     CollectEffect(viewModel.effect) { effect ->
@@ -84,7 +84,7 @@ fun CollectionsScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.handleAction(Action.Refresh) }) {
+                        Button(onClick = { viewModel.handleIntent(Intent.Refresh) }) {
                             Text("Retry")
                         }
                     }

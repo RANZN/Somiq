@@ -2,7 +2,7 @@ package com.ranjan.somiq.chat.ui.conversation
 
 import androidx.compose.runtime.Stable
 import com.ranjan.somiq.chat.data.model.Message
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
@@ -20,14 +20,14 @@ object ConversationContract {
         val hasError: Boolean get() = error != null
     }
 
-    sealed interface Action : BaseUiAction {
-        data object LoadMessages : Action
-        data class MessageTextChange(val text: String) : Action
-        data object SendMessage : Action
-        data object ClearError : Action
-        data object Retry : Action
-        data object StartVoiceCall : Action
-        data object StartVideoCall : Action
+    sealed interface Intent : BaseUiIntent {
+        data object LoadMessages : Intent
+        data class MessageTextChange(val text: String) : Intent
+        data object SendMessage : Intent
+        data object ClearError : Intent
+        data object Retry : Intent
+        data object StartVoiceCall : Intent
+        data object StartVideoCall : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
  * Base ViewModel class that provides a standardized structure for state management.
  *
  * @param S The UI State type that extends [BaseUiState]
- * @param A The UI Action type that extends [BaseUiAction]
+ * @param I The UI Intent type that extends [BaseUiIntent]
  * @param E The UI Effect type that extends [BaseUiEffect]
  * @param initialState The initial state for the ViewModel
  */
-abstract class BaseViewModel<S : BaseUiState, A : BaseUiAction, E : BaseUiEffect>() : ViewModel() {
+abstract class BaseViewModel<S : BaseUiState, I : BaseUiIntent, E : BaseUiEffect>() : ViewModel() {
 
     abstract val initialState: S
 
@@ -43,10 +43,10 @@ abstract class BaseViewModel<S : BaseUiState, A : BaseUiAction, E : BaseUiEffect
         }
     }
 
-    // ---- ACTION ----
-    fun handleAction(action: A) {
-        onAction(action)
+    // ---- INTENT ----
+    fun handleIntent(intent: I) {
+        onIntent(intent)
     }
 
-    protected abstract fun onAction(action: A)
+    protected abstract fun onIntent(intent: I)
 }

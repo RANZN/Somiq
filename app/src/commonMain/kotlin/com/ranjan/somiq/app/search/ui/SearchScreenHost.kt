@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import com.ranjan.somiq.app.search.ui.SearchContract.Action
+import com.ranjan.somiq.app.search.ui.SearchContract.Intent
 import com.ranjan.somiq.app.search.ui.SearchContract.Effect
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import org.koin.compose.viewmodel.koinViewModel
@@ -30,7 +30,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreenHost(
-    viewModel: SearchViewModel = koinViewModel(),
     externalSearchQuery: String? = null,
     onExternalQueryChange: (String) -> Unit = {},
     showSearchFieldInContent: Boolean = true,
@@ -38,14 +37,19 @@ fun SearchScreenHost(
     onNavigateToHashtag: (String) -> Unit = {},
     onNavigateToPost: (String) -> Unit = {}
 ) {
+    val viewModel: SearchViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    if (externalSearchQuery != null) {
-        LaunchedEffect(externalSearchQuery) {
-            viewModel.handleAction(Action.OnQueryChange(externalSearchQuery))
-            viewModel.handleAction(Action.PerformSearch)
+    LaunchedEffect(externalSearchQuery) {
+        if (externalSearchQuery != null) {
+            viewModel.handleIntent(Intent.OnQueryChange(externalSearchQuery))
+            viewModel.handleIntent(Intent.PerformSearch)
         }
+    }
+
+    LaunchedEffect(showSearchFieldInContent) {
+        viewModel.handleIntent(Intent.SetShowSearchFieldInContent(showSearchFieldInContent))
     }
 
     CollectEffect(viewModel.effect) { effect ->
@@ -56,54 +60,55 @@ fun SearchScreenHost(
         }
     }
 
-    if (!showSearchFieldInContent && externalSearchQuery != null) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        TextField(
-                            value = externalSearchQuery,
-                            onValueChange = onExternalQueryChange,
-                            placeholder = { Text("Search") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                cursorColor = MaterialTheme.colorScheme.primary,
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+    when {
+        !showSearchFieldInContent && externalSearchQuery != null -> {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            TextField(
+                                value = externalSearchQuery,
+                                onValueChange = onExternalQueryChange,
+                                placeholder = { Text("Search") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    cursorColor = MaterialTheme.colorScheme.primary,
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                                )
                             )
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            titleContentColor = MaterialTheme.colorScheme.onSurface
                         )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface
                     )
-                )
-            }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                SearchScreen(
-                    uiState = uiState,
-                    onAction = viewModel::handleAction,
-                    showSearchFieldInContent = false
-                )
+                }
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    SearchScreen(
+                        uiState = uiState,
+                        onIntent = viewModel::handleIntent
+                    )
+                }
             }
         }
-    } else {
-        SearchScreen(
-            uiState = uiState,
-            onAction = viewModel::handleAction,
-            showSearchFieldInContent = showSearchFieldInContent
-        )
+        else -> {
+            SearchScreen(
+                uiState = uiState,
+                onIntent = viewModel::handleIntent
+            )
+        }
     }
 }

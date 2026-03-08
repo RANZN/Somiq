@@ -1,6 +1,6 @@
 package com.ranjan.somiq.app.postDetail.ui
 
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.feed.data.model.Post
@@ -16,13 +16,13 @@ object PostDetailContract {
         val commentText: String = ""
     ) : BaseUiState
 
-    sealed class Action : BaseUiAction {
-        data object LoadPost : Action()
-        data object LoadComments : Action()
-        data class UpdateCommentText(val text: String) : Action()
-        data object PostComment : Action()
-        data class ToggleCommentLike(val commentId: String) : Action()
-        data object Refresh : Action()
+    sealed class Intent : BaseUiIntent {
+        data object LoadPost : Intent()
+        data object LoadComments : Intent()
+        data class UpdateCommentText(val text: String) : Intent()
+        data object PostComment : Intent()
+        data class ToggleCommentLike(val commentId: String) : Intent()
+        data object Refresh : Intent()
     }
 
     sealed class Effect : BaseUiEffect {

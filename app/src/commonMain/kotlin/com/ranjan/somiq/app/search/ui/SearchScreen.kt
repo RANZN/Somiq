@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -20,119 +22,132 @@ import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.app.search.data.model.User
-import com.ranjan.somiq.app.search.ui.SearchContract.Action
+import com.ranjan.somiq.app.search.ui.SearchContract.Intent
 import com.ranjan.somiq.app.search.ui.SearchContract.UiState
 
 @Composable
 fun SearchScreen(
     uiState: UiState,
-    onAction: (Action) -> Unit,
-    showSearchFieldInContent: Boolean = true,
+    onIntent: (Intent) -> Unit,
+    scrollToTopTrigger: Int = 0,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(scrollToTopTrigger) {
+        if (scrollToTopTrigger > 0) {
+            listState.animateScrollToItem(0)
+        }
+    }
     Column(modifier = modifier.fillMaxSize()) {
-        if (showSearchFieldInContent) {
-            OutlinedTextField(
-                value = uiState.searchQuery,
-                onValueChange = { onAction(Action.OnQueryChange(it)) },
-                label = { Text("Search") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                singleLine = true
-            )
+        when {
+            uiState.showSearchFieldInContent -> {
+                OutlinedTextField(
+                    value = uiState.searchQuery,
+                    onValueChange = { onIntent(Intent.OnQueryChange(it)) },
+                    label = { Text("Search") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    singleLine = true
+                )
+            }
         }
 
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
             }
-        } else if (uiState.error != null) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(16.dp)
+            uiState.error != null -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = uiState.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+            uiState.hasResults -> {
+                val results = uiState.searchResults!!
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (results.users.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "Users",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                        items(results.users) { user ->
+                            UserSearchItem(
+                                user = user,
+                                onClick = { onIntent(Intent.OnUserClick(user.id)) }
+                            )
+                        }
+                    }
+
+                    if (results.posts.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "Posts",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(16.dp, 8.dp)
+                            )
+                        }
+                        items(results.posts) { post ->
+                            PostSearchItem(
+                                post = post,
+                                onClick = { onIntent(Intent.OnPostClick(post.id)) }
+                            )
+                        }
+                    }
+
+                    if (results.reels.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "Reels",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(16.dp, 8.dp)
+                            )
+                        }
+                        items(results.reels) { reel ->
+                            ReelSearchItem(
+                                reel = reel,
+                                onClick = { onIntent(Intent.OnPostClick(reel.id)) }
+                            )
+                        }
+                    }
+                }
+            }
+            uiState.isSearchActive -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = uiState.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error
+                        text = "No results found",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            }
-        } else if (uiState.hasResults) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val results = uiState.searchResults!!
-                
-                if (results.users.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = "Users",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                    items(results.users) { user ->
-                        UserSearchItem(
-                            user = user,
-                            onClick = { onAction(Action.OnUserClick(user.id)) }
-                        )
-                    }
-                }
-                
-                if (results.posts.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = "Posts",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp, 8.dp)
-                        )
-                    }
-                    items(results.posts) { post ->
-                        PostSearchItem(
-                            post = post,
-                            onClick = { onAction(Action.OnPostClick(post.id)) }
-                        )
-                    }
-                }
-                
-                if (results.reels.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = "Reels",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp, 8.dp)
-                        )
-                    }
-                    items(results.reels) { reel ->
-                        ReelSearchItem(
-                            reel = reel,
-                            onClick = { onAction(Action.OnPostClick(reel.id)) }
-                        )
-                    }
-                }
-            }
-        } else if (uiState.isSearchActive) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No results found",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }

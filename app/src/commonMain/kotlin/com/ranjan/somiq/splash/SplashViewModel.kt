@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.usecase.UserLoginStatus
 import com.ranjan.somiq.common.checkForUpdate.CheckUpdateUseCase
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.core.presentation.viewmodel.NoAction
+import com.ranjan.somiq.core.presentation.viewmodel.NoIntent
 import com.ranjan.somiq.core.presentation.viewmodel.NoState
 import com.ranjan.somiq.splash.SplashContract.Effect
 import kotlinx.coroutines.async
@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 class SplashViewModel(
     private val checkUpdate: CheckUpdateUseCase,
     private val userLoginStatus: UserLoginStatus,
-) : BaseViewModel<NoState, NoAction, Effect>() {
+) : BaseViewModel<NoState, NoIntent, Effect>() {
 
     override val initialState: NoState = NoState
 
@@ -46,8 +46,8 @@ class SplashViewModel(
         emitEffect(action)
     }
 
-    override fun onAction(action: NoAction) {
-        // No actions needed for splash
+    override fun onIntent(intent: NoIntent) {
+        // No intents needed for splash
     }
 
 }

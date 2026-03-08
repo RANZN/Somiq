@@ -11,13 +11,13 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreenHost(
-    viewmodel: LoginViewModel = koinViewModel(),
     navigateToDashboard: () -> Unit,
     navigateToSignUp: () -> Unit,
 ) {
-    val uiState by viewmodel.state.collectAsState()
+    val viewModel: LoginViewModel = koinViewModel()
+    val uiState by viewModel.state.collectAsState()
 
-    CollectEffect(viewmodel.effect) {
+    CollectEffect(viewModel.effect) {
         when (it) {
             Effect.NavigateToDashboard -> navigateToDashboard()
             Effect.NavigateToSignUp -> navigateToSignUp()
@@ -27,6 +27,6 @@ fun LoginScreenHost(
     LoginScreen(
         uiState = uiState,
         modifier = Modifier.statusBarsPadding(),
-        action = viewmodel::handleAction
+        intent = viewModel::handleIntent
     )
 }

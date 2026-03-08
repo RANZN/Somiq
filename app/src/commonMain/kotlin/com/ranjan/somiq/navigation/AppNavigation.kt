@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.ranjan.somiq.app.createpost.CreatePostPlaceholderScreen
+import com.ranjan.somiq.createpost.CreatePostEntry
+import com.ranjan.somiq.createstory.CreateStoryEntry
+import com.ranjan.somiq.feed.ui.storyview.StoryViewScreenHost
 import com.ranjan.somiq.app.home.ui.HomeNavigationHost
 import com.ranjan.somiq.app.postDetail.ui.PostDetailScreen
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
@@ -31,6 +33,8 @@ import com.ranjan.somiq.core.presentation.navigation.ChatListScreen
 import com.ranjan.somiq.core.presentation.navigation.Collections
 import com.ranjan.somiq.core.presentation.navigation.Conversation
 import com.ranjan.somiq.core.presentation.navigation.CreatePostScreen
+import com.ranjan.somiq.core.presentation.navigation.CreateStoryScreen
+import com.ranjan.somiq.core.presentation.navigation.StoryView
 import com.ranjan.somiq.core.presentation.navigation.Home
 import com.ranjan.somiq.core.presentation.navigation.HomeGraph
 import com.ranjan.somiq.core.presentation.navigation.Notifications
@@ -90,7 +94,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     onNavigateToUser = { userId -> backStack.add(Home.Profile(userId)) },
                     onNavigateToPost = { postId -> backStack.add(PostDetail(postId)) },
                     onNavigateToComments = { postId -> backStack.add(PostDetail(postId)) },
-                    onNavigateToStory = { },
+                    onNavigateToStory = { storyId -> backStack.add(StoryView(storyId)) },
                     onNavigateToHashtag = { },
                     onShowShareDialog = { },
                     onShowMoreOptions = { },
@@ -105,12 +109,24 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     },
                     onNavigateToNotifications = { backStack.add(Notifications) },
                     onNavigateToCreatePost = { backStack.add(CreatePostScreen) },
+                    onNavigateToCreateStory = { backStack.add(CreateStoryScreen) },
                     onNavigateToChatList = { backStack.add(ChatListScreen) }
                 )
             }
 
             entry<CreatePostScreen> {
-                CreatePostPlaceholderScreen(onBack = { backStack.removeLastOrNull() })
+                CreatePostEntry(onBack = { backStack.removeLastOrNull() })
+            }
+
+            entry<CreateStoryScreen> {
+                CreateStoryEntry(onBack = { backStack.removeLastOrNull() })
+            }
+
+            entry<StoryView> { key ->
+                StoryViewScreenHost(
+                    storyId = key.storyId,
+                    onBack = { backStack.removeLastOrNull() }
+                )
             }
 
             entry<ChatListScreen> {
@@ -124,7 +140,8 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 ProfileScreenWithBack(
                     userId = key.userId,
                     onBack = { backStack.removeLastOrNull() },
-                    onNavigateToUser = { userId -> backStack.add(Home.Profile(userId)) },
+                    onNavigateToUser = { uid -> backStack.add(Home.Profile(uid)) },
+                    onNavigateToPost = { postId -> backStack.add(PostDetail(postId)) },
                     onNavigateToEditProfile = { },
                     onNavigateToSettings = { },
                     onNavigateToFollowers = { },
@@ -218,6 +235,7 @@ private fun ProfileScreenWithBack(
     userId: String?,
     onBack: () -> Unit,
     onNavigateToUser: (String) -> Unit,
+    onNavigateToPost: (String) -> Unit,
     onNavigateToEditProfile: (String) -> Unit,
     onNavigateToSettings: (String) -> Unit,
     onNavigateToFollowers: (String) -> Unit,
@@ -251,7 +269,8 @@ private fun ProfileScreenWithBack(
                 onNavigateToEditProfile = onNavigateToEditProfile,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToFollowers = onNavigateToFollowers,
-                onNavigateToFollowing = onNavigateToFollowing
+                onNavigateToFollowing = onNavigateToFollowing,
+                onNavigateToPost = onNavigateToPost
             )
         }
     }

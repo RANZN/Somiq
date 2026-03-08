@@ -21,19 +21,11 @@ class TokenStorageImpl(
     private val dataStore: DataStore<Preferences>,
 ) : TokenStorage {
 
-    private var cacheAccessToken: String? = null
-    override suspend fun getAccessToken(): String? {
-        if (cacheAccessToken != null) return cacheAccessToken
-        cacheAccessToken = dataStore.data.map { it[KEY_ACCESS_TOKEN] }.first()
-        return cacheAccessToken
-    }
+    override suspend fun getAccessToken(): String? =
+        dataStore.data.map { it[KEY_ACCESS_TOKEN] }.first()
 
-    private var cacheRefreshToken: String? = null
-    override suspend fun getRefreshToken(): String? {
-        if (cacheRefreshToken != null) return cacheRefreshToken
-        cacheRefreshToken = dataStore.data.map { it[KEY_REFRESH_TOKEN] }.first()
-        return cacheRefreshToken
-    }
+    override suspend fun getRefreshToken(): String? =
+        dataStore.data.map { it[KEY_REFRESH_TOKEN] }.first()
 
     override suspend fun setTokens(accessToken: String, refreshToken: String) {
         dataStore.edit {

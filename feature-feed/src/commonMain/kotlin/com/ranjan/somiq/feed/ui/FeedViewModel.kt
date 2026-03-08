@@ -2,48 +2,54 @@ package com.ranjan.somiq.feed.ui
 
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.feed.domain.usecase.GetFeedUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetFeedPageUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetStoriesUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleBookmarkUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleLikeUseCase
-import com.ranjan.somiq.feed.ui.FeedContract.Action
 import com.ranjan.somiq.feed.ui.FeedContract.Effect
+import com.ranjan.somiq.feed.ui.FeedContract.Intent
 import com.ranjan.somiq.feed.ui.FeedContract.UiState
 import kotlinx.coroutines.launch
 
 class FeedViewModel(
-    private val getFeedUseCase: GetFeedUseCase,
+    private val getFeedPageUseCase: GetFeedPageUseCase,
     private val getStoriesUseCase: GetStoriesUseCase,
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase
-) : BaseViewModel<UiState, Action, Effect>() {
+) : BaseViewModel<UiState, Intent, Effect>() {
 
     override val initialState: UiState
         get() = UiState()
 
     init {
-        handleAction(Action.LoadFeed)
-        handleAction(Action.LoadStories)
+        handleIntent(Intent.LoadFeed)
+        handleIntent(Intent.LoadStories)
     }
 
-    override fun onAction(action: Action) {
+    override fun onIntent(intent: Intent) {
         viewModelScope.launch {
-            when (action) {
-                is Action.LoadFeed -> loadFeed()
-                is Action.RefreshFeed -> refreshFeed()
-                is Action.LoadStories -> loadStories()
-                is Action.ToggleLike -> toggleLike(action.postId)
-                is Action.ToggleBookmark -> toggleBookmark(action.postId)
-                is Action.OnPostClick -> emitEffect(Effect.NavigateToPost(action.postId))
-                is Action.OnCommentClick -> emitEffect(Effect.NavigateToComments(action.postId))
-                is Action.OnShareClick -> emitEffect(Effect.ShowShareDialog(action.postId))
-                is Action.OnMoreClick -> emitEffect(Effect.ShowMoreOptions(action.postId))
-                is Action.OnUserClick -> emitEffect(Effect.NavigateToUser(action.userId))
-                is Action.OnStoryClick -> emitEffect(Effect.NavigateToStory(action.storyId))
-                is Action.ClearError -> setState { copy(error = null) }
-                is Action.Retry -> {
+            when (intent) {
+                is Intent.LoadFeed -> loadFeed()
+                is Intent.LoadMore -> loadMore()
+                is Intent.RefreshFeed -> refreshFeed()
+                is Intent.LoadStories -> loadStories()
+                is Intent.ToggleLike -> toggleLike(intent.postId)
+                is Intent.ToggleBookmark -> toggleBookmark(intent.postId)
+                is Intent.OnPostClick -> emitEffect(Effect.NavigateToPost(intent.postId))
+                is Intent.OnCommentClick -> emitEffect(Effect.NavigateToComments(intent.postId))
+                is Intent.OnShareClick -> emitEffect(Effect.ShowShareDialog(intent.postId))
+                is Intent.OnMoreClick -> emitEffect(Effect.ShowMoreOptions(intent.postId))
+                is Intent.OnUserClick -> emitEffect(Effect.NavigateToUser(intent.userId))
+                is Intent.OnStoryClick -> emitEffect(Effect.NavigateToStory(intent.storyId))
+                is Intent.OnCreatePostClick -> emitEffect(Effect.NavigateToCreatePost)
+                is Intent.OnNotificationsClick -> emitEffect(Effect.NavigateToNotifications)
+                is Intent.OnChatClick -> emitEffect(Effect.NavigateToChat)
+                is Intent.OnAddStoryClick -> emitEffect(Effect.NavigateToCreateStory)
+                is Intent.ClearError -> setState { copy(error = null) }
+                is Intent.Retry -> {
                     setState { copy(error = null) }
                     loadFeed()
+                    loadStories()
                 }
             }
         }
@@ -51,7 +57,7 @@ class FeedViewModel(
 
     private suspend fun loadFeed() {
         setState { copy(isLoading = true, error = null) }
-        getFeedUseCase().getOrElse { error ->
+        getFeedPageUseCase(after = null).getOrElse { error ->
             setState {
                 copy(
                     isLoading = false,
@@ -59,10 +65,11 @@ class FeedViewModel(
                 )
             }
             return
-        }.let { posts ->
+        }.let { result ->
             setState {
                 copy(
-                    posts = posts,
+                    posts = result.data,
+                    nextCursor = result.nextCursor,
                     isLoading = false,
                     error = null
                 )
@@ -70,9 +77,27 @@ class FeedViewModel(
         }
     }
 
+    private suspend fun loadMore() {
+        val cursor = state.value.nextCursor ?: return
+        if (state.value.loadingMore) return
+        setState { copy(loadingMore = true) }
+        getFeedPageUseCase(after = cursor).getOrElse { error ->
+            setState { copy(loadingMore = false) }
+            return
+        }.let { result ->
+            setState {
+                copy(
+                    posts = posts + result.data,
+                    nextCursor = result.nextCursor,
+                    loadingMore = false
+                )
+            }
+        }
+    }
+
     private suspend fun refreshFeed() {
         setState { copy(refreshing = true, error = null) }
-        getFeedUseCase().getOrElse { error ->
+        getFeedPageUseCase(after = null).getOrElse { error ->
             setState {
                 copy(
                     refreshing = false,
@@ -80,15 +105,17 @@ class FeedViewModel(
                 )
             }
             return
-        }.let { posts ->
+        }.let { result ->
             setState {
                 copy(
-                    posts = posts,
-                    refreshing = false,
+                    posts = result.data,
+                    nextCursor = result.nextCursor,
                     error = null
                 )
             }
         }
+        loadStories()
+        setState { copy(refreshing = false) }
     }
 
     private suspend fun loadStories() {

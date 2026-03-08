@@ -12,10 +12,10 @@ import org.koin.core.parameter.parametersOf
 fun VideoCallScreenHost(
     otherUserId: String,
     otherUserName: String,
-    viewModel: VideoCallViewModel = koinViewModel(parameters = { parametersOf(otherUserId, otherUserName) }),
     onCallEnded: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val viewModel: VideoCallViewModel = koinViewModel(parameters = { parametersOf(otherUserId, otherUserName) })
     val uiState by viewModel.state.collectAsState()
 
     CollectEffect(viewModel.effect) { effect ->
@@ -24,5 +24,5 @@ fun VideoCallScreenHost(
         }
     }
 
-    VideoCallScreen(uiState = uiState, onAction = viewModel::handleAction, modifier = modifier)
+    VideoCallScreen(uiState = uiState, onIntent = viewModel::handleIntent, modifier = modifier)
 }

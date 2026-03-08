@@ -1,7 +1,7 @@
 package com.ranjan.somiq.auth.ui.signup
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiAction
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
@@ -50,17 +50,17 @@ object SignUpContract {
         }
     }
 
-    sealed interface Action : BaseUiAction {
-        data object AddPictureClick : Action
-        data class OnNameChange(val name: String) : Action
-        data class OnUsernameChange(val username: String) : Action
-        data class OnEmailChange(val email: String) : Action
-        data class OnPasswordChange(val password: String) : Action
-        data class OnConfirmPasswordChange(val confirmPassword: String) : Action
-        object Signup : Action
-        data class ShowError(val error: String) : Action
-        object OnGoogleLoginClick : Action
-        object NavigateToHome : Action
+    sealed interface Intent : BaseUiIntent {
+        data object AddPictureClick : Intent
+        data class OnNameChange(val name: String) : Intent
+        data class OnUsernameChange(val username: String) : Intent
+        data class OnEmailChange(val email: String) : Intent
+        data class OnPasswordChange(val password: String) : Intent
+        data class OnConfirmPasswordChange(val confirmPassword: String) : Intent
+        object Signup : Intent
+        data class ShowError(val error: String) : Intent
+        object OnGoogleLoginClick : Intent
+        object NavigateToHome : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

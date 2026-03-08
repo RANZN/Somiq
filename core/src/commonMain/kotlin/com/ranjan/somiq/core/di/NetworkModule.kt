@@ -37,6 +37,7 @@ val networkModule = module {
     single<TokenRefresher> {
         TokenRefresherImpl(
             tokenProvider = get(),
+            authStateManager = get(),
             nonAuthHttpClient = get(NonAuthClient)
         )
     }

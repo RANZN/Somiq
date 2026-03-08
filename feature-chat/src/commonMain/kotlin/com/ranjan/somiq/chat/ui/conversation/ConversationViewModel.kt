@@ -11,29 +11,29 @@ class ConversationViewModel(
     private val otherUserName: String,
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase
-) : BaseViewModel<ConversationContract.UiState, ConversationContract.Action, ConversationContract.Effect>() {
+) : BaseViewModel<ConversationContract.UiState, ConversationContract.Intent, ConversationContract.Effect>() {
 
     override val initialState: ConversationContract.UiState
         get() = ConversationContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
 
     init {
-        handleAction(ConversationContract.Action.LoadMessages)
+        handleIntent(ConversationContract.Intent.LoadMessages)
     }
 
-    override fun onAction(action: ConversationContract.Action) {
+    override fun onIntent(intent: ConversationContract.Intent) {
         viewModelScope.launch {
-            when (action) {
-                is ConversationContract.Action.LoadMessages -> loadMessages()
-                is ConversationContract.Action.MessageTextChange -> setState { copy(messageText = action.text) }
-                is ConversationContract.Action.SendMessage -> sendMessage()
-                is ConversationContract.Action.ClearError -> setState { copy(error = null) }
-                is ConversationContract.Action.Retry -> {
+            when (intent) {
+                is ConversationContract.Intent.LoadMessages -> loadMessages()
+                is ConversationContract.Intent.MessageTextChange -> setState { copy(messageText = intent.text) }
+                is ConversationContract.Intent.SendMessage -> sendMessage()
+                is ConversationContract.Intent.ClearError -> setState { copy(error = null) }
+                is ConversationContract.Intent.Retry -> {
                     setState { copy(error = null) }
                     loadMessages()
                 }
-                is ConversationContract.Action.StartVoiceCall ->
+                is ConversationContract.Intent.StartVoiceCall ->
                     emitEffect(ConversationContract.Effect.StartVoiceCall(otherUserId))
-                is ConversationContract.Action.StartVideoCall ->
+                is ConversationContract.Intent.StartVideoCall ->
                     emitEffect(ConversationContract.Effect.StartVideoCall(otherUserId))
             }
         }

@@ -51,3 +51,9 @@ enum class MediaType {
     IMAGE,
     VIDEO
 }
+
+@Serializable
+data class CreateStoryRequest(
+    val mediaUrl: String,
+    val mediaType: MediaType
+)

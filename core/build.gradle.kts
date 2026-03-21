@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -38,16 +39,17 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.ui.tooling.preview.v1101)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(compose.materialIconsExtended)
+            implementation(libs.material.icons.extended)
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
@@ -89,7 +91,7 @@ kotlin {
     }
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.ranjan.somiq.core"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 

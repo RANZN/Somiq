@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -30,17 +31,18 @@ kotlin {
         commonMain.dependencies {
             api(project(":core"))
 
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.ui.tooling.preview.v1101)
+            implementation(libs.ui.tooling.preview)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.ui.tooling.preview)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -48,7 +50,7 @@ kotlin {
     }
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.ranjan.somiq.mediaeditor"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 

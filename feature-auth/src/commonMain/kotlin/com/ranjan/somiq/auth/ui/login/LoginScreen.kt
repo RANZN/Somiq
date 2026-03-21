@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.auth.ui.login.components.LoginHeader
 import com.ranjan.somiq.core.presentation.component.CustomOutlinedButton
@@ -33,7 +34,6 @@ import com.ranjan.somiq.core.presentation.util.clickWithEffect
 import com.ranjan.somiq.core.presentation.util.defaultPadding
 import com.ranjan.somiq.auth.ui.login.LoginContract.Intent
 import com.ranjan.somiq.auth.ui.login.LoginContract.UiState
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LoginScreen(

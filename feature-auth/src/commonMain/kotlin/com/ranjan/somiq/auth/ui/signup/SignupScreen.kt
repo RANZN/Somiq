@@ -29,7 +29,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.auth.ui.signup.SignUpContract
 import com.ranjan.somiq.auth.ui.signup.components.AddPhotoPlaceHolder
 import com.ranjan.somiq.auth.ui.signup.components.SignupHeader
 import com.ranjan.somiq.auth.ui.signup.mapper.getMessage
@@ -39,7 +38,7 @@ import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.defaultPadding
 import com.ranjan.somiq.auth.ui.signup.SignUpContract.Intent
 import com.ranjan.somiq.auth.ui.signup.SignUpContract.UiState
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SignupScreen(
@@ -73,7 +72,7 @@ fun SignupScreen(
 
         val nameError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is SignUpContract.UiState.Error.Name }
+                uiState.error.find { it is UiState.Error.Name }
             }
         }
         CustomTextField(
@@ -92,7 +91,7 @@ fun SignupScreen(
 
         val usernameError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is SignUpContract.UiState.Error.Username }
+                uiState.error.find { it is UiState.Error.Username }
             }
         }
         CustomTextField(
@@ -114,7 +113,7 @@ fun SignupScreen(
 
         val emailError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is SignUpContract.UiState.Error.Email }
+                uiState.error.find { it is UiState.Error.Email }
             }
         }
         CustomTextField(
@@ -133,7 +132,7 @@ fun SignupScreen(
         )
         val passwordError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is SignUpContract.UiState.Error.Password }
+                uiState.error.find { it is UiState.Error.Password }
             }
         }
         CustomTextField(
@@ -153,7 +152,7 @@ fun SignupScreen(
 
         val rePasswordError by remember(uiState.error) {
             derivedStateOf {
-                uiState.error.find { it is SignUpContract.UiState.Error.ConfirmPassword }
+                uiState.error.find { it is UiState.Error.ConfirmPassword }
             }
         }
         CustomTextField(

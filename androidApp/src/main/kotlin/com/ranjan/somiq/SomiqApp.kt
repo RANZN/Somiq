@@ -8,8 +8,6 @@ class SomiqApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        KotlinInitializer(this).init(
-            additionalModules = getAllAppModules()
-        )
+        KotlinInitializer(this).init(additionalModules = getAllAppModules())
     }
 }

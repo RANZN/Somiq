@@ -38,7 +38,6 @@ kotlin {
             implementation(libs.foundation)
             implementation(libs.material3)
             implementation(libs.ui)
-            implementation(libs.ui.tooling.preview.v1101)
             implementation(libs.ui.tooling.preview)
             implementation(libs.material.icons.extended)
             implementation(libs.androidx.lifecycle.viewmodelCompose)

@@ -49,7 +49,7 @@ kotlin {
             implementation(libs.material3)
             implementation(libs.ui)
             implementation(libs.components.resources)
-            implementation(libs.ui.tooling.preview.v1101)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -65,7 +65,7 @@ kotlin {
             implementation(libs.ktor.ktor.serialization.kotlinx.json)
         }
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
         }
@@ -123,7 +123,7 @@ android {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.ui.tooling)
     val roomCompiler = libs.room.compiler
     listOf(
         "kspAndroid",

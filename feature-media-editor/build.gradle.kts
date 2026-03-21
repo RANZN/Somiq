@@ -35,7 +35,6 @@ kotlin {
             implementation(libs.foundation)
             implementation(libs.material3)
             implementation(libs.ui)
-            implementation(libs.ui.tooling.preview.v1101)
             implementation(libs.ui.tooling.preview)
         }
         commonTest.dependencies {

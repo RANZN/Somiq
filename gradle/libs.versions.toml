@@ -41,8 +41,7 @@ coil = "3.4.0"
 datastore = "1.2.0"
 ui = "1.10.2"
 uiTooling = "1.10.2"
-uiToolingPreview = "1.10.2"
-uiToolingPreviewVersion = "1.10.2"
+uiToolingPreview = "1.10.3"
 
 [libraries]
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
@@ -109,8 +108,6 @@ coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.re
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "ui" }
 ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "uiTooling" }
 ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
-ui-tooling-preview-v1101 = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreviewVersion" }
-ui-tooling-preview-v1103 = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrainsUiToolingPreview" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

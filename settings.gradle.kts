@@ -32,7 +32,15 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+includeBuild("build-logic")
+
 include(":core")
-include(":auth")
-include(":home")
-include(":composeApp")
+include(":feature-auth")
+include(":feature-feed")
+include(":feature-profile")
+include(":feature-chat")
+include(":feature-media")
+include(":feature-media-editor")
+include(":feature-content-creation")
+include(":app")
+include(":androidApp")

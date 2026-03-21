@@ -90,20 +90,17 @@ fun provideAuthHttpClient(
                 val accessToken = tokenProvider.getAccessToken()
                 val refreshToken = tokenProvider.getRefreshToken()
 
-                if (accessToken != null && refreshToken != null) {
-                    return@loadTokens BearerTokens(accessToken, refreshToken)
-                }
-                null
+                if (accessToken == null) return@loadTokens null
+                BearerTokens(accessToken, refreshToken)
             }
 
             refreshTokens {
                 val newTokens = tokenRefresher.tryRefresh(oldRefreshToken = oldTokens?.refreshToken)
-
-                newTokens ?: return@refreshTokens null
-                return@refreshTokens BearerTokens(newTokens.accessToken, newTokens.refreshToken)
+                    ?: return@refreshTokens null
+                BearerTokens(newTokens.accessToken, newTokens.refreshToken)
             }
             sendWithoutRequest { request ->
-                request.url.host.contains(BASE_URL)
+                BASE_URL.contains(request.url.host)
             }
         }
     }

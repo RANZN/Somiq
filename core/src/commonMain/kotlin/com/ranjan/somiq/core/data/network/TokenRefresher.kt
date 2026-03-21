@@ -1,6 +1,7 @@
 package com.ranjan.somiq.core.data.network
 
 import com.ranjan.somiq.core.consts.BASE_URL
+import com.ranjan.somiq.core.data.local.AuthStateManager
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -32,12 +33,18 @@ interface TokenRefresher {
 
 class TokenRefresherImpl(
     private val tokenProvider: TokenProvider,
+    private val authStateManager: AuthStateManager,
     private val nonAuthHttpClient: HttpClient
 ) : TokenRefresher {
     private val mutex = Mutex()
     
     override suspend fun tryRefresh(oldRefreshToken: String?): TokenPair? {
         return mutex.withLock {
+            if (oldRefreshToken == null) {
+                tokenProvider.clearToken()
+                authStateManager.setLoggedIn(false)
+                return@withLock null
+            }
             val currentAccessToken = tokenProvider.getAccessToken()
             val currentRefreshToken = tokenProvider.getRefreshToken()
 

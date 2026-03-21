@@ -172,7 +172,15 @@ afterEvaluate {
             tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { testKspTask.dependsOn(it) }
         }
     }
-    
+
+    tasks.named("kspKotlinJvm") {
+        dependsOn(tasks.named("generateResourceAccessorsForJvmMain"))
+        dependsOn(tasks.named("generateActualResourceCollectorsForJvmMain"))
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommonMain"))
+        tasks.findByName("generateExpectResourceCollectorsForCommonMain")?.let { dependsOn(it) }
+    }
+
     // iOS KSP task dependencies
     listOf("IosSimulatorArm64", "IosArm64").forEach { iosTarget ->
         val kspTaskName = "kspKotlin$iosTarget"

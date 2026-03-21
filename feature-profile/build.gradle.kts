@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -33,12 +34,13 @@ kotlin {
             api(project(":feature-auth"))
             api(project(":feature-feed"))
             
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.uiToolingPreview)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.ui.tooling.preview.v1101)
+            implementation(libs.ui.tooling.preview)
+            implementation(libs.material.icons.extended)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.koin.compose.viewmodel)
@@ -58,7 +60,7 @@ kotlin {
     }
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.ranjan.somiq.profile"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 

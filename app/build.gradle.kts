@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
@@ -14,7 +14,10 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
+    android {
+        namespace = "com.ranjan.somiq.app"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -31,28 +34,8 @@ kotlin {
     }
 
     jvm()
-    /*
-
-    js {
-        browser()
-        binaries.executable()
-    }
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs {
-            browser()
-            binaries.executable()
-        }
-    */
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.jetbrains.navigation3.ui)
-            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-        }
         commonMain.dependencies {
             // Feature modules
             api(project(":core"))
@@ -63,19 +46,28 @@ kotlin {
             api(project(":feature-media"))
             api(project(":feature-content-creation"))
 
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.ui.tooling.preview.v1101)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(compose.materialIconsExtended)
+            implementation(libs.material.icons.extended)
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
+
+            // Ktor (used by app/home, app/postDetail, app/search repositories)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.ktor.client.content.negotiation)
+            implementation(libs.ktor.ktor.serialization.kotlinx.json)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -83,11 +75,13 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.ktor.client.cio)
         }
 
         val iosMain by creating {
             dependsOn(getByName("commonMain"))
             dependencies {
+                implementation(libs.ktor.client.darwin)
             }
         }
 
@@ -96,47 +90,12 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.ranjan.somiq"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.ranjan.somiq"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    dependencies {
-        debugImplementation(libs.chucker)
-        releaseImplementation(libs.chucker.release)
-    }
-}
-
 dependencies {
-    debugImplementation(compose.uiTooling)
-
     ksp(libs.room.compiler)
-    debugImplementation(compose.uiTooling)
-    // KSP support for Room Compiler.
     add("kspAndroid", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)           // For physical iOS devices
-    add("kspIosSimulatorArm64", libs.room.compiler) // For M-series Mac simulators
-    add("kspJvm", libs.room.compiler) // For Desktop
+    add("kspIosArm64", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspJvm", libs.room.compiler)
 
     room {
         schemaDirectory("$projectDir/schemas")

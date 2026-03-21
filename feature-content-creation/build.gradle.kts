@@ -47,7 +47,6 @@ kotlin {
             implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
-            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
         }
         jvmMain.dependencies {

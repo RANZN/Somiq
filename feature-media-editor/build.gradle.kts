@@ -40,9 +40,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        androidMain.dependencies {
-            implementation(libs.ui.tooling.preview)
-        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }

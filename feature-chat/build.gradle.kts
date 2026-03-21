@@ -44,8 +44,8 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.ktor.client.content.negotiation)
-            implementation(libs.ktor.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -60,8 +60,8 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.auth)
-            implementation(libs.ktor.ktor.client.content.negotiation)
-            implementation(libs.ktor.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.logging)
             
             // Coil for image loading
@@ -83,7 +83,7 @@ kotlin {
         val iosMain by creating {
             dependsOn(getByName("commonMain"))
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:${libs.versions.ktor.get()}")
+                implementation(libs.ktor.client.darwin)
             }
         }
 
@@ -106,13 +106,13 @@ configure<LibraryExtension> {
 }
 
 dependencies {
-    // Room KSP - only for Android for now
-    // For full KMP support, you'll need to configure @ConstructedBy properly
-    add("kspAndroid", libs.room.compiler)
-    // Temporarily disabled for other platforms until @ConstructedBy is properly configured
-    // add("kspIosArm64", libs.room.compiler)
-    // add("kspIosSimulatorArm64", libs.room.compiler)
-    // add("kspJvm", libs.room.compiler)
+    val roomCompiler = libs.room.compiler
+    listOf(
+        "kspAndroid",
+        "kspJvm",
+        "kspIosArm64",
+        "kspIosSimulatorArm64",
+    ).forEach { add(it, roomCompiler) }
 
     room {
         schemaDirectory("$projectDir/schemas")
@@ -124,16 +124,16 @@ afterEvaluate {
     val kmp = extensions.getByType<KotlinMultiplatformExtension>()
     fun cap(s: String) = s.replaceFirstChar { it.uppercaseChar() }
 
-    fun org.gradle.api.Task.composePreamble(useMainCommon: Boolean) {
+    fun Task.composePreamble(useMainCommon: Boolean) {
         val scope = if (useMainCommon) "Main" else "Test"
         dependsOn(tasks.named("generateComposeResClass"))
         dependsOn(tasks.named("generateResourceAccessorsForCommon$scope"))
         tasks.findByName("generateExpectResourceCollectorsForCommon$scope")?.let { dependsOn(it) }
     }
 
-    fun org.gradle.api.Task.dependsOnOptional(n: String) = tasks.findByName(n)?.let { dependsOn(it) }
+    fun Task.dependsOnOptional(n: String) = tasks.findByName(n)?.let { dependsOn(it) }
 
-    fun org.gradle.api.Task.androidKspFrom(compilationName: String) {
+    fun Task.androidKspFrom(compilationName: String) {
         when {
             compilationName.endsWith("UnitTest") -> {
                 val bt = cap(compilationName.removeSuffix("UnitTest"))
@@ -165,7 +165,7 @@ afterEvaluate {
             else -> "ksp${cap(compilationName)}KotlinJvm"
         }
 
-    fun org.gradle.api.Task.jvmKspFrom(compilationName: String) {
+    fun Task.jvmKspFrom(compilationName: String) {
         val seg = cap(compilationName)
         when (compilationName) {
             "test" -> {
@@ -180,14 +180,14 @@ afterEvaluate {
         }
     }
 
-    fun org.gradle.api.Task.iosMainKsp(suffix: String) {
+    fun Task.iosMainKsp(suffix: String) {
         composePreamble(useMainCommon = true)
         dependsOn(tasks.named("generateResourceAccessorsFor${suffix}Main"))
         dependsOn(tasks.named("generateActualResourceCollectorsFor${suffix}Main"))
         dependsOnOptional("generateResourceAccessorsForIosMain")
     }
 
-    fun org.gradle.api.Task.iosTestKsp(suffix: String) {
+    fun Task.iosTestKsp(suffix: String) {
         composePreamble(useMainCommon = false)
         dependsOnOptional("generateResourceAccessorsFor${suffix}Test")
         dependsOnOptional("generateResourceAccessorsForIosMain")

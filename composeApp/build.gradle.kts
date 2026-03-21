@@ -33,57 +33,56 @@ kotlin {
     }
 
     jvm()
-    /*
-
-    js {
-        browser()
-        binaries.executable()
-    }
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs {
-            browser()
-            binaries.executable()
-        }
-    */
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
-            implementation(libs.ktor.client.okhttp)
-        }
         commonMain.dependencies {
-            // Feature modules
             api(project(":core"))
-            api(project(":auth"))
-            api(project(":home"))
+            api(project(":feature-auth"))
+            api(project(":feature-feed"))
+            api(project(":feature-profile"))
+            api(project(":feature-chat"))
+            api(project(":feature-media"))
+            api(project(":feature-content-creation"))
 
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.ui.tooling.preview.v1101)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(compose.materialIconsExtended)
-            implementation(libs.compose.navigation)
+            implementation(libs.material.icons.extended)
+            implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.core)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.ktor.client.content.negotiation)
+            implementation(libs.ktor.ktor.serialization.kotlinx.json)
         }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.okhttp)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.ktor.client.cio)
         }
 
         val iosMain by creating {
             dependsOn(getByName("commonMain"))
             dependencies {
+                implementation(libs.ktor.client.darwin)
             }
         }
 
@@ -154,7 +153,6 @@ afterEvaluate {
     val kmp = extensions.getByType<KotlinMultiplatformExtension>()
     fun cap(s: String) = s.replaceFirstChar { it.uppercaseChar() }
 
-    /** Common codegen shared by main-line KSP; [useMainCommon] false = commonTest collectors. */
     fun Task.composePreamble(useMainCommon: Boolean) {
         val scope = if (useMainCommon) "Main" else "Test"
         dependsOn(tasks.named("generateComposeResClass"))
@@ -173,7 +171,6 @@ afterEvaluate {
                 dependsOnOptional("generateResourceAccessorsForAndroidUnitTest")
                 dependsOnOptional("generateResourceAccessorsForCommonTest")
             }
-
             compilationName.endsWith("AndroidTest") -> {
                 val bt = cap(compilationName.removeSuffix("AndroidTest"))
                 composePreamble(useMainCommon = true)
@@ -181,7 +178,6 @@ afterEvaluate {
                 dependsOnOptional("generateResourceAccessorsForAndroidInstrumentedTest")
                 dependsOnOptional("generateResourceAccessorsForCommonMain")
             }
-
             else -> {
                 val bt = cap(compilationName)
                 composePreamble(useMainCommon = true)
@@ -192,10 +188,11 @@ afterEvaluate {
         }
     }
 
-    fun jvmKspTaskName(compilationName: String) = when (compilationName) {
-        "main" -> "kspKotlinJvm"
-        else -> "ksp${cap(compilationName)}KotlinJvm"
-    }
+    fun jvmKspTaskName(compilationName: String) =
+        when (compilationName) {
+            "main" -> "kspKotlinJvm"
+            else -> "ksp${cap(compilationName)}KotlinJvm"
+        }
 
     fun Task.jvmKspFrom(compilationName: String) {
         val seg = cap(compilationName)
@@ -204,7 +201,6 @@ afterEvaluate {
                 composePreamble(useMainCommon = false)
                 dependsOnOptional("generateResourceAccessorsForJvmTest")
             }
-
             else -> {
                 composePreamble(useMainCommon = true)
                 dependsOn(tasks.named("generateResourceAccessorsForJvm$seg"))

@@ -7,7 +7,7 @@ actual class KotlinInitializer {
         initKoin(
             additionalModules = additionalModules,
             appDeclaration = {
-                // JVM doesn't need special initialization
+                modules(jvmModules)
             }
         )
     }

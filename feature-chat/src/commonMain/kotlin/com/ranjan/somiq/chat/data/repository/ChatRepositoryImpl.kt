@@ -2,9 +2,9 @@ package com.ranjan.somiq.chat.data.repository
 
 import com.ranjan.somiq.chat.data.model.Conversation
 import com.ranjan.somiq.chat.data.model.Message
-import com.ranjan.somiq.chat.data.model.SendMessageRequest
 import com.ranjan.somiq.chat.domain.repository.ChatRepository
 import io.ktor.client.HttpClient
+import kotlin.time.Clock
 
 class ChatRepositoryImpl(
     private val httpClient: HttpClient
@@ -26,11 +26,11 @@ class ChatRepositoryImpl(
         // TODO: Replace with real API
         // httpClient.post("/api/chat/messages") { setBody(SendMessageRequest(content, receiverId)) }.body()
         Message(
-            id = "mock-${System.currentTimeMillis()}",
+            id = "mock-${Clock.System.now()}",
             content = content,
             senderId = "current-user",
             receiverId = receiverId,
-            timestamp = System.currentTimeMillis(),
+            timestamp = Clock.System.now().epochSeconds,
             isFromMe = true
         )
     }

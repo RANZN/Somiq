@@ -1,7 +1,7 @@
 package com.ranjan.somiq.core.data.local
 
 /**
- * Returns the TokenStorage instance. One implementation in commonMain (DataStore-based)
- * for Android/JVM; iOS can use platform storage (UserDefaults) without DataStore.
+ * Returns the TokenStorage instance. All targets use [TokenStorageImpl] backed by
+ * Preferences DataStore (file on JVM/iOS, [preferencesDataStore] on Android).
  */
 expect fun createTokenStorage(): TokenStorage

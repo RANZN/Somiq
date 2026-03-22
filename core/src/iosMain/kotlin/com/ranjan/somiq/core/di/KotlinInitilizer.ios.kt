@@ -7,7 +7,7 @@ actual class KotlinInitializer {
         initKoin(
             additionalModules = additionalModules,
             appDeclaration = {
-                // iOS doesn't need special initialization like Android
+                modules(iosModules)
             }
         )
     }

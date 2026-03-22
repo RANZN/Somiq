@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,26 +37,21 @@ fun ChatListScreen(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        topBar = when {
-            uiState.showTopBar -> {
-                {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = "Chat",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            titleContentColor = MaterialTheme.colorScheme.onSurface
-                        )
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Chat",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
-                }
-            }
-            else -> { {} }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
         }
     ) { paddingValues ->
         Box(
@@ -64,42 +59,54 @@ fun ChatListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-        when {
-            uiState.isLoading && uiState.conversations.isEmpty() -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+            when {
+                uiState.isLoading && uiState.conversations.isEmpty() -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            uiState.hasError && uiState.conversations.isEmpty() -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(uiState.error ?: "Error", color = MaterialTheme.colorScheme.error)
-                        Text("Tap to retry", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.clickable { onIntent(Intent.Retry) })
+
+                uiState.hasError && uiState.conversations.isEmpty() -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(uiState.error ?: "Error", color = MaterialTheme.colorScheme.error)
+                            Text(
+                                "Tap to retry",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.clickable { onIntent(Intent.Retry) })
+                        }
+                    }
+                }
+
+                uiState.isEmpty -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null)
+                            Text("No conversations yet", style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(uiState.conversations, key = { it.otherUserId }) { conversation ->
+                            ConversationItem(
+                                conversation = conversation,
+                                onClick = { onIntent(Intent.OnConversationClick(conversation.otherUserId)) }
+                            )
+                        }
                     }
                 }
             }
-            uiState.isEmpty -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Icon(Icons.Default.Chat, contentDescription = null)
-                        Text("No conversations yet", style = MaterialTheme.typography.bodyLarge)
-                    }
-                }
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(uiState.conversations, key = { it.otherUserId }) { conversation ->
-                        ConversationItem(
-                            conversation = conversation,
-                            onClick = { onIntent(Intent.OnConversationClick(conversation.otherUserId)) }
-                        )
-                    }
-                }
-            }
-        }
         }
     }
 }
@@ -111,8 +118,19 @@ private fun ConversationItem(
     modifier: Modifier = Modifier
 ) {
     ListItem(
-        headlineContent = { Text(conversation.otherUserName, style = MaterialTheme.typography.titleMedium) },
-        supportingContent = { Text(conversation.lastMessage ?: "", style = MaterialTheme.typography.bodySmall, maxLines = 1) },
+        headlineContent = {
+            Text(
+                conversation.otherUserName,
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        supportingContent = {
+            Text(
+                conversation.lastMessage ?: "",
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1
+            )
+        },
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)

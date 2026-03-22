@@ -36,8 +36,7 @@ fun AppScaffold(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
-        content(paddingValues)
-    }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        content = content
+    )
 }

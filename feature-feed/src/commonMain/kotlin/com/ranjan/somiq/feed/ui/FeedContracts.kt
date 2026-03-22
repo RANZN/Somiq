@@ -13,13 +13,16 @@ object FeedContract {
         val posts: List<Post> = emptyList(),
         val stories: List<Story> = emptyList(),
         val nextCursor: String? = null,
-        val isLoading: Boolean = false,
+        val loading: Boolean = false,
         val loadingMore: Boolean = false,
         val error: String? = null,
         val refreshing: Boolean = false
     ) : BaseUiState {
         val hasMore: Boolean
             get() = nextCursor != null
+
+        val showLoading get() = loading && posts.isEmpty()
+        val showError get() = error != null && posts.isEmpty()
     }
 
     sealed interface Intent : BaseUiIntent {

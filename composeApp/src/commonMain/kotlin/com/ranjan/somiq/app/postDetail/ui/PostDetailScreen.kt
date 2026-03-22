@@ -32,13 +32,15 @@ import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Intent
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Effect
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun PostDetailScreen(
     postId: String,
-    viewModel: PostDetailViewModel,
     modifier: Modifier = Modifier
 ) {
+    val viewModel: PostDetailViewModel = koinViewModel(parameters = { parametersOf(postId) })
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {

@@ -21,7 +21,6 @@ class ChatListViewModel(
             when (intent) {
                 is ChatListContract.Intent.LoadConversations -> loadConversations()
                 is ChatListContract.Intent.Refresh -> refresh()
-                is ChatListContract.Intent.SetShowTopBar -> setState { copy(showTopBar = intent.show) }
                 is ChatListContract.Intent.OnConversationClick ->
                     emitEffect(ChatListContract.Effect.NavigateToConversation(intent.userId))
                 is ChatListContract.Intent.ClearError -> setState { copy(error = null) }

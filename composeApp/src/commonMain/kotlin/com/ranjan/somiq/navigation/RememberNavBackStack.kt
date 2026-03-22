@@ -6,7 +6,6 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.ranjan.somiq.core.presentation.navigation.Chat
-import com.ranjan.somiq.core.presentation.navigation.ChatListScreen
 import com.ranjan.somiq.core.presentation.navigation.Collections
 import com.ranjan.somiq.core.presentation.navigation.Conversation
 import com.ranjan.somiq.core.presentation.navigation.CreatePostScreen
@@ -29,10 +28,8 @@ private fun PolymorphicModuleBuilder<NavKey>.authNavKeys() {
 }
 
 private fun PolymorphicModuleBuilder<NavKey>.homeNavKeys() {
-    subclass(Home.Feed::class, Home.Feed.serializer())
-    subclass(Home.Search::class, Home.Search.serializer())
-    subclass(Home.Reels::class, Home.Reels.serializer())
-    subclass(Home.Profile::class, Home.Profile.serializer())
+    subclass(Home.Updates::class, Home.Updates.serializer())
+    subclass(Home.UserProfile::class, Home.UserProfile.serializer())
 }
 
 private fun PolymorphicModuleBuilder<NavKey>.chatNavKeys() {
@@ -49,7 +46,6 @@ private fun PolymorphicModuleBuilder<NavKey>.rootAndOtherNavKeys() {
     subclass(PostDetail::class, PostDetail.serializer())
     subclass(Notifications::class, Notifications.serializer())
     subclass(CreatePostScreen::class, CreatePostScreen.serializer())
-    subclass(ChatListScreen::class, ChatListScreen.serializer())
     subclass(Collections::class, Collections.serializer())
 }
 

@@ -56,11 +56,11 @@ class FeedViewModel(
     }
 
     private suspend fun loadFeed() {
-        setState { copy(isLoading = true, error = null) }
+        setState { copy(loading = true, error = null) }
         getFeedPageUseCase(after = null).getOrElse { error ->
             setState {
                 copy(
-                    isLoading = false,
+                    loading = false,
                     error = error.message ?: "Failed to load feed"
                 )
             }
@@ -70,7 +70,7 @@ class FeedViewModel(
                 copy(
                     posts = result.data,
                     nextCursor = result.nextCursor,
-                    isLoading = false,
+                    loading = false,
                     error = null
                 )
             }

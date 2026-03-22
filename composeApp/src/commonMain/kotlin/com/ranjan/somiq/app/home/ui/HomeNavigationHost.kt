@@ -10,12 +10,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
-import com.ranjan.somiq.app.search.ui.SearchScreenHost
+import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
 import com.ranjan.somiq.core.presentation.navigation.Home
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.feed.ui.FeedScreenHost
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
-import com.ranjan.somiq.reels.ui.ReelsScreenHost
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +36,6 @@ fun HomeNavigationHost(
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToCreatePost: () -> Unit = {},
     onNavigateToCreateStory: () -> Unit = {},
-    onNavigateToChatList: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val viewModel: HomeViewModel = koinViewModel()
@@ -61,13 +59,16 @@ fun HomeNavigationHost(
         Box(
             modifier = modifier.fillMaxSize()
         ) {
-            when (val selectedTab = state.selectedTab) {
-                Home.Feed -> {
+            when (state.selectedTab) {
+                Home.ChatLists -> {
+                    ChatListScreenHost(onNavigateToConversation = onNavigateToConversation)
+                }
+
+                Home.Updates -> {
                     FeedScreenHost(
                         scrollToTopTrigger = state.scrollToTopKey,
                         onCreatePost = onNavigateToCreatePost,
                         onNavigateToNotifications = onNavigateToNotifications,
-                        onNavigateToChat = onNavigateToChatList,
                         onNavigateToCreateStory = onNavigateToCreateStory,
                         onNavigateToUser = onNavigateToUser,
                         onNavigateToPost = onNavigateToPost,
@@ -78,29 +79,9 @@ fun HomeNavigationHost(
                     )
                 }
 
-                Home.Search -> {
-                    SearchScreenHost(
-                        externalSearchQuery = state.searchQuery,
-                        onExternalQueryChange = { viewModel.handleIntent(HomeContract.Intent.SearchQueryChange(it)) },
-                        showSearchFieldInContent = false,
-                        onNavigateToUser = onNavigateToUser,
-                        onNavigateToHashtag = onNavigateToHashtag,
-                        onNavigateToPost = onNavigateToPost
-                    )
-                }
-
-                Home.Reels -> {
-                    ReelsScreenHost(
-                        onNavigateToReel = { reelId -> /* TODO */ },
-                        onNavigateToComments = { reelId -> /* TODO */ },
-                        onShowShareDialog = onShowShareDialog
-                    )
-                }
-
-                is Home.Profile -> {
+                is Home.UserProfile -> {
                     ProfileScreenHost(
                         scrollToTopTrigger = state.scrollToTopKey,
-                        userId = selectedTab.userId,
                         appBarTitle = state.currentUserName,
                         onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },
                         onNavigateToEditProfile = onNavigateToEditProfile,

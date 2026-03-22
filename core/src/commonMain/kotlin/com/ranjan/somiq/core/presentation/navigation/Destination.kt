@@ -24,19 +24,23 @@ data object HomeGraph : NavKey
 
 @Stable
 @Serializable
-sealed interface Home : NavKey {
-    @Serializable
-    data object Feed : Home
+sealed class Home(val name: String) : NavKey {
 
     @Serializable
-    data object Search : Home
+    data object ChatLists : Home("Chats")
 
     @Serializable
-    data object Reels : Home
+    data object Updates : Home("Updates")
 
     @Serializable
-    data class Profile(val userId: String? = null) : Home
+    data object UserProfile : Home("Profile")
 }
+
+@Serializable
+data object Chat : NavKey
+
+@Serializable
+data class Profile(val userId: String) : NavKey
 
 @Serializable
 data class PostDetail(val postId: String) : NavKey
@@ -54,13 +58,7 @@ data object CreateStoryScreen : NavKey
 data class StoryView(val storyId: String) : NavKey
 
 @Serializable
-data object ChatListScreen : NavKey
-
-@Serializable
 data object Collections : NavKey
-
-@Serializable
-data object Chat : NavKey
 
 @Serializable
 data class Conversation(val userId: String) : NavKey

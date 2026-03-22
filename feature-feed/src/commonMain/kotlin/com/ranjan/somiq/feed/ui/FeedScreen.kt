@@ -91,7 +91,7 @@ fun FeedScreen(
                 .padding(paddingValues)
         ) {
             when {
-                uiState.isLoading && uiState.posts.isEmpty() -> {
+                uiState.showLoading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -101,7 +101,7 @@ fun FeedScreen(
                         )
                     }
                 }
-                uiState.error != null && uiState.posts.isEmpty() -> {
+                uiState.showError -> {
                     val pullToRefreshState = rememberPullToRefreshState()
                     PullToRefreshBox(
                         isRefreshing = uiState.refreshing,
@@ -120,7 +120,7 @@ fun FeedScreen(
                                     .clickable { onIntent(Intent.Retry) }
                             ) {
                                 Text(
-                                    text = uiState.error,
+                                    text = uiState.error.orEmpty(),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )

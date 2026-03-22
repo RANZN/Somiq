@@ -9,7 +9,7 @@ import com.ranjan.somiq.core.presentation.navigation.Home
 object HomeContract {
     @Stable
     data class UiState(
-        val selectedTab: Home = Home.Feed,
+        val selectedTab: Home = Home.Updates,
         val searchQuery: String = "",
         val currentUserName: String = "Profile",
         val isLoadingProfile: Boolean = false,

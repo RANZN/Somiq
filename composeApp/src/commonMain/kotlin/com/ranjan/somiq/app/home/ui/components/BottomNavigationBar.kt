@@ -2,6 +2,7 @@ package com.ranjan.somiq.app.home.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -26,6 +27,10 @@ private val bottomNavItems = listOf(
     BottomNavItem(
         icon = Icons.Default.Home,
         value = Home.Updates,
+    ),
+    BottomNavItem(
+        icon = Icons.Default.Call,
+        value = Home.Calls,
     ),
     BottomNavItem(
         icon = Icons.Default.Person,

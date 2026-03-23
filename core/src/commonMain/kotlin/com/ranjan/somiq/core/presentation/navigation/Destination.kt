@@ -33,6 +33,9 @@ sealed class Home(val name: String) : NavKey {
     data object Updates : Home("Updates")
 
     @Serializable
+    data object Calls : Home("Calls")
+
+    @Serializable
     data object UserProfile : Home("Profile")
 }
 

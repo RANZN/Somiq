@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,27 +52,11 @@ fun FeedScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = { onIntent(Intent.OnCreatePostClick) }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Create Post",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
                 actions = {
                     IconButton(onClick = { onIntent(Intent.OnNotificationsClick) }) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "Notifications",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    IconButton(onClick = { onIntent(Intent.OnChatClick) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Chat,
-                            contentDescription = "Chat",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -83,6 +66,15 @@ fun FeedScreen(
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
+        },
+        floatingActionButton = {
+            IconButton(onClick = { onIntent(Intent.OnCreatePostClick) }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Create Post",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     ) { paddingValues ->
         Column(

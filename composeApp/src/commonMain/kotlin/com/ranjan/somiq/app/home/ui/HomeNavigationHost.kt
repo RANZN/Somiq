@@ -91,6 +91,10 @@ fun HomeNavigationHost(
                         onNavigateToPost = onNavigateToPost
                     )
                 }
+
+                Home.Calls -> {
+
+                }
             }
         }
     }

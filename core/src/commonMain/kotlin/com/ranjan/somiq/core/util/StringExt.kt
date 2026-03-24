@@ -5,11 +5,10 @@ fun String.isValidEmail(): Boolean {
     return emailRegex.matches(this)
 }
 
-fun String.isValidPassword(): Boolean {
-    val passwordRegex = Regex(
-        pattern = """^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"""
-    )
-    return passwordRegex.matches(this)
+/** Digits only, minimum length 10 (E.164-style local part). */
+fun String.isValidPhone(): Boolean {
+    val digits = filter { it.isDigit() }
+    return digits.length in 10..15
 }
 
 fun Long.toMinSecFormat(): String {

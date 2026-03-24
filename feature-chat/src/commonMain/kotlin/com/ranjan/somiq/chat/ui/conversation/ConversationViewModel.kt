@@ -11,10 +11,9 @@ class ConversationViewModel(
     private val otherUserName: String,
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase
-) : BaseViewModel<ConversationContract.UiState, ConversationContract.Intent, ConversationContract.Effect>() {
-
-    override val initialState: ConversationContract.UiState
-        get() = ConversationContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
+) : BaseViewModel<ConversationContract.UiState, ConversationContract.Intent, ConversationContract.Effect>(
+    ConversationContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
+) {
 
     init {
         handleIntent(ConversationContract.Intent.LoadMessages)

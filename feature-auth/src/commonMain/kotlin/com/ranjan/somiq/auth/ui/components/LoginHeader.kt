@@ -1,4 +1,4 @@
-package com.ranjan.somiq.auth.ui.signup.components
+package com.ranjan.somiq.auth.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,33 +9,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
-fun SignupHeader(modifier: Modifier = Modifier) {
+fun LoginHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Sign Up",
+            text = "SomiQ",
             style = MaterialTheme.typography.headlineLarge
         )
         Text(
-            text = "SomiQ",
-            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 16.sp)
-        )
-        Text(
-            text = "Create your account",
+            text = "Welcome back",
             style = MaterialTheme.typography.headlineMedium
         )
     }
-
 }
 
 @Preview
 @Composable
-private fun SignupHeaderPrev() {
-    SignupHeader()
+private fun LoginHeaderPrev() {
+    LoginHeader()
 }

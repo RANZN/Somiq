@@ -11,7 +11,9 @@ import com.ranjan.somiq.core.data.network.TokenRefresherImpl
 import com.ranjan.somiq.core.data.network.provideAuthHttpClient
 import com.ranjan.somiq.core.data.network.provideNonAuthHttpClient
 import io.ktor.client.HttpClient
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val NonAuthClient = named("nonAuthClient")
@@ -26,13 +28,8 @@ val networkModule = module {
         createTokenStorage()
     }
 
-    single<TokenProvider> {
-        TokenProviderImpl(get())
-    }
-
-    single<AuthStateManager> {
-        AuthStateManagerImpl()
-    }
+    singleOf(::TokenProviderImpl) bind TokenProvider::class
+    singleOf(::AuthStateManagerImpl) bind AuthStateManager::class
 
     single<TokenRefresher> {
         TokenRefresherImpl(

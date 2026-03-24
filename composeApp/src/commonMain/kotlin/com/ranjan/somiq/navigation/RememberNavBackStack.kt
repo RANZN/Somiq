@@ -13,7 +13,6 @@ import com.ranjan.somiq.core.presentation.navigation.Home
 import com.ranjan.somiq.core.presentation.navigation.HomeGraph
 import com.ranjan.somiq.core.presentation.navigation.Notifications
 import com.ranjan.somiq.core.presentation.navigation.OnBoarding
-import com.ranjan.somiq.core.presentation.navigation.OnBoardingGraph
 import com.ranjan.somiq.core.presentation.navigation.PostDetail
 import com.ranjan.somiq.core.presentation.navigation.Splash
 import com.ranjan.somiq.core.presentation.navigation.VideoCall
@@ -24,7 +23,8 @@ import kotlinx.serialization.modules.PolymorphicModuleBuilder
 
 private fun PolymorphicModuleBuilder<NavKey>.authNavKeys() {
     subclass(OnBoarding.Login::class, OnBoarding.Login.serializer())
-    subclass(OnBoarding.SignUp::class, OnBoarding.SignUp.serializer())
+    subclass(OnBoarding.Otp::class, OnBoarding.Otp.serializer())
+    subclass(OnBoarding.CompleteProfile::class, OnBoarding.CompleteProfile.serializer())
 }
 
 private fun PolymorphicModuleBuilder<NavKey>.homeNavKeys() {
@@ -41,7 +41,6 @@ private fun PolymorphicModuleBuilder<NavKey>.chatNavKeys() {
 
 private fun PolymorphicModuleBuilder<NavKey>.rootAndOtherNavKeys() {
     subclass(Splash::class, Splash.serializer())
-    subclass(OnBoardingGraph::class, OnBoardingGraph.serializer())
     subclass(HomeGraph::class, HomeGraph.serializer())
     subclass(PostDetail::class, PostDetail.serializer())
     subclass(Notifications::class, Notifications.serializer())

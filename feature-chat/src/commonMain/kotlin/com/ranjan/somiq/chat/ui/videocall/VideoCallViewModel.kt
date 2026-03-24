@@ -8,10 +8,9 @@ import kotlinx.coroutines.launch
 class VideoCallViewModel(
     private val otherUserId: String,
     private val otherUserName: String
-) : BaseViewModel<VideoCallContract.UiState, VideoCallContract.Intent, VideoCallContract.Effect>() {
-
-    override val initialState: VideoCallContract.UiState
-        get() = VideoCallContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
+) : BaseViewModel<VideoCallContract.UiState, VideoCallContract.Intent, VideoCallContract.Effect>(
+    VideoCallContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
+) {
 
     override fun onIntent(intent: VideoCallContract.Intent) {
         viewModelScope.launch {

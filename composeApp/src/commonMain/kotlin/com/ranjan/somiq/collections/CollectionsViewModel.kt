@@ -11,12 +11,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(), KoinComponent {
+class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), KoinComponent {
     private val getCollectionsUseCase: GetCollectionsUseCase by inject()
     private val collectionRepository: CollectionRepository by inject()
-
-    override val initialState: UiState
-        get() = UiState()
 
     init {
         handleIntent(Intent.LoadCollections)

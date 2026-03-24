@@ -17,10 +17,7 @@ class PostDetailViewModel(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val createCommentUseCase: CreateCommentUseCase,
     private val toggleCommentLikeUseCase: ToggleCommentLikeUseCase
-) : BaseViewModel<UiState, Intent, Effect>() {
-
-    override val initialState: UiState
-        get() = UiState()
+) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     init {
         handleIntent(Intent.LoadPost)

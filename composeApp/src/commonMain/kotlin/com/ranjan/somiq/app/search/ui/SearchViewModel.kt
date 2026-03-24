@@ -10,10 +10,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase
-) : BaseViewModel<UiState, Intent, Effect>() {
-
-    override val initialState: UiState
-        get() = UiState()
+) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {

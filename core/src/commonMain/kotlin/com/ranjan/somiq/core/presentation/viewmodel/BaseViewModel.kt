@@ -17,11 +17,13 @@ import kotlinx.coroutines.launch
  * @param S The UI State type that extends [BaseUiState]
  * @param I The UI Intent type that extends [BaseUiIntent]
  * @param E The UI Effect type that extends [BaseUiEffect]
- * @param initialState The initial state for the ViewModel
+ * @param initialState First snapshot for [state]. Pass `UiState(...)` into `super(...)` using
+ *   constructor parameters (e.g. `phone`) so values are available before [ViewModel] init; avoid
+ *   overriding a property that reads subclass `val` fields, which are not initialized when [BaseViewModel] runs.
  */
-abstract class BaseViewModel<S : BaseUiState, I : BaseUiIntent, E : BaseUiEffect>() : ViewModel() {
-
-    abstract val initialState: S
+abstract class BaseViewModel<S : BaseUiState, I : BaseUiIntent, E : BaseUiEffect>(
+    val initialState: S
+) : ViewModel() {
 
     // ---- STATE ----
     private val _state = MutableStateFlow(initialState)

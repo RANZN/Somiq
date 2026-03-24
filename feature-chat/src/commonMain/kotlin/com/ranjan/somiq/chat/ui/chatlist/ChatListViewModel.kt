@@ -7,10 +7,9 @@ import kotlinx.coroutines.launch
 
 class ChatListViewModel(
     private val getConversationsUseCase: GetConversationsUseCase
-) : BaseViewModel<ChatListContract.UiState, ChatListContract.Intent, ChatListContract.Effect>() {
-
-    override val initialState: ChatListContract.UiState
-        get() = ChatListContract.UiState()
+) : BaseViewModel<ChatListContract.UiState, ChatListContract.Intent, ChatListContract.Effect>(
+    ChatListContract.UiState()
+) {
 
     init {
         handleIntent(ChatListContract.Intent.LoadConversations)

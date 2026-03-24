@@ -8,7 +8,7 @@ This is a Kotlin Multiplatform project. **Three client targets** are first-class
 
 Shared UI, navigation, and DI live under **[composeApp/src/commonMain](./composeApp/src/commonMain)**. Platform code: [androidMain](./composeApp/src/androidMain), [iosMain](./composeApp/src/iosMain), [jvmMain](./composeApp/src/jvmMain).
 
-**Architecture:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) (modules, MVI-style presentation, `BaseViewModel`, navigation, auth summary). **Auth flow detail:** [docs/LOGIN_FLOW_PLAN.md](./docs/LOGIN_FLOW_PLAN.md).
+**Architecture:** [docs/ARCHITECTURE.md](.docs/ARCHITECTURE.md) (modules, MVI-style presentation, `BaseViewModel`, navigation, auth summary). **Auth flow detail:** [docs/LOGIN_FLOW_PLAN.md](.docs/LOGIN_FLOW_PLAN.md).
 
 * [/iosApp](./iosApp/iosApp) — Xcode host for the iOS app (embeds the `ComposeApp` framework).
 

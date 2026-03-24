@@ -5,7 +5,6 @@ import com.ranjan.somiq.auth.data.model.CheckUserIdRequest
 import com.ranjan.somiq.auth.data.model.CheckUserIdResponse
 import com.ranjan.somiq.auth.data.model.CompleteSignupRequest
 import com.ranjan.somiq.auth.data.model.ErrorResponse
-import com.ranjan.somiq.auth.data.model.OtpFlowDto
 import com.ranjan.somiq.auth.data.model.OtpVerifyStatusDto
 import com.ranjan.somiq.auth.data.model.VerifyOtpRequest
 import com.ranjan.somiq.auth.data.model.VerifyOtpResponse
@@ -14,9 +13,9 @@ import com.ranjan.somiq.auth.domain.model.VerifyOtpResult
 import com.ranjan.somiq.auth.domain.repository.AuthRepository
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.local.AuthStateManager
+import com.ranjan.somiq.core.data.local.DeviceIdProvider
 import com.ranjan.somiq.core.data.network.NetworkException
 import com.ranjan.somiq.core.data.network.TokenProvider
-import com.ranjan.somiq.core.di.NonAuthClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -30,16 +29,18 @@ class AuthRepositoryImpl(
     private val authHttpClient: HttpClient,
     private val tokenProvider: TokenProvider,
     private val authStateManager: AuthStateManager,
+    private val deviceIdProvider: DeviceIdProvider,
 ) : AuthRepository {
 
     override suspend fun verifyOtp(phone: String, otp: String): VerifyOtpResult {
         return try {
+            val deviceId = deviceIdProvider.getDeviceId()
             val response = nonAuthHttpClient.post("$BASE_URL/auth/verify-otp") {
                 setBody(
                     VerifyOtpRequest(
                         phone = phone,
                         otp = otp,
-                        flow = OtpFlowDto.PHONE_AUTH,
+                        deviceId = deviceId,
                     )
                 )
             }

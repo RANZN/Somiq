@@ -9,8 +9,8 @@ This document describes the **unified** authentication path: one phone entry, on
 1. **Phone** (`OnBoarding.Login` → `PhoneEntryScreen`)  
    User enters a phone number and taps Continue.
 
-2. **OTP** (`OnBoarding.Otp`)  
-   User enters the verification code (dev: `000000`).
+2. **OTP screen** (`OnBoarding.Otp`)  
+   User enters the code. Backend accepts only `000000` for now.
 
 3. **Branch (server decides)**  
    - **Existing user** — API returns `LOGGED_IN` with tokens → **Home** (`HomeGraph`).  
@@ -22,17 +22,17 @@ There is **no separate “log in vs sign up” phone screen**; new vs returning 
 
 | Step | Endpoint | Notes |
 |------|----------|--------|
-| Verify OTP | `POST /auth/verify-otp` | Body includes `flow: PHONE_AUTH` (see `OtpFlow` / `OtpFlowDto`). |
+| Verify OTP | `POST /auth/verify-otp` | Body includes `phone`, `otp`, and `deviceId` (stable per app install). |
 | Complete signup | `POST /auth/complete-signup` | `Authorization: Bearer <signupToken>`; body: `name`, `userId` (username), optional `email`, `profilePictureUrl`. |
 
-### Server: `OtpFlow.PHONE_AUTH`
+### Server verification behavior
 
 After OTP is valid:
 
-- If a user exists for the normalized phone → issue session tokens (`LOGGED_IN`).
-- If not → issue a short-lived signup token (`SIGNUP_REQUIRED`).
+- If a user exists for the normalized phone → issue session tokens (`LOGGED_IN`) bound to `deviceId`.
+- If not → issue a short-lived signup token (`SIGNUP_REQUIRED`) carrying `deviceId`, then final auth token after profile completion.
 
-Legacy flows `LOGIN` and `SIGNUP` remain on the server for compatibility but the **Somiq client only sends `PHONE_AUTH`**.
+Verification endpoint uses a single behavior (existing user -> login, unknown phone -> signup-required); no flow flag is needed.
 
 ## Navigation (Compose)
 
@@ -64,6 +64,7 @@ Removing `OnBoarding.SignUp` and changing `Otp`’s shape can break **restored n
 - SMS OTP instead of dev `000000`.
 - Optional email / avatar on complete profile (already partially supported by API).
 - Analytics funnel: phone → OTP → home vs complete profile.
+- Device mismatch UX: show a clearer “session belongs to another device” message on refresh failures.
 
 ---
 

@@ -104,6 +104,13 @@ Optional UX notes: [NAVIGATION_ANIMATIONS.md](../core/src/commonMain/kotlin/com/
 
 The client uses a **single** phone → OTP path; the server returns either session tokens or a signup token. New users complete **name + username** on `CompleteProfile` before entering the main graph.
 
+### 6.1 Device-bound auth context
+
+- A stable per-installation `deviceId` is persisted in `core` DataStore (`TokenStorage`).
+- `feature-auth` includes this `deviceId` in OTP verification request.
+- Backend includes `deviceId` in JWT claims; refresh token rotation preserves the same device binding.
+- If refresh token/device mapping is missing or mismatched in backend DB, refresh is rejected with **401**.
+
 Details, API table, and navigation diagram: [LOGIN_FLOW_PLAN.md](./LOGIN_FLOW_PLAN.md).
 
 ---

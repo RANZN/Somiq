@@ -2,6 +2,8 @@ package com.ranjan.somiq.core.di
 
 import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.data.local.AuthStateManagerImpl
+import com.ranjan.somiq.core.data.local.DeviceIdProvider
+import com.ranjan.somiq.core.data.local.DeviceIdProviderImpl
 import com.ranjan.somiq.core.data.local.createTokenStorage
 import com.ranjan.somiq.core.data.local.TokenStorage
 import com.ranjan.somiq.core.data.network.TokenProvider
@@ -27,6 +29,7 @@ val networkModule = module {
     single<TokenStorage> {
         createTokenStorage()
     }
+    single<DeviceIdProvider> { DeviceIdProviderImpl(get()) }
 
     singleOf(::TokenProviderImpl) bind TokenProvider::class
     singleOf(::AuthStateManagerImpl) bind AuthStateManager::class

@@ -4,18 +4,10 @@ import com.ranjan.somiq.core.data.model.AuthToken
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class OtpFlowDto {
-    LOGIN,
-    SIGNUP,
-    /** Unified entry: server returns login or signup-required. */
-    PHONE_AUTH,
-}
-
-@Serializable
 data class VerifyOtpRequest(
     val phone: String,
     val otp: String,
-    val flow: OtpFlowDto,
+    val deviceId: String,
 )
 
 @Serializable

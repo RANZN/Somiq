@@ -55,7 +55,7 @@ fun PhoneEntryScreen(
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text = "We’ll send a verification code. Use 000000 for now.",
+            text = "We’ll text you a code to verify your number.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

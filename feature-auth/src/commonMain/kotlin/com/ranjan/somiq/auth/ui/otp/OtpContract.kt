@@ -12,7 +12,7 @@ object OtpContract {
     @Stable
     data class UiState(
         val phoneDisplay: String,
-        val otp: String = "000000",
+        val otp: String = "",
         val isLoading: Boolean = false,
         val error: Error? = null,
         /** Counts failed verify attempts (local or server); reset when OTP text changes. */

@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.auth.ui.components.LoginHeader
-import com.ranjan.somiq.auth.ui.otp.OtpContract
 import com.ranjan.somiq.auth.ui.otp.OtpContract.Intent
 import com.ranjan.somiq.auth.ui.otp.OtpContract.UiState
 import com.ranjan.somiq.core.presentation.component.CustomTextField
@@ -70,7 +69,7 @@ fun OtpScreen(
         CustomTextField(
             value = uiState.otp,
             onValueChange = { intent(Intent.OnOtpChange(it)) },
-            placeholder = "6-digit code (000000)",
+            placeholder = "6-digit code",
             leadingImageVector = Icons.Outlined.Lock,
             isError = uiState.error != null,
             keyboardOptions = KeyboardOptions(

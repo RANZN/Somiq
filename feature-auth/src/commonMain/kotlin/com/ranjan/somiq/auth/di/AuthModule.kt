@@ -17,7 +17,8 @@ val authModule = module {
             nonAuthHttpClient = get(NonAuthClient),
             authHttpClient = get(),
             tokenProvider = get(),
-            authStateManager = get()
+            authStateManager = get(),
+            deviceIdProvider = get(),
         )
     }
     factoryOf(::UserLoginStatus)

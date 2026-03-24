@@ -57,12 +57,12 @@ class OtpViewModel(
 
             is VerifyOtpResult.Failure.AccountNotFound -> {
                 if (registerFailure(UiState.Error.ACCOUNT_NOT_FOUND)) return
-                emitEffect(Effect.ShowSnackbar("No account for this number. Sign up instead."))
+                emitEffect(Effect.ShowSnackbar("No account for this number."))
             }
 
             is VerifyOtpResult.Failure.PhoneAlreadyRegistered -> {
                 if (registerFailure(UiState.Error.PHONE_REGISTERED)) return
-                emitEffect(Effect.ShowSnackbar("This number is already registered. Log in."))
+                emitEffect(Effect.ShowSnackbar("This number is already registered."))
             }
 
             is VerifyOtpResult.Failure.NoNetwork -> {

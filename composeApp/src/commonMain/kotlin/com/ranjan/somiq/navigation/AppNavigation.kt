@@ -18,8 +18,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.ranjan.somiq.app.home.ui.HomeNavigationHost
 import com.ranjan.somiq.app.postDetail.ui.PostDetailScreen
-import com.ranjan.somiq.auth.ui.login.LoginScreenHost
-import com.ranjan.somiq.auth.ui.signup.SignupScreenHost
+import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileScreenHost
+import com.ranjan.somiq.auth.ui.otp.OtpScreenHost
+import com.ranjan.somiq.auth.ui.phone.PhoneEntryScreenHost
 import com.ranjan.somiq.chat.ui.conversation.ConversationScreenHost
 import com.ranjan.somiq.chat.ui.videocall.VideoCallScreenHost
 import com.ranjan.somiq.chat.ui.voicecall.VoiceCallScreenHost
@@ -69,20 +70,32 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             }
 
             entry<OnBoarding.Login> {
-                LoginScreenHost(
-                    navigateToDashboard = {
+                PhoneEntryScreenHost(
+                    navigateToOtp = { phone ->
+                        backStack.add(OnBoarding.Otp(phone = phone))
+                    },
+                )
+            }
+            entry<OnBoarding.Otp> { key ->
+                OtpScreenHost(
+                    phone = key.phone,
+                    navigateHome = {
                         backStack.clear()
                         backStack.add(HomeGraph)
                     },
-                    navigateToSignUp = { backStack.add(OnBoarding.SignUp) }
+                    navigateCompleteProfile = { signupToken ->
+                        backStack.add(OnBoarding.CompleteProfile(signupToken = signupToken))
+                    },
+                    navigateBackToPhone = { backStack.removeLastOrNull() },
                 )
             }
-            entry<OnBoarding.SignUp> {
-                SignupScreenHost(
-                    navigateToHome = {
+            entry<OnBoarding.CompleteProfile> { key ->
+                CompleteProfileScreenHost(
+                    signupToken = key.signupToken,
+                    navigateHome = {
                         backStack.clear()
                         backStack.add(HomeGraph)
-                    }
+                    },
                 )
             }
 

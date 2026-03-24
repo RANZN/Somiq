@@ -1,10 +1,11 @@
 package com.ranjan.somiq.auth.di
 
-import com.ranjan.somiq.auth.data.repositories.AuthRepositoryImpl
+import com.ranjan.somiq.auth.data.repository.AuthRepositoryImpl
 import com.ranjan.somiq.auth.domain.repository.AuthRepository
-import com.ranjan.somiq.auth.domain.usecase.LoginUseCase
+import com.ranjan.somiq.auth.domain.usecase.CheckUserIdUseCase
+import com.ranjan.somiq.auth.domain.usecase.CompleteSignupUseCase
 import com.ranjan.somiq.auth.domain.usecase.LogoutUseCase
-import com.ranjan.somiq.auth.domain.usecase.SignupUseCase
+import com.ranjan.somiq.auth.domain.usecase.VerifyOtpUseCase
 import com.ranjan.somiq.auth.domain.usecase.UserLoginStatus
 import com.ranjan.somiq.core.di.NonAuthClient
 import org.koin.core.module.dsl.factoryOf
@@ -16,11 +17,13 @@ val authModule = module {
             nonAuthHttpClient = get(NonAuthClient),
             authHttpClient = get(),
             tokenProvider = get(),
-            authStateManager = get()
+            authStateManager = get(),
+            deviceIdProvider = get(),
         )
     }
     factoryOf(::UserLoginStatus)
-    factoryOf(::SignupUseCase)
-    factoryOf(::LoginUseCase)
+    factoryOf(::VerifyOtpUseCase)
+    factoryOf(::CompleteSignupUseCase)
+    factoryOf(::CheckUserIdUseCase)
     factoryOf(::LogoutUseCase)
 }

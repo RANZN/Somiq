@@ -12,9 +12,9 @@ import kotlin.time.ExperimentalTime
 
 class CreateStoryViewModel(
     private val feedRepository: FeedRepository
-) : BaseViewModel<CreateStoryContract.UiState, CreateStoryContract.Intent, CreateStoryContract.Effect>() {
-
-    override val initialState: CreateStoryContract.UiState get() = CreateStoryContract.UiState()
+) : BaseViewModel<CreateStoryContract.UiState, CreateStoryContract.Intent, CreateStoryContract.Effect>(
+    CreateStoryContract.UiState()
+) {
 
     override fun onIntent(intent: CreateStoryContract.Intent) {
         when (intent) {

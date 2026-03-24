@@ -10,10 +10,7 @@ import kotlinx.coroutines.launch
 
 class ReelsViewModel(
     private val getReelsUseCase: GetReelsUseCase
-) : BaseViewModel<UiState, Intent, Effect>() {
-
-    override val initialState: UiState
-        get() = UiState()
+) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     init {
         handleIntent(Intent.LoadReels)

@@ -22,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,6 +36,7 @@ fun CustomTextField(
     value: String,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit = {},
+    onFocusChanged: ((FocusState) -> Unit)? = null,
     placeholder: String,
     isError: Boolean = false,
     errorMessage: String? = "",
@@ -52,7 +55,8 @@ fun CustomTextField(
             onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(shape),
+                .clip(shape)
+                .onFocusChanged { onFocusChanged?.invoke(it) },
             placeholder = {
                 Text(text = placeholder, maxLines = 1)
             },

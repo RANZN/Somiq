@@ -8,9 +8,9 @@ import kotlinx.coroutines.launch
 class StoryViewViewModel(
     private val storyId: String,
     private val feedRepository: FeedRepository
-) : BaseViewModel<StoryViewContract.UiState, StoryViewContract.Intent, StoryViewContract.Effect>() {
-
-    override val initialState: StoryViewContract.UiState get() = StoryViewContract.UiState()
+) : BaseViewModel<StoryViewContract.UiState, StoryViewContract.Intent, StoryViewContract.Effect>(
+    StoryViewContract.UiState()
+) {
 
     override fun onIntent(intent: StoryViewContract.Intent) {}
 

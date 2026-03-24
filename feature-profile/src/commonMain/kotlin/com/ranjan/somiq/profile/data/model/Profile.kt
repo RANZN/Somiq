@@ -18,7 +18,8 @@ data class User(
     @SerialName("userId")
     val id: String,
     val name: String,
-    val email: String,
+    val email: String? = null,
+    val phone: String? = null,
     val username: String? = null,
     val profilePictureUrl: String? = null,
     val bio: String? = null

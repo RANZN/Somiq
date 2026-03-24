@@ -12,9 +12,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val getProfileUseCase: GetProfileUseCase,
     private val feedRepository: FeedRepository
-) : BaseViewModel<UiState, Intent, Effect>() {
-
-    override val initialState: UiState get() = UiState()
+) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     private var userId: String? = null
 

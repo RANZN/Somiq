@@ -16,10 +16,7 @@ class FeedViewModel(
     private val getStoriesUseCase: GetStoriesUseCase,
     private val toggleLikeUseCase: ToggleLikeUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase
-) : BaseViewModel<UiState, Intent, Effect>() {
-
-    override val initialState: UiState
-        get() = UiState()
+) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     init {
         handleIntent(Intent.LoadFeed)

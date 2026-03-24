@@ -11,12 +11,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(), KoinComponent {
+class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), KoinComponent {
     private val getNotificationsUseCase: GetNotificationsUseCase by inject()
     private val notificationRepository: NotificationRepository by inject()
-
-    override val initialState: UiState
-        get() = UiState()
 
     init {
         handleIntent(Intent.LoadNotifications)

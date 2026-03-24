@@ -1,5 +1,6 @@
 package com.ranjan.somiq.di
 
+import com.ranjan.somiq.app.home.ui.HomeViewModel
 import com.ranjan.somiq.collections.CollectionsViewModel
 import com.ranjan.somiq.core.presentation.effect.GlobalEffectDispatcher
 import com.ranjan.somiq.notifications.NotificationsViewModel
@@ -14,4 +15,5 @@ val appViewModelModule = module {
     viewModelOf(::CollectionsViewModel)
     
     singleOf(::GlobalEffectDispatcher)
+    viewModelOf(::HomeViewModel)
 }

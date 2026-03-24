@@ -8,15 +8,15 @@ import kotlinx.serialization.Serializable
 data object Splash : NavKey
 
 @Serializable
-object OnBoardingGraph : NavKey
-
-@Serializable
 sealed interface OnBoarding : NavKey {
     @Serializable
     data object Login : OnBoarding
 
     @Serializable
-    data object SignUp : OnBoarding
+    data class Otp(val phone: String) : OnBoarding
+
+    @Serializable
+    data class CompleteProfile(val signupToken: String) : OnBoarding
 }
 
 @Serializable

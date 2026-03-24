@@ -9,10 +9,9 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val getProfileUseCase: GetProfileUseCase
-) : BaseViewModel<HomeContract.UiState, HomeContract.Intent, HomeContract.Effect>() {
-
-    override val initialState: HomeContract.UiState
-        get() = HomeContract.UiState()
+) : BaseViewModel<HomeContract.UiState, HomeContract.Intent, HomeContract.Effect>(
+    HomeContract.UiState()
+) {
 
     init {
         loadCurrentUserProfile()

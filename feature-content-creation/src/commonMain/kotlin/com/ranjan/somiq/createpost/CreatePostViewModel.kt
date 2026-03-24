@@ -13,9 +13,9 @@ import kotlin.time.ExperimentalTime
 class CreatePostViewModel(
     private val createPostUseCase: CreatePostUseCase,
     private val feedRepository: FeedRepository
-) : BaseViewModel<CreatePostContract.UiState, CreatePostContract.Intent, CreatePostContract.Effect>() {
-
-    override val initialState: CreatePostContract.UiState get() = CreatePostContract.UiState()
+) : BaseViewModel<CreatePostContract.UiState, CreatePostContract.Intent, CreatePostContract.Effect>(
+    CreatePostContract.UiState()
+) {
 
     override fun onIntent(intent: CreatePostContract.Intent) {
         when (intent) {

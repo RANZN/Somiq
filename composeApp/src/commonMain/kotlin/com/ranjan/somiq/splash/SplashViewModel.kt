@@ -15,9 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 class SplashViewModel(
     private val checkUpdate: CheckUpdateUseCase,
     private val userLoginStatus: UserLoginStatus,
-) : BaseViewModel<NoState, NoIntent, Effect>() {
-
-    override val initialState: NoState = NoState
+) : BaseViewModel<NoState, NoIntent, Effect>(NoState) {
 
     init {
         handleSplashTransition()

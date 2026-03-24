@@ -8,10 +8,9 @@ import kotlinx.coroutines.launch
 class VoiceCallViewModel(
     private val otherUserId: String,
     private val otherUserName: String
-) : BaseViewModel<VoiceCallContract.UiState, VoiceCallContract.Intent, VoiceCallContract.Effect>() {
-
-    override val initialState: VoiceCallContract.UiState
-        get() = VoiceCallContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
+) : BaseViewModel<VoiceCallContract.UiState, VoiceCallContract.Intent, VoiceCallContract.Effect>(
+    VoiceCallContract.UiState(otherUserId = otherUserId, otherUserName = otherUserName)
+) {
 
     override fun onIntent(intent: VoiceCallContract.Intent) {
         viewModelScope.launch {

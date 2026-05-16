@@ -2,6 +2,7 @@ package com.ranjan.somiq.core.presentation.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.NonRestartableComposable
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import kotlinx.coroutines.flow.Flow
 
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
  * @param onEffect The callback to handle each effect
  */
 @Composable
+@NonRestartableComposable
 fun <T : BaseUiEffect> CollectEffect(
     effectFlow: Flow<T>,
     onEffect: suspend (T) -> Unit

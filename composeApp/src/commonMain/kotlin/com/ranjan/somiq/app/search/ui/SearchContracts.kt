@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import com.ranjan.somiq.app.search.data.model.SearchResult
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.model.UiText
-import com.ranjan.somiq.core.presentation.viewmodel.BaseScreenError
+import com.ranjan.somiq.core.presentation.error.BaseScreenError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState

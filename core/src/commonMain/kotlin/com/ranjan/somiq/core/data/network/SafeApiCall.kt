@@ -18,7 +18,7 @@ import kotlinx.serialization.SerializationException
  * - Generic exceptions
  *
  * Map failures in the ViewModel with [com.ranjan.somiq.core.presentation.error.toAppError]
- * and a screen-specific [com.ranjan.somiq.core.presentation.viewmodel.BaseScreenError] default
+ * and a screen-specific [com.ranjan.somiq.core.presentation.error.BaseScreenError] default
  * (see each contract’s `ScreenError`), then show [com.ranjan.somiq.core.presentation.error.AppError]
  * in the UI with [com.ranjan.somiq.core.presentation.error.asString].
  *

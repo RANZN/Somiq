@@ -8,12 +8,12 @@ This document describes how the **Somiq** Kotlin Multiplatform (KMP) client is s
 
 | Layer | Role | Typical location |
 |-------|------|------------------|
-| **App shell** | DI, `App()`, root navigation, splash | `:composeApp` |
+| **App shell** | DI, `App()`, root navigation, splash | `:shared` |
 | **Feature UI** | Screens, feature ViewModels, feature contracts | `:feature-*` (e.g. `feature-auth`, `feature-chat`) |
 | **Core** | Shared primitives: networking, storage, navigation keys, `BaseViewModel`, global effects | `:core` |
 | **Domain / data** | Use cases, repositories (often co-located with features or shared modules) | Per feature or `:core` |
 
-All **Compose UI** that ships in the app is wired through **`:composeApp`** for Android, iOS, and Desktop (JVM), sharing `commonMain` code where possible.
+All **Compose UI** that ships in the app is wired through **`:shared`** for Android, iOS, and Desktop (JVM), with platform entry points in **`androidApp`**, **`desktopApp`**, and **`iosApp`**.
 
 ### 1.1 `:feature-auth` layout
 
@@ -93,8 +93,8 @@ Feature screens may still use **local** `Effect.ShowSnackbar` variants where the
 ## 5. Navigation
 
 - **Keys:** `core/.../presentation/navigation/Destination.kt` — serializable `NavKey` types (`Splash`, `OnBoarding`, `HomeGraph`, `Conversation`, etc.).
-- **Graph:** `composeApp/.../navigation/AppNavigation.kt` — `NavDisplay` + back stack; feature hosts receive lambdas for navigation.
-- **Saved state:** `composeApp/.../navigation/RememberNavBackStack.kt` — polymorphic serialization for `NavKey` (required for KMP / non-reflection targets).
+- **Graph:** `shared/.../navigation/AppNavigation.kt` — `NavDisplay` + back stack; feature hosts receive lambdas for navigation.
+- **Saved state:** `shared/.../navigation/RememberNavBackStack.kt` — polymorphic serialization for `NavKey` (required for KMP / non-reflection targets).
 
 Optional UX notes: [NAVIGATION_ANIMATIONS.md](../core/src/commonMain/kotlin/com/ranjan/somiq/core/presentation/navigation/NAVIGATION_ANIMATIONS.md).
 
@@ -117,7 +117,7 @@ Details, API table, and navigation diagram: [LOGIN_FLOW_PLAN.md](./LOGIN_FLOW_PL
 
 ## 7. Dependency injection
 
-**Koin** is used across modules. Feature ViewModels are registered in feature modules (e.g. `authViewModelModule`); `composeApp` aggregates modules for the running target.
+**Koin** is used across modules. Feature ViewModels are registered in feature modules (e.g. `authViewModelModule`); `shared` aggregates modules for the running target.
 
 ---
 

@@ -1,6 +1,7 @@
 package com.ranjan.somiq.feed.ui.storyview
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ class StoryViewViewModel(
                     setState {
                         copy(
                             isLoading = false,
-                            error = e.message ?: "Failed to load story"
+                            error = e.toAppError(StoryViewContract.ScreenError.LoadStoryFailed)
                         )
                     }
                 }

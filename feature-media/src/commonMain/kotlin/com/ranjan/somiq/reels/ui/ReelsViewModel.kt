@@ -1,6 +1,8 @@
 package com.ranjan.somiq.reels.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.reels.domain.usecase.GetReelsUseCase
 import com.ranjan.somiq.reels.ui.ReelsContract.Effect
@@ -42,7 +44,7 @@ class ReelsViewModel(
             setState {
                 copy(
                     isLoading = false,
-                    error = error.message ?: "Failed to load reels"
+                    error = error.toAppError(ReelsContract.ScreenError.LoadReelsFailed)
                 )
             }
             return
@@ -63,7 +65,7 @@ class ReelsViewModel(
             setState {
                 copy(
                     refreshing = false,
-                    error = error.message ?: "Failed to refresh reels"
+                    error = error.toAppError(ReelsContract.ScreenError.RefreshReelsFailed)
                 )
             }
             return

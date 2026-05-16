@@ -1,18 +1,31 @@
 package com.ranjan.somiq.app.search.ui
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.app.search.data.model.SearchResult
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.model.UiText
+import com.ranjan.somiq.core.presentation.viewmodel.BaseScreenError
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.error_failed_to_search
 
 object SearchContract {
+    sealed class ScreenError : BaseScreenError {
+        data object SearchFailed : ScreenError()
+
+        override fun toUiText(): UiText? = when (this) {
+            SearchFailed -> UiText.Resource(Res.string.error_failed_to_search)
+        }
+    }
+
     @Stable
     data class UiState(
         val searchQuery: String = "",
         val searchResults: SearchResult? = null,
         val isLoading: Boolean = false,
-        val error: String? = null,
+        val error: AppError? = null,
         val isSearchActive: Boolean = false,
         val showSearchFieldInContent: Boolean = true
     ) : BaseUiState {

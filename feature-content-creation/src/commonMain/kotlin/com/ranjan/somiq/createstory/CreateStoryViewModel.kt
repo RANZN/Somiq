@@ -1,6 +1,8 @@
 package com.ranjan.somiq.createstory
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.platform.readUriToBytes
 import com.ranjan.somiq.feed.data.model.CreateStoryRequest
@@ -28,7 +30,7 @@ class CreateStoryViewModel(
     private fun post() {
         val uri = state.value.selectedImageUri
         if (uri.isNullOrBlank()) {
-            setState { copy(error = "Please select an image") }
+            setState { copy(error = AppError.Custom(CreateStoryContract.ScreenError.PleaseSelectImage)) }
             return
         }
 
@@ -36,7 +38,7 @@ class CreateStoryViewModel(
             setState { copy(isLoading = true, error = null) }
             val bytes = readUriToBytes(uri)
             if (bytes == null || bytes.isEmpty()) {
-                setState { copy(isLoading = false, error = "Could not read image") }
+                setState { copy(isLoading = false, error = AppError.Custom(CreateStoryContract.ScreenError.CouldNotReadImage)) }
                 return@launch
             }
             val fileName = "story_${Clock.System.now()}.jpg"
@@ -52,7 +54,7 @@ class CreateStoryViewModel(
                             setState {
                                 copy(
                                     isLoading = false,
-                                    error = e.message ?: "Failed to create story"
+                                    error = e.toAppError(CreateStoryContract.ScreenError.CreateStoryFailed)
                                 )
                             }
                         }
@@ -62,7 +64,7 @@ class CreateStoryViewModel(
                     setState {
                         copy(
                             isLoading = false,
-                            error = e.message ?: "Failed to upload image"
+                            error = e.toAppError(CreateStoryContract.ScreenError.UploadImageFailed)
                         )
                     }
                 }

@@ -1,6 +1,7 @@
 package com.ranjan.somiq.notifications
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.app.home.domain.repository.NotificationRepository
 import com.ranjan.somiq.app.home.domain.usecase.GetNotificationsUseCase
@@ -51,7 +52,7 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState())
                     setState {
                         copy(
                             isLoading = false,
-                            error = error.message ?: "Failed to load notifications"
+                            error = error.toAppError(NotificationsContract.ScreenError.LoadNotificationsFailed)
                         )
                     }
                 }
@@ -79,7 +80,7 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState())
                 },
                 onFailure = { error ->
                     emitEffect(Effect.ShowError(
-                        error.message ?: "Failed to mark as read"
+                        error.toAppError(NotificationsContract.ScreenError.MarkNotificationReadFailed)
                     ))
                 }
             )
@@ -95,7 +96,7 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState())
                 },
                 onFailure = { error ->
                     emitEffect(Effect.ShowError(
-                        error.message ?: "Failed to mark all as read"
+                        error.toAppError(NotificationsContract.ScreenError.MarkAllNotificationsReadFailed)
                     ))
                 }
             )

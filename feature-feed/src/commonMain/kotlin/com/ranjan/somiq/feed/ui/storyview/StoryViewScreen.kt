@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.feed.data.model.MediaType
 
 @Composable
@@ -38,7 +39,7 @@ fun StoryViewScreen(
             }
             state.error != null -> {
                 Text(
-                    text = state.error,
+                    text = state.error.asString(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier

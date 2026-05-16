@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_request_timed_out">Request timed out</string>
+    <string name="error_unauthorized">Invalid credentials</string>
+    <string name="error_not_found">Resource not found</string>
+    <string name="error_server_error">Something went wrong on the server. Try again.</string>
+    <string name="error_something_went_wrong">Something went wrong.</string>
+
+    <string name="error_failed_to_load_feed">Couldn\'t load feed</string>
+    <string name="error_failed_to_refresh_feed">Couldn\'t refresh feed</string>
+    <string name="error_failed_to_load_profile">Couldn\'t load profile</string>
+    <string name="error_failed_to_refresh_profile">Couldn\'t refresh profile</string>
+    <string name="error_failed_to_load_post">Couldn\'t load post</string>
+    <string name="error_failed_to_load_comments">Couldn\'t load comments</string>
+    <string name="error_failed_to_post_comment">Couldn\'t post comment</string>
+    <string name="error_failed_to_toggle_comment_like">Couldn\'t update like</string>
+    <string name="error_failed_to_load_notifications">Couldn\'t load notifications</string>
+    <string name="error_failed_to_mark_notification_read">Couldn\'t mark notification as read</string>
+    <string name="error_failed_to_mark_all_notifications_read">Couldn\'t mark all as read</string>
+    <string name="error_failed_to_search">Couldn\'t search</string>
+    <string name="error_failed_to_load_collections">Couldn\'t load collections</string>
+    <string name="error_failed_to_create_collection">Couldn\'t create collection</string>
+    <string name="error_failed_to_create_post">Couldn\'t create post</string>
+    <string name="error_failed_to_upload_image">Couldn\'t upload image</string>
+    <string name="error_failed_to_create_story">Couldn\'t create story</string>
+    <string name="error_failed_to_load_reels">Couldn\'t load reels</string>
+    <string name="error_failed_to_refresh_reels">Couldn\'t refresh reels</string>
+    <string name="error_failed_to_load_story">Couldn\'t load story</string>
+    <string name="error_failed_to_load_chats">Couldn\'t load chats</string>
+    <string name="error_failed_to_refresh_chats">Couldn\'t refresh chats</string>
+    <string name="error_failed_to_load_messages">Couldn\'t load messages</string>
+    <string name="error_failed_to_send_message">Couldn\'t send message</string>
+    <string name="error_please_select_image">Please select an image</string>
+    <string name="error_could_not_read_image">Couldn\'t read image</string>
+</resources>

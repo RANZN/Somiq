@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.chat.data.model.Conversation
 import com.ranjan.somiq.chat.ui.chatlist.ChatListContract.Intent
 import com.ranjan.somiq.chat.ui.chatlist.ChatListContract.UiState
+import com.ranjan.somiq.core.presentation.error.asString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +73,7 @@ fun ChatListScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text(uiState.error ?: "Error", color = MaterialTheme.colorScheme.error)
+                            Text(uiState.error!!.asString(), color = MaterialTheme.colorScheme.error)
                             Text(
                                 "Tap to retry",
                                 style = MaterialTheme.typography.bodyMedium,

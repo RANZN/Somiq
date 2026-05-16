@@ -1,13 +1,29 @@
 package com.ranjan.somiq.feed.ui
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.model.UiText
+import com.ranjan.somiq.core.presentation.viewmodel.BaseScreenError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.error_failed_to_load_feed
+import com.ranjan.somiq.core.resources.error_failed_to_refresh_feed
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.feed.data.model.Story
 
 object FeedContract {
+    sealed class ScreenError : BaseScreenError {
+        data object LoadFeedFailed : ScreenError()
+        data object RefreshFeedFailed : ScreenError()
+
+        override fun toUiText(): UiText? = when (this) {
+            LoadFeedFailed -> UiText.Resource(Res.string.error_failed_to_load_feed)
+            RefreshFeedFailed -> UiText.Resource(Res.string.error_failed_to_refresh_feed)
+        }
+    }
+
     @Stable
     data class UiState(
         val posts: List<Post> = emptyList(),
@@ -15,7 +31,7 @@ object FeedContract {
         val nextCursor: String? = null,
         val loading: Boolean = false,
         val loadingMore: Boolean = false,
-        val error: String? = null,
+        val error: AppError? = null,
         val refreshing: Boolean = false
     ) : BaseUiState {
         val hasMore: Boolean
@@ -26,13 +42,11 @@ object FeedContract {
     }
 
     sealed interface Intent : BaseUiIntent {
-        // Feed intents
         object LoadFeed : Intent
         object LoadMore : Intent
         object RefreshFeed : Intent
         object LoadStories : Intent
 
-        // Post interaction intents
         data class ToggleLike(val postId: String) : Intent
         data class ToggleBookmark(val postId: String) : Intent
         data class OnPostClick(val postId: String) : Intent
@@ -40,17 +54,14 @@ object FeedContract {
         data class OnShareClick(val postId: String) : Intent
         data class OnMoreClick(val postId: String) : Intent
 
-        // User intents
         data class OnUserClick(val userId: String) : Intent
         data class OnStoryClick(val storyId: String) : Intent
 
-        // Top bar / app bar intents
         object OnCreatePostClick : Intent
         object OnNotificationsClick : Intent
         object OnChatClick : Intent
         object OnAddStoryClick : Intent
 
-        // Error handling
         object ClearError : Intent
         object Retry : Intent
     }

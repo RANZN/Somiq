@@ -19,12 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.app.search.data.model.User
 import com.ranjan.somiq.app.search.ui.SearchContract.Intent
 import com.ranjan.somiq.app.search.ui.SearchContract.UiState
-
 @Composable
 fun SearchScreen(
     uiState: UiState,
@@ -72,7 +72,7 @@ fun SearchScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = uiState.error,
+                            text = uiState.error!!.asString(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )

@@ -17,9 +17,10 @@ import kotlinx.serialization.SerializationException
  * - Serialization errors
  * - Generic exceptions
  *
- * Map failures in the ViewModel with [Throwable.mapAsUiError] and a feature [UiErrorAdapter]
- * into screen [UiError] types, then resolve strings in the UI with each feature’s `displayText`
- * mapper and [com.ranjan.somiq.core.presentation.error.userFacingErrorText] for generic cases.
+ * Map failures in the ViewModel with [com.ranjan.somiq.core.presentation.error.toAppError]
+ * and a screen-specific [com.ranjan.somiq.core.presentation.viewmodel.BaseScreenError] default
+ * (see each contract’s `ScreenError`), then show [com.ranjan.somiq.core.presentation.error.AppError]
+ * in the UI with [com.ranjan.somiq.core.presentation.error.asString].
  *
  * @param apiCall The suspend function that makes the HTTP request and returns HttpResponse
  * @param onSuccess The function to parse the response body when status is OK

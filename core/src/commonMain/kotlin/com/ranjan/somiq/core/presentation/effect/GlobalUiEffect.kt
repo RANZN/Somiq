@@ -1,5 +1,6 @@
 package com.ranjan.somiq.core.presentation.effect
 
+import androidx.compose.material3.SnackbarDuration
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 
 sealed interface GlobalUiEffect : BaseUiEffect {
@@ -8,10 +9,4 @@ sealed interface GlobalUiEffect : BaseUiEffect {
         val actionLabel: String? = null,
         val duration: SnackbarDuration = SnackbarDuration.Short
     ) : GlobalUiEffect
-}
-
-enum class SnackbarDuration {
-    Short,
-    Long,
-    Indefinite
 }

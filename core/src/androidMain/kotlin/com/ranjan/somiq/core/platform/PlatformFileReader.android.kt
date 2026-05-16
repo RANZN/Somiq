@@ -1,7 +1,7 @@
 package com.ranjan.somiq.core.platform
 
-import org.koin.mp.KoinPlatform.getKoin
 import androidx.core.net.toUri
+import org.koin.mp.KoinPlatform.getKoin
 
 actual fun readUriToBytes(uri: String): ByteArray? {
     return try {

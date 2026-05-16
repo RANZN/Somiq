@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.core.presentation.component.PaginatedLazyList
+import com.ranjan.somiq.feed.ui.components.PaginatedLazyList
 import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.feed.ui.FeedContract.Intent
 import com.ranjan.somiq.feed.ui.FeedContract.UiState

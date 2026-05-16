@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.auth.ui.components.LoginHeader
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryContract.Intent
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryContract.UiState
-import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.component.CustomTextField
+import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.defaultPadding
 
 @Composable

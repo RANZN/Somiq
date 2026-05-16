@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
 import com.ranjan.somiq.core.presentation.error.asString
-import com.ranjan.somiq.core.data.model.CollectionResponse
+import com.ranjan.somiq.collections.data.CollectionResponse
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import org.koin.compose.viewmodel.koinViewModel
 

@@ -11,8 +11,6 @@ expect class KotlinInitializer {
 fun initKoin(appDeclaration: KoinAppDeclaration, additionalModules: List<Module> = emptyList()) = startKoin {
     appDeclaration()
     modules(
-        coreModule,
-        coreViewModelModule,
         networkModule,
         *additionalModules.toTypedArray()
     )

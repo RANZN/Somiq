@@ -3,7 +3,7 @@ package com.ranjan.somiq
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ComposeAppCommonTest {
+class SharedCommonTest {
 
     @Test
     fun example() {

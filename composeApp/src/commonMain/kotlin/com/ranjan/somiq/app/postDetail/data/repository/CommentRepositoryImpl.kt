@@ -49,8 +49,7 @@ class CommentRepositoryImpl(
         
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/comments?$queryParams") },
-            onSuccess = { response -> response.body<PaginationResult<CommentResponse>>().data },
-            errorMessage = "Failed to load comments"
+            onSuccess = { response -> response.body<PaginationResult<CommentResponse>>().data }
         )
     }
 
@@ -75,8 +74,7 @@ class CommentRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to create comment"
+            }
         )
     }
 
@@ -88,23 +86,20 @@ class CommentRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to update comment"
+            }
         )
     }
 
     override suspend fun deleteComment(commentId: String): Result<Unit> {
         return safeApiCallUnit(
-            apiCall = { httpClient.delete("$BASE_URL/v1/comments/$commentId") },
-            errorMessage = "Failed to delete comment"
+            apiCall = { httpClient.delete("$BASE_URL/v1/comments/$commentId") }
         )
     }
 
     override suspend fun toggleLike(commentId: String): Result<Boolean> {
         return safeApiCall(
             apiCall = { httpClient.post("$BASE_URL/v1/comments/$commentId/like") },
-            onSuccess = { response -> response.status.value == 200 },
-            errorMessage = "Failed to toggle like"
+            onSuccess = { response -> response.status.value == 200 }
         )
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
 import com.ranjan.somiq.core.presentation.navigation.Home
@@ -39,7 +40,7 @@ fun HomeNavigationHost(
     modifier: Modifier = Modifier
 ) {
     val viewModel: HomeViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     CollectEffect(viewModel.effect) { effect ->
         when (effect) {

@@ -13,8 +13,7 @@ class SearchRepositoryImpl(
 
     override suspend fun search(query: String): Result<SearchResult> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/search?q=$query") },
-            errorMessage = "Failed to search"
+            apiCall = { httpClient.get("$BASE_URL/v1/search?q=$query") }
         )
     }
 }

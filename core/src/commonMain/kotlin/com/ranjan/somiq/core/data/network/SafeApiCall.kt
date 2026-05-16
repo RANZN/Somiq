@@ -3,6 +3,11 @@ package com.ranjan.somiq.core.data.network
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.isSuccess
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 
 /**
@@ -12,29 +17,30 @@ import kotlinx.serialization.SerializationException
  * - Serialization errors
  * - Generic exceptions
  *
+ * Map failures in the ViewModel with [Throwable.mapAsUiError] and a feature [UiErrorAdapter]
+ * into screen [UiError] types, then resolve strings in the UI with each feature’s `displayText`
+ * mapper and [com.ranjan.somiq.core.presentation.error.userFacingErrorText] for generic cases.
+ *
  * @param apiCall The suspend function that makes the HTTP request and returns HttpResponse
  * @param onSuccess The function to parse the response body when status is OK
- * @param errorMessage Optional custom error message prefix (defaults to "API call failed")
  * @return Result<T> containing either the parsed response or a failure with appropriate exception
  */
 suspend inline fun <T> safeApiCall(
     crossinline apiCall: suspend () -> HttpResponse,
     crossinline onSuccess: suspend (HttpResponse) -> T,
-    errorMessage: String = "API call failed"
-): Result<T> {
-    return try {
+): Result<T> = withContext(Dispatchers.IO) {
+    try {
         val response = apiCall()
-        
-        if (response.status == HttpStatusCode.OK || response.status == HttpStatusCode.Created) {
+        if (response.status.isSuccess()) {
             try {
                 Result.success(onSuccess(response))
             } catch (e: SerializationException) {
-                Result.failure(Exception("Failed to parse response: ${e.message}"))
+                Result.failure(e)
             } catch (e: Exception) {
-                Result.failure(Exception("Failed to process response: ${e.message}"))
+                if (e is CancellationException) throw e
+                Result.failure(e)
             }
         } else {
-            // Handle HTTP error status codes
             val error = when (response.status) {
                 HttpStatusCode.Unauthorized -> ApiException.Unauthorized()
                 HttpStatusCode.NotFound -> ApiException.NotFound()
@@ -47,66 +53,29 @@ suspend inline fun <T> safeApiCall(
     } catch (e: NetworkException.Timeout) {
         Result.failure(e)
     } catch (e: ApiException) {
-        // Re-throw ApiException as-is (Unauthorized, NotFound, ServerError)
         Result.failure(e)
     } catch (e: Exception) {
-        Result.failure(Exception("$errorMessage: ${e.message}"))
+        if (e is CancellationException) throw e
+        Result.failure(e)
     }
 }
 
 /**
- * Simplified version that automatically parses the response body.
- * Use this when you just need to deserialize the response to a type.
- *
- * @param apiCall The suspend function that makes the HTTP request and returns HttpResponse
- * @param errorMessage Optional custom error message prefix
- * @return Result<T> containing either the parsed response body or a failure
+ * Parses the response body to [T] when the HTTP status is successful.
  */
 suspend inline fun <reified T> safeApiCall(
     crossinline apiCall: suspend () -> HttpResponse,
-    errorMessage: String = "API call failed"
-): Result<T> {
-    return safeApiCall(
-        apiCall = apiCall,
-        onSuccess = { response -> response.body<T>() },
-        errorMessage = errorMessage
-    )
-}
+): Result<T> = safeApiCall(
+    apiCall = apiCall,
+    onSuccess = { response -> response.body<T>() },
+)
 
 /**
- * Version for API calls that return Unit (no response body).
- * Use this for DELETE, PUT operations that just need to check success status.
- *
- * @param apiCall The suspend function that makes the HTTP request and returns HttpResponse
- * @param errorMessage Optional custom error message prefix
- * @return Result<Unit> containing either Unit on success or a failure
+ * For calls with no response body (e.g. some DELETE/PUT flows).
  */
 suspend inline fun safeApiCallUnit(
     crossinline apiCall: suspend () -> HttpResponse,
-    errorMessage: String = "API call failed"
-): Result<Unit> {
-    return try {
-        val response = apiCall()
-        
-        if (response.status == HttpStatusCode.OK || response.status == HttpStatusCode.Created) {
-            Result.success(Unit)
-        } else {
-            // Handle HTTP error status codes
-            val error = when (response.status) {
-                HttpStatusCode.Unauthorized -> ApiException.Unauthorized()
-                HttpStatusCode.NotFound -> ApiException.NotFound()
-                else -> ApiException.ServerError(response.status.value)
-            }
-            Result.failure(error)
-        }
-    } catch (e: NetworkException.NoNetwork) {
-        Result.failure(e)
-    } catch (e: NetworkException.Timeout) {
-        Result.failure(e)
-    } catch (e: ApiException) {
-        // Re-throw ApiException as-is (Unauthorized, NotFound, ServerError)
-        Result.failure(e)
-    } catch (e: Exception) {
-        Result.failure(Exception("$errorMessage: ${e.message}"))
-    }
-}
+): Result<Unit> = safeApiCall(
+    apiCall = apiCall,
+    onSuccess = { },
+)

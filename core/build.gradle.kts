@@ -45,7 +45,7 @@ kotlin {
             implementation(libs.foundation)
             implementation(libs.material3)
             implementation(libs.ui)
-            implementation(libs.components.resources)
+            api(libs.components.resources)
             implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -90,6 +90,11 @@ kotlin {
         getByName("iosArm64Main").dependsOn(iosMain)
         getByName("iosSimulatorArm64Main").dependsOn(iosMain)
     }
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.ranjan.somiq.core.resources"
 }
 
 configure<LibraryExtension> {

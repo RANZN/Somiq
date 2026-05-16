@@ -30,8 +30,7 @@ class NotificationRepositoryImpl(
         
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/notifications?$queryParams") },
-            onSuccess = { response -> response.body<PaginationResult<NotificationResponse>>().data },
-            errorMessage = "Failed to load notifications"
+            onSuccess = { response -> response.body<PaginationResult<NotificationResponse>>().data }
         )
     }
 
@@ -42,22 +41,19 @@ class NotificationRepositoryImpl(
                 @kotlinx.serialization.Serializable
                 data class UnreadCountResponse(val unreadCount: Long)
                 response.body<UnreadCountResponse>().unreadCount
-            },
-            errorMessage = "Failed to get unread count"
+            }
         )
     }
 
     override suspend fun markAsRead(notificationId: String): Result<Unit> {
         return safeApiCallUnit(
-            apiCall = { httpClient.put("$BASE_URL/v1/notifications/$notificationId/read") },
-            errorMessage = "Failed to mark notification as read"
+            apiCall = { httpClient.put("$BASE_URL/v1/notifications/$notificationId/read") }
         )
     }
 
     override suspend fun markAllAsRead(): Result<Unit> {
         return safeApiCallUnit(
-            apiCall = { httpClient.put("$BASE_URL/v1/notifications/read-all") },
-            errorMessage = "Failed to mark all notifications as read"
+            apiCall = { httpClient.put("$BASE_URL/v1/notifications/read-all") }
         )
     }
 }

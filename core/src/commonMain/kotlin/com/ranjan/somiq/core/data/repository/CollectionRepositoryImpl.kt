@@ -32,8 +32,7 @@ class CollectionRepositoryImpl(
 
     override suspend fun getCollections(): Result<List<CollectionResponse>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/collections") },
-            errorMessage = "Failed to load collections"
+            apiCall = { httpClient.get("$BASE_URL/v1/collections") }
         )
     }
 
@@ -45,8 +44,7 @@ class CollectionRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to create collection"
+            }
         )
     }
 
@@ -62,22 +60,19 @@ class CollectionRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to update collection"
+            }
         )
     }
 
     override suspend fun deleteCollection(collectionId: String): Result<Unit> {
         return safeApiCallUnit(
-            apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId") },
-            errorMessage = "Failed to delete collection"
+            apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId") }
         )
     }
 
     override suspend fun getCollectionItems(collectionId: String): Result<List<CollectionItemResponse>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/collections/$collectionId/items") },
-            errorMessage = "Failed to load collection items"
+            apiCall = { httpClient.get("$BASE_URL/v1/collections/$collectionId/items") }
         )
     }
 
@@ -93,15 +88,13 @@ class CollectionRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to add item to collection"
+            }
         )
     }
 
     override suspend fun removeItemFromCollection(collectionId: String, itemId: String): Result<Unit> {
         return safeApiCallUnit(
-            apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId/items/$itemId") },
-            errorMessage = "Failed to remove item from collection"
+            apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId/items/$itemId") }
         )
     }
 }

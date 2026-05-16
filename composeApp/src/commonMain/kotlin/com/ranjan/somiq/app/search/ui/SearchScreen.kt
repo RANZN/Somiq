@@ -72,7 +72,7 @@ fun SearchScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = uiState.error!!.asString(),
+                            text = uiState.error.asString(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )

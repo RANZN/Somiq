@@ -2,7 +2,6 @@ package com.ranjan.somiq.app.home.data.repository
 
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
-import com.ranjan.somiq.core.data.network.safeApiCallUnit
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.app.home.data.model.NotificationResponse
 import com.ranjan.somiq.app.home.domain.repository.NotificationRepository
@@ -46,13 +45,13 @@ class NotificationRepositoryImpl(
     }
 
     override suspend fun markAsRead(notificationId: String): Result<Unit> {
-        return safeApiCallUnit(
+        return safeApiCall(
             apiCall = { httpClient.put("$BASE_URL/v1/notifications/$notificationId/read") }
         )
     }
 
     override suspend fun markAllAsRead(): Result<Unit> {
-        return safeApiCallUnit(
+        return safeApiCall(
             apiCall = { httpClient.put("$BASE_URL/v1/notifications/read-all") }
         )
     }

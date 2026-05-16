@@ -2,7 +2,6 @@ package com.ranjan.somiq.app.postDetail.data.repository
 
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
-import com.ranjan.somiq.core.data.network.safeApiCallUnit
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.app.postDetail.data.model.CommentResponse
 import com.ranjan.somiq.app.postDetail.data.model.CreateCommentRequest
@@ -91,7 +90,7 @@ class CommentRepositoryImpl(
     }
 
     override suspend fun deleteComment(commentId: String): Result<Unit> {
-        return safeApiCallUnit(
+        return safeApiCall(
             apiCall = { httpClient.delete("$BASE_URL/v1/comments/$commentId") }
         )
     }

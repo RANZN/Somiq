@@ -70,13 +70,3 @@ suspend inline fun <reified T> safeApiCall(
     apiCall = apiCall,
     onSuccess = { response -> response.body<T>() },
 )
-
-/**
- * For calls with no response body (e.g. some DELETE/PUT flows).
- */
-suspend inline fun safeApiCallUnit(
-    crossinline apiCall: suspend () -> HttpResponse,
-): Result<Unit> = safeApiCall(
-    apiCall = apiCall,
-    onSuccess = { },
-)

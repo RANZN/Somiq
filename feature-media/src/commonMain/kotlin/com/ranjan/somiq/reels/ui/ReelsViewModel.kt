@@ -1,7 +1,6 @@
 package com.ranjan.somiq.reels.ui
 
 import androidx.lifecycle.viewModelScope
-import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.reels.domain.usecase.GetReelsUseCase

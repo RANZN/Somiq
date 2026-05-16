@@ -22,9 +22,9 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionsScreen(
-    viewModel: CollectionsViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val viewModel : CollectionsViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {

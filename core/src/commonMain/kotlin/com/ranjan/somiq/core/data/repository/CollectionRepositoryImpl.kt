@@ -4,7 +4,6 @@ import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.model.CollectionItemResponse
 import com.ranjan.somiq.core.data.model.CollectionResponse
 import com.ranjan.somiq.core.data.network.safeApiCall
-import com.ranjan.somiq.core.data.network.safeApiCallUnit
 import com.ranjan.somiq.core.domain.model.ItemType
 import com.ranjan.somiq.core.domain.repository.CollectionRepository
 import io.ktor.client.HttpClient
@@ -65,7 +64,7 @@ class CollectionRepositoryImpl(
     }
 
     override suspend fun deleteCollection(collectionId: String): Result<Unit> {
-        return safeApiCallUnit(
+        return safeApiCall(
             apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId") }
         )
     }
@@ -93,7 +92,7 @@ class CollectionRepositoryImpl(
     }
 
     override suspend fun removeItemFromCollection(collectionId: String, itemId: String): Result<Unit> {
-        return safeApiCallUnit(
+        return safeApiCall(
             apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId/items/$itemId") }
         )
     }

@@ -5,8 +5,8 @@ import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
 import com.ranjan.somiq.collections.CollectionsContract.UiState
 import com.ranjan.somiq.core.presentation.error.toAppError
-import com.ranjan.somiq.core.domain.repository.CollectionRepository
-import com.ranjan.somiq.core.domain.usecase.GetCollectionsUseCase
+import com.ranjan.somiq.collections.domain.CollectionRepository
+import com.ranjan.somiq.collections.domain.GetCollectionsUseCase
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent

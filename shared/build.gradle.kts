@@ -1,5 +1,8 @@
 import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +10,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -54,11 +59,14 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.core)
 
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
         androidMain.dependencies {
+            implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
         }
 
@@ -96,6 +104,115 @@ configure<LibraryExtension> {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.ranjan.somiq.shared.resources"
+}
+
 dependencies {
     "debugImplementation"(libs.ui.tooling)
+
+    val roomCompiler = libs.room.compiler
+    listOf(
+        "kspAndroid",
+        "kspJvm",
+        "kspIosArm64",
+        "kspIosSimulatorArm64",
+    ).forEach { add(it, roomCompiler) }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
+}
+
+afterEvaluate {
+    val kmp = extensions.getByType<KotlinMultiplatformExtension>()
+    fun cap(s: String) = s.replaceFirstChar { it.uppercaseChar() }
+
+    fun Task.composePreamble(useMainCommon: Boolean) {
+        val scope = if (useMainCommon) "Main" else "Test"
+        dependsOn(tasks.named("generateComposeResClass"))
+        dependsOn(tasks.named("generateResourceAccessorsForCommon$scope"))
+        tasks.findByName("generateExpectResourceCollectorsForCommon$scope")?.let { dependsOn(it) }
+    }
+
+    fun Task.dependsOnOptional(n: String) = tasks.findByName(n)?.let { dependsOn(it) }
+
+    fun Task.androidKspFrom(compilationName: String) {
+        when {
+            compilationName.endsWith("UnitTest") -> {
+                val bt = cap(compilationName.removeSuffix("UnitTest"))
+                composePreamble(useMainCommon = false)
+                dependsOnOptional("generateResourceAccessorsForAndroidUnitTest$bt")
+                dependsOnOptional("generateResourceAccessorsForAndroidUnitTest")
+                dependsOnOptional("generateResourceAccessorsForCommonTest")
+            }
+            compilationName.endsWith("AndroidTest") -> {
+                val bt = cap(compilationName.removeSuffix("AndroidTest"))
+                composePreamble(useMainCommon = true)
+                dependsOnOptional("generateResourceAccessorsForAndroidInstrumentedTest$bt")
+                dependsOnOptional("generateResourceAccessorsForAndroidInstrumentedTest")
+                dependsOnOptional("generateResourceAccessorsForCommonMain")
+            }
+            else -> {
+                val bt = cap(compilationName)
+                composePreamble(useMainCommon = true)
+                dependsOn(tasks.named("generateResourceAccessorsForAndroid$bt"))
+                dependsOn(tasks.named("generateResourceAccessorsForAndroidMain"))
+                dependsOn(tasks.named("generateActualResourceCollectorsForAndroidMain"))
+            }
+        }
+    }
+
+    fun jvmKspTaskName(compilationName: String) =
+        when (compilationName) {
+            "main" -> "kspKotlinJvm"
+            else -> "ksp${cap(compilationName)}KotlinJvm"
+        }
+
+    fun Task.jvmKspFrom(compilationName: String) {
+        val seg = cap(compilationName)
+        when (compilationName) {
+            "test" -> {
+                composePreamble(useMainCommon = false)
+                dependsOnOptional("generateResourceAccessorsForJvmTest")
+            }
+            else -> {
+                composePreamble(useMainCommon = true)
+                dependsOn(tasks.named("generateResourceAccessorsForJvm$seg"))
+                dependsOnOptional("generateActualResourceCollectorsForJvm$seg")
+            }
+        }
+    }
+
+    fun Task.iosMainKsp(suffix: String) {
+        composePreamble(useMainCommon = true)
+        dependsOn(tasks.named("generateResourceAccessorsFor${suffix}Main"))
+        dependsOn(tasks.named("generateActualResourceCollectorsFor${suffix}Main"))
+        dependsOnOptional("generateResourceAccessorsForIosMain")
+    }
+
+    fun Task.iosTestKsp(suffix: String) {
+        composePreamble(useMainCommon = false)
+        dependsOnOptional("generateResourceAccessorsFor${suffix}Test")
+        dependsOnOptional("generateResourceAccessorsForIosMain")
+    }
+
+    kmp.targets.filterIsInstance<KotlinAndroidTarget>().forEach { t ->
+        t.compilations.forEach { c ->
+            tasks.findByName("ksp${cap(c.name)}KotlinAndroid")?.androidKspFrom(c.name)
+        }
+    }
+
+    kmp.targets.filterIsInstance<KotlinJvmTarget>().forEach { t ->
+        t.compilations.forEach { c ->
+            tasks.findByName(jvmKspTaskName(c.name))?.jvmKspFrom(c.name)
+        }
+    }
+
+    kmp.targets.filter { it.name.startsWith("ios") }.forEach { t ->
+        val s = cap(t.name)
+        tasks.findByName("kspKotlin$s")?.iosMainKsp(s)
+        tasks.findByName("kspTestKotlin$s")?.iosTestKsp(s)
+    }
 }

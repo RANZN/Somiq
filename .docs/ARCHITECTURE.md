@@ -10,8 +10,8 @@ This document describes how the **Somiq** Kotlin Multiplatform (KMP) client is s
 |-------|------|------------------|
 | **App shell** | DI, `App()`, root navigation, splash | `:shared` |
 | **Feature UI** | Screens, feature ViewModels, feature contracts | `:feature-*` (e.g. `feature-auth`, `feature-chat`) |
-| **Core** | Shared primitives: networking, storage, navigation keys, `BaseViewModel`, global effects | `:core` |
-| **Domain / data** | Use cases, repositories (often co-located with features or shared modules) | Per feature or `:core` |
+| **Core** | Infrastructure only: HTTP client, token/auth storage, `BaseViewModel`, `AppError`, `UiText`, Coil, global effects | `:core` |
+| **Domain / data** | Use cases, repositories | Per feature or `:shared` (app-shell screens) |
 
 All **Compose UI** that ships in the app is wired through **`:shared`** for Android, iOS, and Desktop (JVM), with platform entry points in **`androidApp`**, **`desktopApp`**, and **`iosApp`**.
 
@@ -92,7 +92,7 @@ Feature screens may still use **local** `Effect.ShowSnackbar` variants where the
 
 ## 5. Navigation
 
-- **Keys:** `core/.../presentation/navigation/Destination.kt` — serializable `NavKey` types (`Splash`, `OnBoarding`, `HomeGraph`, `Conversation`, etc.).
+- **Keys:** `shared/.../navigation/NavDestinations.kt` — serializable `NavKey` types (`Splash`, `OnBoarding`, `HomeGraph`, `Conversation`, etc.).
 - **Graph:** `shared/.../navigation/AppNavigation.kt` — `NavDisplay` + back stack; feature hosts receive lambdas for navigation.
 - **Saved state:** `shared/.../navigation/RememberNavBackStack.kt` — polymorphic serialization for `NavKey` (required for KMP / non-reflection targets).
 

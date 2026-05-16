@@ -1,6 +1,6 @@
 package com.ranjan.somiq.collections
 
-import com.ranjan.somiq.core.data.model.CollectionResponse
+import com.ranjan.somiq.collections.data.CollectionResponse
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.error.BaseScreenError

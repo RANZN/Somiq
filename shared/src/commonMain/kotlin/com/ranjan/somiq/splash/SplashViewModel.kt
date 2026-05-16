@@ -2,7 +2,7 @@ package com.ranjan.somiq.splash
 
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.usecase.UserLoginStatus
-import com.ranjan.somiq.common.checkForUpdate.CheckUpdateUseCase
+import com.ranjan.somiq.splash.data.CheckUpdateUseCase
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.presentation.viewmodel.NoIntent
 import com.ranjan.somiq.core.presentation.viewmodel.NoState

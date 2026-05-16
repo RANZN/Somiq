@@ -1,6 +1,6 @@
 package com.ranjan.somiq.app.home.data.model
 
-import com.ranjan.somiq.core.domain.model.TargetType
+import com.ranjan.somiq.app.home.domain.model.TargetType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

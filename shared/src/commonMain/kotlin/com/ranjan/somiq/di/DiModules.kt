@@ -25,6 +25,9 @@ import org.koin.core.module.Module
  * This centralizes module registration so you only need to update it in one place.
  */
 fun getAllAppModules(): List<Module> = listOf(
+    platformDatabaseModule(),
+    localDatabaseModule,
+    appDataModule,
     authModule,
     authViewModelModule,
     feedModule,

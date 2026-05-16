@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
-import com.ranjan.somiq.core.presentation.navigation.Home
+import com.ranjan.somiq.navigation.Home
 
 object HomeContract {
     @Stable

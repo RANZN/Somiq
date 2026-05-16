@@ -1,18 +1,13 @@
 package com.ranjan.somiq.core.presentation.effect
 
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class GlobalEffectDispatcher {
-    private val _effects = MutableSharedFlow<GlobalUiEffect>(
-        replay = 0,
-        extraBufferCapacity = 1
-    )
+    private val _effects = Channel<GlobalUiEffect>(Channel.BUFFERED)
+    val effects = _effects.receiveAsFlow()
 
-    val effects: SharedFlow<GlobalUiEffect> = _effects.asSharedFlow()
-
-    fun emit(effect: GlobalUiEffect) {
-        _effects.tryEmit(effect)
+    suspend fun emit(effect: GlobalUiEffect) {
+        _effects.send(effect)
     }
 }

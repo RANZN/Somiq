@@ -1,6 +1,7 @@
 package com.ranjan.somiq.profile.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import com.ranjan.somiq.profile.domain.usecase.GetProfileUseCase
@@ -47,7 +48,7 @@ class ProfileViewModel(
             setState {
                 copy(
                     isLoading = false,
-                    error = error.message ?: "Failed to load profile"
+                    error = error.toAppError(ProfileContract.ScreenError.LoadProfileFailed)
                 )
             }
             return
@@ -80,7 +81,7 @@ class ProfileViewModel(
             setState {
                 copy(
                     refreshing = false,
-                    error = error.message ?: "Failed to refresh profile"
+                    error = error.toAppError(ProfileContract.ScreenError.RefreshProfileFailed)
                 )
             }
             return

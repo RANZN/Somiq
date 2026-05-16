@@ -1,9 +1,15 @@
 package com.ranjan.somiq.profile.ui
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.model.UiText
+import com.ranjan.somiq.core.presentation.error.BaseScreenError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.error_failed_to_load_profile
+import com.ranjan.somiq.core.resources.error_failed_to_refresh_profile
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.feed.data.model.Story
 import com.ranjan.somiq.profile.data.model.ProfileResponse
@@ -11,6 +17,16 @@ import com.ranjan.somiq.profile.data.model.ProfileResponse
 enum class ProfileTab { MyStories, Saved }
 
 object ProfileContract {
+    sealed class ScreenError : BaseScreenError {
+        data object LoadProfileFailed : ScreenError()
+        data object RefreshProfileFailed : ScreenError()
+
+        override fun toUiText(): UiText? = when (this) {
+            LoadProfileFailed -> UiText.Resource(Res.string.error_failed_to_load_profile)
+            RefreshProfileFailed -> UiText.Resource(Res.string.error_failed_to_refresh_profile)
+        }
+    }
+
     @Stable
     data class UiState(
         val profile: ProfileResponse? = null,
@@ -19,7 +35,7 @@ object ProfileContract {
         val savedPosts: List<Post> = emptyList(),
         val selectedTab: ProfileTab = ProfileTab.MyStories,
         val isLoading: Boolean = false,
-        val error: String? = null,
+        val error: AppError? = null,
         val refreshing: Boolean = false,
         val showAppBar: Boolean = false,
         val appBarTitle: String? = null

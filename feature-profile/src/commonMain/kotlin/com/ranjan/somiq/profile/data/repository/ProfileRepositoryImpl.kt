@@ -21,8 +21,7 @@ class ProfileRepositoryImpl(
             "$BASE_URL/v1/account"
         }
         return safeApiCall(
-            apiCall = { httpClient.get(url) },
-            errorMessage = "Failed to load profile"
+            apiCall = { httpClient.get(url) }
         )
     }
 
@@ -44,8 +43,7 @@ class ProfileRepositoryImpl(
                         )
                     )
                 }
-            },
-            errorMessage = "Failed to update profile"
+            }
         )
     }
 }

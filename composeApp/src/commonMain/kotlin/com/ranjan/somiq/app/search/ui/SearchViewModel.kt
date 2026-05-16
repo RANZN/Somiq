@@ -1,6 +1,7 @@
 package com.ranjan.somiq.app.search.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.app.search.domain.usecase.SearchUseCase
 import com.ranjan.somiq.app.search.ui.SearchContract.Intent
@@ -67,7 +68,7 @@ class SearchViewModel(
             setState {
                 copy(
                     isLoading = false,
-                    error = error.message ?: "Failed to search"
+                    error = error.toAppError(SearchContract.ScreenError.SearchFailed)
                 )
             }
             return

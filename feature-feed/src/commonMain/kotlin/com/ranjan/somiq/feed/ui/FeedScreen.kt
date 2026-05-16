@@ -27,9 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.component.PaginatedLazyList
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.feed.ui.FeedContract.Intent
 import com.ranjan.somiq.feed.ui.FeedContract.UiState
-import com.ranjan.somiq.core.presentation.component.PaginatedLazyList
 import com.ranjan.somiq.feed.ui.components.PostItem
 import com.ranjan.somiq.feed.ui.components.StoriesSection
 
@@ -112,7 +113,7 @@ fun FeedScreen(
                                     .clickable { onIntent(Intent.Retry) }
                             ) {
                                 Text(
-                                    text = uiState.error.orEmpty(),
+                                    text = uiState.error?.asString().orEmpty(),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )

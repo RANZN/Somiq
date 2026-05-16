@@ -1,6 +1,7 @@
 package com.ranjan.somiq.app.postDetail.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import com.ranjan.somiq.app.postDetail.domain.usecase.CreateCommentUseCase
@@ -52,7 +53,7 @@ class PostDetailViewModel(
                 setState {
                     copy(
                         isLoading = false,
-                        error = error.message ?: "Failed to load post"
+                        error = error.toAppError(PostDetailContract.ScreenError.LoadPostFailed)
                     )
                 }
             }
@@ -69,7 +70,7 @@ class PostDetailViewModel(
                 setState {
                     copy(
                         isLoadingComments = false,
-                        error = error.message ?: "Failed to load comments"
+                        error = error.toAppError(PostDetailContract.ScreenError.LoadCommentsFailed)
                     )
                 }
             }
@@ -88,7 +89,7 @@ class PostDetailViewModel(
             },
             onFailure = { error ->
                 emitEffect(Effect.ShowError(
-                    error.message ?: "Failed to post comment"
+                    error.toAppError(PostDetailContract.ScreenError.PostCommentFailed)
                 ))
             }
         )
@@ -101,7 +102,7 @@ class PostDetailViewModel(
             },
             onFailure = { error ->
                 emitEffect(Effect.ShowError(
-                    error.message ?: "Failed to toggle like"
+                    error.toAppError(PostDetailContract.ScreenError.ToggleCommentLikeFailed)
                 ))
             }
         )

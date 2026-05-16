@@ -31,62 +31,54 @@ class FeedRepositoryImpl(
             if (!after.isNullOrBlank()) append("&after=$after")
         }
         return safeApiCall(
-            apiCall = { httpClient.get(url) },
-            errorMessage = "Failed to load feed"
+            apiCall = { httpClient.get(url) }
         )
     }
 
     override suspend fun getPostsByUser(userId: String): Result<List<Post>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts?authorId=$userId") },
-            onSuccess = { response -> response.body<PaginationResult<Post>>().data },
-            errorMessage = "Failed to load user posts"
+            onSuccess = { response -> response.body<PaginationResult<Post>>().data }
         )
     }
 
     override suspend fun getBookmarkedPosts(): Result<List<Post>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts/bookmarks") },
-            onSuccess = { response -> response.body<PaginationResult<Post>>().data },
-            errorMessage = "Failed to load saved posts"
+            onSuccess = { response -> response.body<PaginationResult<Post>>().data }
         )
     }
 
     override suspend fun getPost(postId: String): Result<Post> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/posts/$postId") },
-            errorMessage = "Failed to load post"
+            apiCall = { httpClient.get("$BASE_URL/v1/posts/$postId") }
         )
     }
 
     override suspend fun getStories(): Result<List<Story>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/stories") },
-            onSuccess = { response -> response.body<StoryResponse>().data },
-            errorMessage = "Failed to load stories"
+            onSuccess = { response -> response.body<StoryResponse>().data }
         )
     }
 
     override suspend fun getMyStories(): Result<List<Story>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/stories/me") },
-            onSuccess = { response -> response.body<List<Story>>() },
-            errorMessage = "Failed to load my stories"
+            onSuccess = { response -> response.body<List<Story>>() }
         )
     }
 
     override suspend fun getUserStories(userId: String): Result<List<Story>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/stories/user/$userId") },
-            onSuccess = { response -> response.body<List<Story>>() },
-            errorMessage = "Failed to load user stories"
+            onSuccess = { response -> response.body<List<Story>>() }
         )
     }
 
     override suspend fun getStory(storyId: String): Result<Story> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/stories/$storyId") },
-            errorMessage = "Failed to load story"
+            apiCall = { httpClient.get("$BASE_URL/v1/stories/$storyId") }
         )
     }
 
@@ -96,22 +88,19 @@ class FeedRepositoryImpl(
                 httpClient.post("$BASE_URL/v1/stories") {
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to create story"
+            }
         )
     }
 
     override suspend fun toggleLike(postId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/like") },
-            errorMessage = "Failed to toggle like"
+            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/like") }
         )
     }
 
     override suspend fun toggleBookmark(postId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") },
-            errorMessage = "Failed to toggle bookmark"
+            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") }
         )
     }
 
@@ -121,8 +110,7 @@ class FeedRepositoryImpl(
                 httpClient.post("$BASE_URL/v1/posts") {
                     setBody(request)
                 }
-            },
-            errorMessage = "Failed to create post"
+            }
         )
     }
 
@@ -143,8 +131,7 @@ class FeedRepositoryImpl(
                     }
                 )
             },
-            onSuccess = { response -> response.body<UploadResponse>().url },
-            errorMessage = "Failed to upload image"
+            onSuccess = { response -> response.body<UploadResponse>().url }
         )
     }
 }

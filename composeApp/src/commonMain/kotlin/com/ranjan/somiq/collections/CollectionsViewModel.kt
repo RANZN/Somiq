@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
 import com.ranjan.somiq.collections.CollectionsContract.UiState
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.domain.repository.CollectionRepository
 import com.ranjan.somiq.core.domain.usecase.GetCollectionsUseCase
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
@@ -45,7 +46,7 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
                     setState {
                         copy(
                             isLoading = false,
-                            error = error.message ?: "Failed to load collections"
+                            error = error.toAppError(CollectionsContract.ScreenError.LoadCollectionsFailed)
                         )
                     }
                 }
@@ -62,7 +63,7 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
                 },
                 onFailure = { error ->
                     emitEffect(Effect.ShowError(
-                        error.message ?: "Failed to create collection"
+                        error.toAppError(CollectionsContract.ScreenError.CreateCollectionFailed)
                     ))
                 }
             )

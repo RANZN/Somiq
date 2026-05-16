@@ -18,29 +18,25 @@ class ReelsRepositoryImpl(
     override suspend fun getReels(): Result<List<Reel>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/reels") },
-            onSuccess = { response -> response.body<ReelResponse>().data },
-            errorMessage = "Failed to load reels"
+            onSuccess = { response -> response.body<ReelResponse>().data }
         )
     }
 
     override suspend fun getReel(reelId: String): Result<Reel> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/reels/$reelId") },
-            errorMessage = "Failed to load reel"
+            apiCall = { httpClient.get("$BASE_URL/v1/reels/$reelId") }
         )
     }
 
     override suspend fun toggleLike(reelId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/reels/$reelId/like") },
-            errorMessage = "Failed to toggle like"
+            apiCall = { httpClient.post("$BASE_URL/v1/reels/$reelId/like") }
         )
     }
 
     override suspend fun toggleBookmark(reelId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/reels/$reelId/bookmark") },
-            errorMessage = "Failed to toggle bookmark"
+            apiCall = { httpClient.post("$BASE_URL/v1/reels/$reelId/bookmark") }
         )
     }
 }

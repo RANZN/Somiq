@@ -12,9 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.notifications.NotificationsContract.Intent
 import com.ranjan.somiq.notifications.NotificationsContract.Effect
+import com.ranjan.somiq.notifications.NotificationsContract.Intent
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,10 +74,10 @@ fun NotificationsScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        val errorText = uiState.error
-                        if (errorText != null) {
+                        val errorRes = uiState.error
+                        if (errorRes != null) {
                             Text(
-                                text = errorText,
+                                text = errorRes.asString(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error
                             )

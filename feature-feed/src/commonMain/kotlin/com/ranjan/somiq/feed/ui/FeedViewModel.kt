@@ -1,6 +1,7 @@
 package com.ranjan.somiq.feed.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.feed.domain.usecase.GetFeedPageUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetStoriesUseCase
@@ -58,7 +59,7 @@ class FeedViewModel(
             setState {
                 copy(
                     loading = false,
-                    error = error.message ?: "Failed to load feed"
+                    error = error.toAppError(FeedContract.ScreenError.LoadFeedFailed)
                 )
             }
             return
@@ -98,7 +99,7 @@ class FeedViewModel(
             setState {
                 copy(
                     refreshing = false,
-                    error = error.message ?: "Failed to refresh feed"
+                    error = error.toAppError(FeedContract.ScreenError.RefreshFeedFailed)
                 )
             }
             return

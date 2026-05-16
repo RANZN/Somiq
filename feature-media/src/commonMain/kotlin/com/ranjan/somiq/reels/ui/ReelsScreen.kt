@@ -22,10 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.reels.ui.ReelsContract.Intent
 import com.ranjan.somiq.reels.ui.ReelsContract.UiState
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReelsScreen(
@@ -77,7 +77,7 @@ fun ReelsScreen(
                                 .clickable { onIntent(Intent.Retry) }
                         ) {
                             Text(
-                                text = uiState.error,
+                                text = uiState.error.asString(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error
                             )

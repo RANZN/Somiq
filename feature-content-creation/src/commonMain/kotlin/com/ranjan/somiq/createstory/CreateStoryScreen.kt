@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,7 +118,7 @@ fun CreateStoryScreen(
             }
             state.error?.let { error ->
                 Text(
-                    text = error,
+                    text = error.asString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier

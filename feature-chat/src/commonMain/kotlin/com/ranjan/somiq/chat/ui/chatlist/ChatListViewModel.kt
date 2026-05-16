@@ -2,6 +2,7 @@ package com.ranjan.somiq.chat.ui.chatlist
 
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.chat.domain.usecase.GetConversationsUseCase
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -20,9 +21,13 @@ class ChatListViewModel(
             when (intent) {
                 is ChatListContract.Intent.LoadConversations -> loadConversations()
                 is ChatListContract.Intent.Refresh -> refresh()
-                is ChatListContract.Intent.OnConversationClick ->
+                is ChatListContract.Intent.OnConversationClick -> {
                     emitEffect(ChatListContract.Effect.NavigateToConversation(intent.userId))
-                is ChatListContract.Intent.ClearError -> setState { copy(error = null) }
+                }
+
+                is ChatListContract.Intent.ClearError -> {
+                    setState { copy(error = null) }
+                }
                 is ChatListContract.Intent.Retry -> {
                     setState { copy(error = null) }
                     loadConversations()
@@ -34,14 +39,44 @@ class ChatListViewModel(
     private suspend fun loadConversations() {
         setState { copy(isLoading = true, error = null) }
         getConversationsUseCase()
-            .onSuccess { list -> setState { copy(conversations = list, isLoading = false, error = null) } }
-            .onFailure { e -> setState { copy(isLoading = false, error = e.message ?: "Failed to load chats") } }
+            .onSuccess { list ->
+                setState {
+                    copy(
+                        conversations = list,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            }
+            .onFailure { e ->
+                setState {
+                    copy(
+                        isLoading = false,
+                        error = e.toAppError(ChatListContract.ScreenError.LoadChatsFailed)
+                    )
+                }
+            }
     }
 
     private suspend fun refresh() {
         setState { copy(refreshing = true, error = null) }
         getConversationsUseCase()
-            .onSuccess { list -> setState { copy(conversations = list, refreshing = false, error = null) } }
-            .onFailure { e -> setState { copy(refreshing = false, error = e.message ?: "Failed to refresh") } }
+            .onSuccess { list ->
+                setState {
+                    copy(
+                        conversations = list,
+                        refreshing = false,
+                        error = null
+                    )
+                }
+            }
+            .onFailure { e ->
+                setState {
+                    copy(
+                        refreshing = false,
+                        error = e.toAppError(ChatListContract.ScreenError.RefreshChatsFailed)
+                    )
+                }
+            }
     }
 }

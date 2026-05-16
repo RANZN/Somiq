@@ -3,6 +3,7 @@ package com.ranjan.somiq.chat.ui.conversation
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.chat.domain.usecase.GetMessagesUseCase
 import com.ranjan.somiq.chat.domain.usecase.SendMessageUseCase
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,11 @@ class ConversationViewModel(
         setState { copy(isLoading = true, error = null) }
         getMessagesUseCase(otherUserId)
             .onSuccess { list -> setState { copy(messages = list, isLoading = false, error = null) } }
-            .onFailure { e -> setState { copy(isLoading = false, error = e.message ?: "Failed to load messages") } }
+            .onFailure { e ->
+                setState {
+                    copy(isLoading = false, error = e.toAppError(ConversationContract.ScreenError.LoadMessagesFailed))
+                }
+            }
     }
 
     private suspend fun sendMessage() {
@@ -60,7 +65,11 @@ class ConversationViewModel(
             }
             .onFailure { e ->
                 setState { copy(messageText = text, sending = false) }
-                emitEffect(ConversationContract.Effect.ShowError(e.message ?: "Failed to send"))
+                emitEffect(
+                    ConversationContract.Effect.ShowError(
+                        e.toAppError(ConversationContract.ScreenError.SendMessageFailed)
+                    )
+                )
             }
     }
 }

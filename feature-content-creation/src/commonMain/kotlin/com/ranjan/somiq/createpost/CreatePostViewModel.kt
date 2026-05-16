@@ -1,6 +1,8 @@
 package com.ranjan.somiq.createpost
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.platform.readUriToBytes
 import com.ranjan.somiq.feed.data.model.CreatePostRequest
@@ -31,7 +33,7 @@ class CreatePostViewModel(
         val uri = state.value.selectedImageUri
         val caption = state.value.caption.trim()
         if (uri.isNullOrBlank()) {
-            setState { copy(error = "Please select an image") }
+            setState { copy(error = AppError.Custom(CreatePostContract.ScreenError.PleaseSelectImage)) }
             return
         }
 
@@ -39,7 +41,7 @@ class CreatePostViewModel(
             setState { copy(isLoading = true, error = null) }
             val bytes = readUriToBytes(uri)
             if (bytes == null || bytes.isEmpty()) {
-                setState { copy(isLoading = false, error = "Could not read image") }
+                setState { copy(isLoading = false, error = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)) }
                 return@launch
             }
             val fileName = "post_${Clock.System.now().toEpochMilliseconds()}.jpg"
@@ -59,7 +61,7 @@ class CreatePostViewModel(
                             setState {
                                 copy(
                                     isLoading = false,
-                                    error = e.message ?: "Failed to create post"
+                                    error = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
                                 )
                             }
                         }
@@ -69,7 +71,7 @@ class CreatePostViewModel(
                     setState {
                         copy(
                             isLoading = false,
-                            error = e.message ?: "Failed to upload image"
+                            error = e.toAppError(CreatePostContract.ScreenError.UploadImageFailed)
                         )
                     }
                 }

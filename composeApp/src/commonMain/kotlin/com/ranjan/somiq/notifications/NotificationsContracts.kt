@@ -1,16 +1,36 @@
 package com.ranjan.somiq.notifications
 
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.app.home.data.model.NotificationResponse
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.model.UiText
+import com.ranjan.somiq.core.presentation.error.BaseScreenError
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.error_failed_to_load_notifications
+import com.ranjan.somiq.core.resources.error_failed_to_mark_all_notifications_read
+import com.ranjan.somiq.core.resources.error_failed_to_mark_notification_read
 
 object NotificationsContract {
+    sealed class ScreenError : BaseScreenError {
+        data object LoadNotificationsFailed : ScreenError()
+        data object MarkNotificationReadFailed : ScreenError()
+        data object MarkAllNotificationsReadFailed : ScreenError()
+
+        override fun toUiText(): UiText? = when (this) {
+            LoadNotificationsFailed -> UiText.Resource(Res.string.error_failed_to_load_notifications)
+            MarkNotificationReadFailed -> UiText.Resource(Res.string.error_failed_to_mark_notification_read)
+            MarkAllNotificationsReadFailed ->
+                UiText.Resource(Res.string.error_failed_to_mark_all_notifications_read)
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val notifications: List<NotificationResponse> = emptyList(),
         val unreadCount: Long = 0,
-        val error: String? = null
+        val error: AppError? = null
     ) : BaseUiState
 
     sealed class Intent : BaseUiIntent {
@@ -22,7 +42,6 @@ object NotificationsContract {
     }
 
     sealed class Effect : BaseUiEffect {
-        data class ShowError(val message: String) : Effect()
+        data class ShowError(val message: AppError) : Effect()
     }
 }
-

@@ -9,7 +9,10 @@ import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.error_failed_to_load_feed
+import com.ranjan.somiq.core.resources.error_failed_to_load_more
 import com.ranjan.somiq.core.resources.error_failed_to_refresh_feed
+import com.ranjan.somiq.core.resources.error_failed_to_update_bookmark
+import com.ranjan.somiq.core.resources.error_failed_to_update_like
 import com.ranjan.somiq.feed.data.model.Post
 import com.ranjan.somiq.feed.data.model.Story
 
@@ -17,10 +20,16 @@ object FeedContract {
     sealed class ScreenError : BaseScreenError {
         data object LoadFeedFailed : ScreenError()
         data object RefreshFeedFailed : ScreenError()
+        data object LoadMoreFailed : ScreenError()
+        data object ToggleLikeFailed : ScreenError()
+        data object ToggleBookmarkFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadFeedFailed -> UiText.Resource(Res.string.error_failed_to_load_feed)
             RefreshFeedFailed -> UiText.Resource(Res.string.error_failed_to_refresh_feed)
+            LoadMoreFailed -> UiText.Resource(Res.string.error_failed_to_load_more)
+            ToggleLikeFailed -> UiText.Resource(Res.string.error_failed_to_update_like)
+            ToggleBookmarkFailed -> UiText.Resource(Res.string.error_failed_to_update_bookmark)
         }
     }
 

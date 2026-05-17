@@ -18,7 +18,7 @@ object ChatListContract {
         data object LoadChatsFailed : ScreenError()
         data object RefreshChatsFailed : ScreenError()
 
-        override fun toUiText(): UiText? {
+        override fun toUiText(): UiText {
             return when (this) {
                 LoadChatsFailed -> UiText.Resource(Res.string.error_failed_to_load_chats)
                 RefreshChatsFailed -> UiText.Resource(Res.string.error_failed_to_refresh_chats)

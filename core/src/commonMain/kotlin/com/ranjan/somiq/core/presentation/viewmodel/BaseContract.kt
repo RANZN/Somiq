@@ -1,10 +1,13 @@
 package com.ranjan.somiq.core.presentation.viewmodel
 
+import androidx.compose.runtime.Stable
+
 /**
  * Base contract interfaces for UI state management pattern.
  * All ViewModels should use these interfaces for their State, Intent, and Effect types.
  */
 
+@Stable
 interface BaseUiState
 
 interface BaseUiIntent

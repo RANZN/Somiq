@@ -4,5 +4,5 @@ import com.ranjan.somiq.core.presentation.model.UiText
 
 /** Screen-specific error; each feature defines a sealed `ScreenError` implementation. */
 interface BaseScreenError {
-    fun toUiText(): UiText?
+    fun toUiText(): UiText
 }

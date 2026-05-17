@@ -6,13 +6,13 @@ import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.app.home.domain.repository.NotificationRepository
 import com.ranjan.somiq.app.home.domain.usecase.GetNotificationsUseCase
 import com.ranjan.somiq.notifications.NotificationsContract.Intent
-import com.ranjan.somiq.notifications.NotificationsContract.Effect
 import com.ranjan.somiq.notifications.NotificationsContract.UiState
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), KoinComponent {
+class NotificationsViewModel : BaseViewModel<UiState, Intent, BaseUiEffect>(UiState()), KoinComponent {
     private val getNotificationsUseCase: GetNotificationsUseCase by inject()
     private val notificationRepository: NotificationRepository by inject()
 
@@ -49,12 +49,9 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState())
                     }
                 },
                 onFailure = { error ->
-                    setState {
-                        copy(
-                            isLoading = false,
-                            error = error.toAppError(NotificationsContract.ScreenError.LoadNotificationsFailed)
-                        )
-                    }
+                    val appError = error.toAppError(NotificationsContract.ScreenError.LoadNotificationsFailed)
+                    setState { copy(isLoading = false, error = appError) }
+                    showSnackbar(appError)
                 }
             )
         }
@@ -79,9 +76,9 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState())
                     loadUnreadCount()
                 },
                 onFailure = { error ->
-                    emitEffect(Effect.ShowError(
-                        error.toAppError(NotificationsContract.ScreenError.MarkNotificationReadFailed)
-                    ))
+                    showSnackbar(
+                        error.toAppError(NotificationsContract.ScreenError.MarkNotificationReadFailed),
+                    )
                 }
             )
         }
@@ -95,9 +92,9 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState())
                     loadUnreadCount()
                 },
                 onFailure = { error ->
-                    emitEffect(Effect.ShowError(
-                        error.toAppError(NotificationsContract.ScreenError.MarkAllNotificationsReadFailed)
-                    ))
+                    showSnackbar(
+                        error.toAppError(NotificationsContract.ScreenError.MarkAllNotificationsReadFailed),
+                    )
                 }
             )
         }

@@ -16,7 +16,7 @@ object StoryViewContract {
     sealed class ScreenError : BaseScreenError {
         data object LoadStoryFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadStoryFailed -> UiText.Resource(Res.string.error_failed_to_load_story)
         }
     }

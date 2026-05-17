@@ -11,17 +11,13 @@ import com.ranjan.somiq.core.resources.error_request_timed_out
 import com.ranjan.somiq.core.resources.error_server_error
 import com.ranjan.somiq.core.resources.error_something_went_wrong
 import com.ranjan.somiq.core.resources.error_unauthorized
-import org.jetbrains.compose.resources.stringResource
 
-@Composable
-fun AppError.asString(): String = when (this) {
-    is AppError.Infrastructure -> failure.toUiText().asString()
-    is AppError.Custom ->
-        error.toUiText()?.asString() ?: stringResource(Res.string.error_something_went_wrong)
+fun AppError.toUiText(): UiText = when (this) {
+    is AppError.Infrastructure -> failure.toUiText()
+    is AppError.Custom -> error.toUiText()
 }
 
-@Composable
-private fun Failure.toUiText(): UiText = when (this) {
+fun Failure.toUiText(): UiText = when (this) {
     Failure.NoInternet -> UiText.Resource(Res.string.error_no_internet)
     Failure.RequestTimedOut -> UiText.Resource(Res.string.error_request_timed_out)
     Failure.Unauthorized -> UiText.Resource(Res.string.error_unauthorized)
@@ -29,3 +25,6 @@ private fun Failure.toUiText(): UiText = when (this) {
     Failure.ServerError -> UiText.Resource(Res.string.error_server_error)
     Failure.Unknown -> UiText.Resource(Res.string.error_something_went_wrong)
 }
+
+@Composable
+fun AppError.asString(): String = toUiText().asString()

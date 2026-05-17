@@ -61,12 +61,9 @@ class ReelsViewModel(
     private suspend fun refreshReels() {
         setState { copy(refreshing = true, error = null) }
         getReelsUseCase().getOrElse { error ->
-            setState {
-                copy(
-                    refreshing = false,
-                    error = error.toAppError(ReelsContract.ScreenError.RefreshReelsFailed)
-                )
-            }
+            val appError = error.toAppError(ReelsContract.ScreenError.RefreshReelsFailed)
+            setState { copy(refreshing = false, error = appError) }
+            showSnackbar(appError)
             return
         }.let { reels ->
             setState {

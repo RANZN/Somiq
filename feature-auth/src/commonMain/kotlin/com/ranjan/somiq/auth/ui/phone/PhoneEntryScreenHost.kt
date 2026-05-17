@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryContract.Effect
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
 fun PhoneEntryScreenHost(
     navigateToOtp: (phone: String) -> Unit,

@@ -4,16 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryContract.Effect
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryContract.Intent
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryContract.UiState
-import com.ranjan.somiq.core.presentation.effect.GlobalEffectDispatcher
-import com.ranjan.somiq.core.presentation.effect.GlobalUiEffect
-import com.ranjan.somiq.core.presentation.effect.SnackbarDuration
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.util.isValidPhone
 import kotlinx.coroutines.launch
 
-class PhoneEntryViewModel(
-    private val globalEffectDispatcher: GlobalEffectDispatcher,
-) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
+class PhoneEntryViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
@@ -24,7 +19,7 @@ class PhoneEntryViewModel(
         }
     }
 
-    private suspend fun handleContinue() {
+    private fun handleContinue() {
         val p = state.value.phone.trim()
         val err = when {
             p.isEmpty() -> UiState.Error.EMPTY
@@ -33,13 +28,7 @@ class PhoneEntryViewModel(
         }
         if (err != null) {
             setState { copy(error = err) }
-            val msg = when (err) {
-                UiState.Error.EMPTY -> "Enter your phone number"
-                UiState.Error.INVALID -> "Enter a valid phone number (10–15 digits)"
-            }
-            globalEffectDispatcher.emit(
-                GlobalUiEffect.ShowSnackbar(message = msg, duration = SnackbarDuration.Short)
-            )
+            showSnackbar(err.getMessage())
             return
         }
         emitEffect(Effect.NavigateToOtp(p))

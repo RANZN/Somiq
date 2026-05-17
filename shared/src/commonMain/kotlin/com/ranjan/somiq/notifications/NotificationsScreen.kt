@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.error.asString
-import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.notifications.NotificationsContract.Effect
 import com.ranjan.somiq.notifications.NotificationsContract.Intent
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -29,14 +27,6 @@ fun NotificationsScreen(
     LaunchedEffect(Unit) {
         viewModel.handleIntent(Intent.LoadNotifications)
         viewModel.handleIntent(Intent.LoadUnreadCount)
-    }
-
-    CollectEffect(viewModel.effect) { effect ->
-        when (effect) {
-            is Effect.ShowError -> {
-                // Handle error
-            }
-        }
     }
 
     Scaffold(

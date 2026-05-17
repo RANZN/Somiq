@@ -16,7 +16,7 @@ object CollectionsContract {
         data object LoadCollectionsFailed : ScreenError()
         data object CreateCollectionFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadCollectionsFailed -> UiText.Resource(Res.string.error_failed_to_load_collections)
             CreateCollectionFailed -> UiText.Resource(Res.string.error_failed_to_create_collection)
         }
@@ -35,7 +35,6 @@ object CollectionsContract {
     }
 
     sealed class Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect()
         data object CollectionCreated : Effect()
     }
 }

@@ -7,10 +7,13 @@ import com.ranjan.somiq.auth.domain.usecase.CompleteSignupUseCase
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.Effect
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.Intent
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.UiState
-import com.ranjan.somiq.core.presentation.effect.GlobalEffectDispatcher
-import com.ranjan.somiq.core.presentation.effect.GlobalUiEffect
-import com.ranjan.somiq.core.presentation.effect.SnackbarDuration
+import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.could_not_check_username
+import com.ranjan.somiq.core.resources.email_already_in_use
+import com.ranjan.somiq.core.resources.please_wait_username_check
+import com.ranjan.somiq.core.resources.session_expired_start_again
 import com.ranjan.somiq.core.util.isValidEmail
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -20,7 +23,6 @@ class CompleteProfileViewModel(
     private val signupToken: String,
     private val completeSignupUseCase: CompleteSignupUseCase,
     private val checkUserIdUseCase: CheckUserIdUseCase,
-    private val globalEffectDispatcher: GlobalEffectDispatcher,
 ) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     private var userIdDebounceJob: Job? = null
@@ -89,9 +91,7 @@ class CompleteProfileViewModel(
             },
             onFailure = {
                 setState { copy(isCheckingUserId = false, userIdAvailable = null) }
-                globalEffectDispatcher.emit(
-                    GlobalUiEffect.ShowSnackbar("Could not check username", duration = SnackbarDuration.Short)
-                )
+                showSnackbar(UiText.Resource(Res.string.could_not_check_username))
             }
         )
     }
@@ -129,20 +129,14 @@ class CompleteProfileViewModel(
 
     private suspend fun handleSubmit() {
         if (state.value.isCheckingUserId) {
-            globalEffectDispatcher.emit(
-                GlobalUiEffect.ShowSnackbar("Please wait for username check…", duration = SnackbarDuration.Short)
-            )
+            showSnackbar(UiText.Resource(Res.string.please_wait_username_check))
             return
         }
 
         val errors = validateLocalFields(state.value)
         if (errors.isNotEmpty()) {
             setState { copy(error = errors) }
-            errors.firstOrNull()?.let { e ->
-                globalEffectDispatcher.emit(
-                    GlobalUiEffect.ShowSnackbar(e.getMessage(), duration = SnackbarDuration.Short)
-                )
-            }
+            errors.firstOrNull()?.let { showSnackbar(it.getMessage()) }
             return
         }
 
@@ -168,34 +162,24 @@ class CompleteProfileViewModel(
 
             AuthResult.Failure.PhoneAlreadyInUse -> {
                 setState { copy(isLoading = false) }
-                globalEffectDispatcher.emit(
-                    GlobalUiEffect.ShowSnackbar("Session expired. Start again.", duration = SnackbarDuration.Short)
-                )
+                showSnackbar(UiText.Resource(Res.string.session_expired_start_again))
             }
 
             AuthResult.Failure.UsernameAlreadyInUse -> {
                 val err = UiState.Error.UserId.AlreadyInUse
                 setState { copy(isLoading = false, error = listOf(err)) }
-                globalEffectDispatcher.emit(
-                    GlobalUiEffect.ShowSnackbar(err.getMessage(), duration = SnackbarDuration.Short)
-                )
+                showSnackbar(err.getMessage())
             }
 
             AuthResult.Failure.EmailAlreadyInUse -> {
                 setState { copy(isLoading = false) }
-                globalEffectDispatcher.emit(
-                    GlobalUiEffect.ShowSnackbar("Email already in use", duration = SnackbarDuration.Short)
-                )
+                showSnackbar(UiText.Resource(Res.string.email_already_in_use))
             }
 
             is AuthResult.Failure.Unknown -> {
-                setState { copy(isLoading = false, error = listOf(UiState.Error.GenericError(result.message))) }
-                globalEffectDispatcher.emit(
-                    GlobalUiEffect.ShowSnackbar(
-                        result.message ?: "Failed",
-                        duration = SnackbarDuration.Short
-                    )
-                )
+                val err = UiState.Error.GenericError(result.message)
+                setState { copy(isLoading = false, error = listOf(err)) }
+                showSnackbar(err.getMessage())
             }
 
             else -> setState { copy(isLoading = false) }

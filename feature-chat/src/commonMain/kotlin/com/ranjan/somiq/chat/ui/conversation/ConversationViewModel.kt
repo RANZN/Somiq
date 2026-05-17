@@ -44,9 +44,9 @@ class ConversationViewModel(
         getMessagesUseCase(otherUserId)
             .onSuccess { list -> setState { copy(messages = list, isLoading = false, error = null) } }
             .onFailure { e ->
-                setState {
-                    copy(isLoading = false, error = e.toAppError(ConversationContract.ScreenError.LoadMessagesFailed))
-                }
+                val appError = e.toAppError(ConversationContract.ScreenError.LoadMessagesFailed)
+                setState { copy(isLoading = false, error = appError) }
+                showSnackbar(appError)
             }
     }
 
@@ -65,10 +65,8 @@ class ConversationViewModel(
             }
             .onFailure { e ->
                 setState { copy(messageText = text, sending = false) }
-                emitEffect(
-                    ConversationContract.Effect.ShowError(
-                        e.toAppError(ConversationContract.ScreenError.SendMessageFailed)
-                    )
+                showSnackbar(
+                    e.toAppError(ConversationContract.ScreenError.SendMessageFailed),
                 )
             }
     }

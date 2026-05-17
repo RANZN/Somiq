@@ -71,12 +71,9 @@ class ChatListViewModel(
                 }
             }
             .onFailure { e ->
-                setState {
-                    copy(
-                        refreshing = false,
-                        error = e.toAppError(ChatListContract.ScreenError.RefreshChatsFailed)
-                    )
-                }
+                val appError = e.toAppError(ChatListContract.ScreenError.RefreshChatsFailed)
+                setState { copy(refreshing = false, error = appError) }
+                showSnackbar(appError)
             }
     }
 }

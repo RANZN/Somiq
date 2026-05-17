@@ -4,7 +4,6 @@ import com.ranjan.somiq.app.home.data.model.NotificationResponse
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.error.BaseScreenError
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
@@ -18,7 +17,7 @@ object NotificationsContract {
         data object MarkNotificationReadFailed : ScreenError()
         data object MarkAllNotificationsReadFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadNotificationsFailed -> UiText.Resource(Res.string.error_failed_to_load_notifications)
             MarkNotificationReadFailed -> UiText.Resource(Res.string.error_failed_to_mark_notification_read)
             MarkAllNotificationsReadFailed ->
@@ -41,7 +40,4 @@ object NotificationsContract {
         data object Refresh : Intent()
     }
 
-    sealed class Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect()
-    }
 }

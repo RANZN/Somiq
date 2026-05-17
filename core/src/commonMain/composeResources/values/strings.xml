@@ -9,6 +9,9 @@
 
     <string name="error_failed_to_load_feed">Couldn\'t load feed</string>
     <string name="error_failed_to_refresh_feed">Couldn\'t refresh feed</string>
+    <string name="error_failed_to_load_more">Couldn\'t load more posts</string>
+    <string name="error_failed_to_update_like">Couldn\'t update like</string>
+    <string name="error_failed_to_update_bookmark">Couldn\'t update bookmark</string>
     <string name="error_failed_to_load_profile">Couldn\'t load profile</string>
     <string name="error_failed_to_refresh_profile">Couldn\'t refresh profile</string>
     <string name="error_failed_to_load_post">Couldn\'t load post</string>
@@ -33,4 +36,28 @@
     <string name="error_failed_to_send_message">Couldn\'t send message</string>
     <string name="error_please_select_image">Please select an image</string>
     <string name="error_could_not_read_image">Couldn\'t read image</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="enter_valid_phone_numberr">Enter a valid phone number (10–15 digits)</string>
+
+    <string name="enter_6_digit_code">Enter the 6-digit code</string>
+    <string name="invalid_otp_code">Invalid code</string>
+    <string name="no_account_for_number">No account for this number.</string>
+    <string name="phone_already_registered">This number is already registered.</string>
+    <string name="otp_too_many_failed_attempts">Too many failed attempts. Enter your number again to get a new code.</string>
+
+    <string name="name_required">Name is required</string>
+    <string name="name_too_short">Name is too short</string>
+    <string name="username_required">Username is required</string>
+    <string name="username_too_short">Username must be at least 3 characters</string>
+    <string name="username_invalid_format">Username can only contain letters, numbers, and underscores</string>
+    <string name="username_already_in_use">This username is already taken</string>
+    <string name="username_availability_not_checked">Wait for the username check to finish, or finish typing and move to another field</string>
+    <string name="username_unavailable">This username is not available</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="could_not_save_profile">Could not save profile</string>
+    <string name="could_not_check_username">Could not check username</string>
+    <string name="please_wait_username_check">Please wait for username check…</string>
+    <string name="session_expired_start_again">Session expired. Start again.</string>
+    <string name="email_already_in_use">Email already in use</string>
+    <string name="failed_generic">Failed</string>
 </resources>

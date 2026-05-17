@@ -17,7 +17,7 @@ object ConversationContract {
         data object LoadMessagesFailed : ScreenError()
         data object SendMessageFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadMessagesFailed -> UiText.Resource(Res.string.error_failed_to_load_messages)
             SendMessageFailed -> UiText.Resource(Res.string.error_failed_to_send_message)
         }
@@ -47,7 +47,6 @@ object ConversationContract {
     }
 
     sealed interface Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect
         data class StartVoiceCall(val userId: String) : Effect
         data class StartVideoCall(val userId: String) : Effect
     }

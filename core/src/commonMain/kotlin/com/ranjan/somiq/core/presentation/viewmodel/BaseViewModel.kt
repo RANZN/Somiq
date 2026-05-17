@@ -1,7 +1,14 @@
 package com.ranjan.somiq.core.presentation.viewmodel
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.presentation.effect.GlobalEffectDispatcher
+import com.ranjan.somiq.core.presentation.effect.GlobalUiEffect
+import com.ranjan.somiq.core.presentation.error.AppError
+import com.ranjan.somiq.core.presentation.error.BaseScreenError
+import com.ranjan.somiq.core.presentation.error.toUiText
+import com.ranjan.somiq.core.presentation.model.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +50,32 @@ abstract class BaseViewModel<S : BaseUiState, I : BaseUiIntent, E : BaseUiEffect
         viewModelScope.launch {
             _effect.send(effect)
         }
+    }
+
+    protected fun showSnackbar(
+        message: UiText,
+        actionLabel: String? = null,
+        withDismissAction: Boolean = false,
+        duration: SnackbarDuration? = null,
+    ) {
+        viewModelScope.launch {
+            GlobalEffectDispatcher.emit(
+                GlobalUiEffect.showSnackbar(
+                    message = message,
+                    actionLabel = actionLabel,
+                    withDismissAction = withDismissAction,
+                    duration = duration,
+                ),
+            )
+        }
+    }
+
+    protected fun showSnackbar(error: AppError) {
+        showSnackbar(error.toUiText())
+    }
+
+    protected fun showSnackbar(error: BaseScreenError) {
+        showSnackbar(error.toUiText())
     }
 
     // ---- INTENT ----

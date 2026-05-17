@@ -21,7 +21,7 @@ object PostDetailContract {
         data object PostCommentFailed : ScreenError()
         data object ToggleCommentLikeFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadPostFailed -> UiText.Resource(Res.string.error_failed_to_load_post)
             LoadCommentsFailed -> UiText.Resource(Res.string.error_failed_to_load_comments)
             PostCommentFailed -> UiText.Resource(Res.string.error_failed_to_post_comment)
@@ -48,7 +48,6 @@ object PostDetailContract {
     }
 
     sealed class Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect()
         data object CommentPosted : Effect()
     }
 }

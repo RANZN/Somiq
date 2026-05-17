@@ -78,12 +78,9 @@ class ProfileViewModel(
     private suspend fun refreshProfile() {
         setState { copy(refreshing = true, error = null) }
         getProfileUseCase(userId).getOrElse { error ->
-            setState {
-                copy(
-                    refreshing = false,
-                    error = error.toAppError(ProfileContract.ScreenError.RefreshProfileFailed)
-                )
-            }
+            val appError = error.toAppError(ProfileContract.ScreenError.RefreshProfileFailed)
+            setState { copy(refreshing = false, error = appError) }
+            showSnackbar(appError)
             return
         }.let { profile ->
             setState {

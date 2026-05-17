@@ -11,13 +11,11 @@ import com.ranjan.somiq.core.resources.error_request_timed_out
 import com.ranjan.somiq.core.resources.error_server_error
 import com.ranjan.somiq.core.resources.error_something_went_wrong
 import com.ranjan.somiq.core.resources.error_unauthorized
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppError.asString(): String = when (this) {
     is AppError.Infrastructure -> failure.toUiText().asString()
-    is AppError.Custom ->
-        error.toUiText()?.asString() ?: stringResource(Res.string.error_something_went_wrong)
+    is AppError.Custom -> error.toUiText().asString()
 }
 
 @Composable

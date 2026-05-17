@@ -17,7 +17,7 @@ object ConversationContract {
         data object LoadMessagesFailed : ScreenError()
         data object SendMessageFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadMessagesFailed -> UiText.Resource(Res.string.error_failed_to_load_messages)
             SendMessageFailed -> UiText.Resource(Res.string.error_failed_to_send_message)
         }

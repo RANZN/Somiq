@@ -21,7 +21,7 @@ object ProfileContract {
         data object LoadProfileFailed : ScreenError()
         data object RefreshProfileFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadProfileFailed -> UiText.Resource(Res.string.error_failed_to_load_profile)
             RefreshProfileFailed -> UiText.Resource(Res.string.error_failed_to_refresh_profile)
         }

@@ -33,6 +33,7 @@ import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.UiState
 import com.ranjan.somiq.auth.ui.components.CompleteProfileHeader
 import com.ranjan.somiq.auth.ui.components.OptionalProfileAvatar
 import com.ranjan.somiq.core.presentation.component.CustomTextField
+import com.ranjan.somiq.core.presentation.model.asString
 import com.ranjan.somiq.core.presentation.component.OnboardingButton
 import com.ranjan.somiq.core.presentation.util.defaultPadding
 
@@ -71,7 +72,7 @@ fun CompleteProfileScreen(
             placeholder = "Name",
             leadingImageVector = Icons.Outlined.Person,
             isError = nameError != null,
-            errorMessage = nameError?.getMessage(),
+            errorMessage = nameError?.getMessage()?.asString(),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = true,
                 imeAction = ImeAction.Next,
@@ -96,7 +97,7 @@ fun CompleteProfileScreen(
             placeholder = "Username (unique)",
             leadingImageVector = Icons.Outlined.Person,
             isError = userIdError != null,
-            errorMessage = userIdError?.getMessage(),
+            errorMessage = userIdError?.getMessage()?.asString(),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next,
@@ -133,7 +134,7 @@ fun CompleteProfileScreen(
             placeholder = "Email (optional)",
             leadingImageVector = Icons.Outlined.Email,
             isError = emailError != null,
-            errorMessage = emailError?.getMessage(),
+            errorMessage = emailError?.getMessage()?.asString(),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Done,

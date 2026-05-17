@@ -18,7 +18,7 @@ object FeedContract {
         data object LoadFeedFailed : ScreenError()
         data object RefreshFeedFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadFeedFailed -> UiText.Resource(Res.string.error_failed_to_load_feed)
             RefreshFeedFailed -> UiText.Resource(Res.string.error_failed_to_refresh_feed)
         }

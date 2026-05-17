@@ -8,8 +8,11 @@ import com.ranjan.somiq.auth.ui.otp.OtpContract.Intent
 import com.ranjan.somiq.auth.ui.otp.OtpContract.UiState
 import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.data.network.TokenProvider
-import com.ranjan.somiq.core.presentation.effect.SnackbarDuration
+import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.error_no_internet
+import com.ranjan.somiq.core.resources.otp_too_many_failed_attempts
 import kotlinx.coroutines.launch
 
 class OtpViewModel(
@@ -33,8 +36,9 @@ class OtpViewModel(
     private suspend fun verify() {
         val otp = state.value.otp.trim()
         if (otp.length != 6 || !otp.all { it.isDigit() }) {
-            if (registerFailure(UiState.Error.INVALID_OTP)) return
-            emitEffect(Effect.ShowSnackbar("Enter the 6-digit code"))
+            val err = UiState.Error.OTP_INCOMPLETE
+            if (registerFailure(err)) return
+            emitEffect(Effect.ShowSnackbar(err.getMessage()))
             return
         }
 
@@ -51,29 +55,33 @@ class OtpViewModel(
             }
 
             is VerifyOtpResult.Failure.InvalidOtp -> {
-                if (registerFailure(UiState.Error.INVALID_OTP)) return
-                emitEffect(Effect.ShowSnackbar("Invalid code"))
+                val err = UiState.Error.INVALID_OTP
+                if (registerFailure(err)) return
+                emitEffect(Effect.ShowSnackbar(err.getMessage()))
             }
 
             is VerifyOtpResult.Failure.AccountNotFound -> {
-                if (registerFailure(UiState.Error.ACCOUNT_NOT_FOUND)) return
-                emitEffect(Effect.ShowSnackbar("No account for this number."))
+                val err = UiState.Error.ACCOUNT_NOT_FOUND
+                if (registerFailure(err)) return
+                emitEffect(Effect.ShowSnackbar(err.getMessage()))
             }
 
             is VerifyOtpResult.Failure.PhoneAlreadyRegistered -> {
-                if (registerFailure(UiState.Error.PHONE_REGISTERED)) return
-                emitEffect(Effect.ShowSnackbar("This number is already registered."))
+                val err = UiState.Error.PHONE_REGISTERED
+                if (registerFailure(err)) return
+                emitEffect(Effect.ShowSnackbar(err.getMessage()))
             }
 
             is VerifyOtpResult.Failure.NoNetwork -> {
                 setState { copy(isLoading = false) }
-                emitEffect(Effect.ShowSnackbar("No network"))
+                emitEffect(Effect.ShowSnackbar(UiText.Resource(Res.string.error_no_internet)))
             }
 
             is VerifyOtpResult.Failure.ServerError,
             is VerifyOtpResult.Failure.Unknown -> {
-                if (registerFailure(UiState.Error.GENERIC)) return
-                emitEffect(Effect.ShowSnackbar("Something went wrong"))
+                val err = UiState.Error.GENERIC
+                if (registerFailure(err)) return
+                emitEffect(Effect.ShowSnackbar(err.getMessage()))
             }
         }
     }
@@ -98,10 +106,7 @@ class OtpViewModel(
         setState { copy(isLoading = false, failedAttempts = 0, error = null) }
         emitEffect(Effect.NavigateBackToPhone)
         emitEffect(
-            Effect.ShowSnackbar(
-                "Too many failed attempts. Enter your number again to get a new code.",
-                duration = SnackbarDuration.Long,
-            )
+            Effect.ShowSnackbar(UiText.Resource(Res.string.otp_too_many_failed_attempts)),
         )
     }
 }

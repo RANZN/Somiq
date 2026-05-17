@@ -18,7 +18,7 @@ object NotificationsContract {
         data object MarkNotificationReadFailed : ScreenError()
         data object MarkAllNotificationsReadFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadNotificationsFailed -> UiText.Resource(Res.string.error_failed_to_load_notifications)
             MarkNotificationReadFailed -> UiText.Resource(Res.string.error_failed_to_mark_notification_read)
             MarkAllNotificationsReadFailed ->

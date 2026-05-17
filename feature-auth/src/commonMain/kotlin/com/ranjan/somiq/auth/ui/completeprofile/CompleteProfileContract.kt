@@ -1,6 +1,8 @@
 package com.ranjan.somiq.auth.ui.completeprofile
 
 import androidx.compose.runtime.Stable
+import com.ranjan.somiq.core.presentation.effect.ShowSnackbarEffect
+import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
@@ -53,5 +55,6 @@ object CompleteProfileContract {
 
     sealed interface Effect : BaseUiEffect {
         data object NavigateHome : Effect
+        data class ShowSnackbar(override val message: UiText) : Effect, ShowSnackbarEffect
     }
 }

@@ -15,7 +15,7 @@ object SearchContract {
     sealed class ScreenError : BaseScreenError {
         data object SearchFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             SearchFailed -> UiText.Resource(Res.string.error_failed_to_search)
         }
     }

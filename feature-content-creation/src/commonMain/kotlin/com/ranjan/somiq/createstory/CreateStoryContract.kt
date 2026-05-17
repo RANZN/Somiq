@@ -19,7 +19,7 @@ interface CreateStoryContract {
         data object CreateStoryFailed : ScreenError()
         data object UploadImageFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             PleaseSelectImage -> UiText.Resource(Res.string.error_please_select_image)
             CouldNotReadImage -> UiText.Resource(Res.string.error_could_not_read_image)
             CreateStoryFailed -> UiText.Resource(Res.string.error_failed_to_create_story)

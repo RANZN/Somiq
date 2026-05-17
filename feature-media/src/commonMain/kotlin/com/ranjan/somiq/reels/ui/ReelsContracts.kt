@@ -17,7 +17,7 @@ object ReelsContract {
         data object LoadReelsFailed : ScreenError()
         data object RefreshReelsFailed : ScreenError()
 
-        override fun toUiText(): UiText? = when (this) {
+        override fun toUiText(): UiText = when (this) {
             LoadReelsFailed -> UiText.Resource(Res.string.error_failed_to_load_reels)
             RefreshReelsFailed -> UiText.Resource(Res.string.error_failed_to_refresh_reels)
         }

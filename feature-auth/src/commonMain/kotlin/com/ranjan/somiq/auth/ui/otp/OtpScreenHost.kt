@@ -6,9 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.ranjan.somiq.auth.ui.otp.OtpContract.Effect
-import com.ranjan.somiq.core.presentation.effect.ShowSnackbarEffect
-import com.ranjan.somiq.core.presentation.model.resolve
-import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -20,7 +17,6 @@ fun OtpScreenHost(
     navigateCompleteProfile: (signupToken: String) -> Unit,
     navigateBackToPhone: () -> Unit,
 ) {
-    val snackbar = LocalSnackbar.current
     val viewModel: OtpViewModel = koinViewModel { parametersOf(phone) }
     val uiState by viewModel.state.collectAsState()
 
@@ -29,7 +25,6 @@ fun OtpScreenHost(
             Effect.NavigateHome -> navigateHome()
             is Effect.NavigateCompleteProfile -> navigateCompleteProfile(it.signupToken)
             Effect.NavigateBackToPhone -> navigateBackToPhone()
-            is ShowSnackbarEffect -> snackbar.showSnackbar(it.message.resolve())
         }
     }
 

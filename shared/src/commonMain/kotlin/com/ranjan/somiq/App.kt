@@ -8,6 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
+import com.ranjan.somiq.core.presentation.snackbar.CollectGlobalUiEffects
 import com.ranjan.somiq.navigation.AppNavigation
 import com.ranjan.somiq.presentation.theme.MyApplicationTheme
 
@@ -18,6 +19,7 @@ fun App() {
 
     MyApplicationTheme {
         CompositionLocalProvider(LocalSnackbar provides snackbarHostState) {
+            CollectGlobalUiEffects()
             Scaffold(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 content = {

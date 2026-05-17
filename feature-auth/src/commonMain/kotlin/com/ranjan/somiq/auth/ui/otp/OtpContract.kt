@@ -1,7 +1,6 @@
 package com.ranjan.somiq.auth.ui.otp
 
 import androidx.compose.runtime.Stable
-import com.ranjan.somiq.core.presentation.effect.ShowSnackbarEffect
 import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
@@ -44,7 +43,6 @@ object OtpContract {
         data class NavigateCompleteProfile(val signupToken: String) : Effect
         /** After too many failed OTP attempts: clear session and return to phone entry. */
         data object NavigateBackToPhone : Effect
-        data class ShowSnackbar(override val message: UiText) : Effect, ShowSnackbarEffect
     }
 }
 

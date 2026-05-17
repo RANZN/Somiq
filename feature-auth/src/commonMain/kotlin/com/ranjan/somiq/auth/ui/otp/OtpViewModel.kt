@@ -38,7 +38,7 @@ class OtpViewModel(
         if (otp.length != 6 || !otp.all { it.isDigit() }) {
             val err = UiState.Error.OTP_INCOMPLETE
             if (registerFailure(err)) return
-            emitEffect(Effect.ShowSnackbar(err.getMessage()))
+            showSnackbar(err.getMessage())
             return
         }
 
@@ -57,31 +57,31 @@ class OtpViewModel(
             is VerifyOtpResult.Failure.InvalidOtp -> {
                 val err = UiState.Error.INVALID_OTP
                 if (registerFailure(err)) return
-                emitEffect(Effect.ShowSnackbar(err.getMessage()))
+                showSnackbar(err.getMessage())
             }
 
             is VerifyOtpResult.Failure.AccountNotFound -> {
                 val err = UiState.Error.ACCOUNT_NOT_FOUND
                 if (registerFailure(err)) return
-                emitEffect(Effect.ShowSnackbar(err.getMessage()))
+                showSnackbar(err.getMessage())
             }
 
             is VerifyOtpResult.Failure.PhoneAlreadyRegistered -> {
                 val err = UiState.Error.PHONE_REGISTERED
                 if (registerFailure(err)) return
-                emitEffect(Effect.ShowSnackbar(err.getMessage()))
+                showSnackbar(err.getMessage())
             }
 
             is VerifyOtpResult.Failure.NoNetwork -> {
                 setState { copy(isLoading = false) }
-                emitEffect(Effect.ShowSnackbar(UiText.Resource(Res.string.error_no_internet)))
+                showSnackbar(UiText.Resource(Res.string.error_no_internet))
             }
 
             is VerifyOtpResult.Failure.ServerError,
             is VerifyOtpResult.Failure.Unknown -> {
                 val err = UiState.Error.GENERIC
                 if (registerFailure(err)) return
-                emitEffect(Effect.ShowSnackbar(err.getMessage()))
+                showSnackbar(err.getMessage())
             }
         }
     }
@@ -105,8 +105,6 @@ class OtpViewModel(
         authStateManager.setLoggedIn(false)
         setState { copy(isLoading = false, failedAttempts = 0, error = null) }
         emitEffect(Effect.NavigateBackToPhone)
-        emitEffect(
-            Effect.ShowSnackbar(UiText.Resource(Res.string.otp_too_many_failed_attempts)),
-        )
+        showSnackbar(UiText.Resource(Res.string.otp_too_many_failed_attempts))
     }
 }

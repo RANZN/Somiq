@@ -47,7 +47,6 @@ object ConversationContract {
     }
 
     sealed interface Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect
         data class StartVoiceCall(val userId: String) : Effect
         data class StartVideoCall(val userId: String) : Effect
     }

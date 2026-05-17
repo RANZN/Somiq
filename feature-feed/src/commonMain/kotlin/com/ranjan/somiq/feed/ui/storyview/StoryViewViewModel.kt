@@ -27,12 +27,9 @@ class StoryViewViewModel(
                     setState { copy(story = story, isLoading = false, error = null) }
                 },
                 onFailure = { e ->
-                    setState {
-                        copy(
-                            isLoading = false,
-                            error = e.toAppError(StoryViewContract.ScreenError.LoadStoryFailed)
-                        )
-                    }
+                    val appError = e.toAppError(StoryViewContract.ScreenError.LoadStoryFailed)
+                    setState { copy(isLoading = false, error = appError) }
+                    showSnackbar(appError)
                 }
             )
         }

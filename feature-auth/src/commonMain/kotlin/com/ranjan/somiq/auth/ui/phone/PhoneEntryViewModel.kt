@@ -28,7 +28,7 @@ class PhoneEntryViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()) {
         }
         if (err != null) {
             setState { copy(error = err) }
-            emitEffect(Effect.ShowSnackbar(err.getMessage()))
+            showSnackbar(err.getMessage())
             return
         }
         emitEffect(Effect.NavigateToOtp(p))

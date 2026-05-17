@@ -9,6 +9,9 @@
 
     <string name="error_failed_to_load_feed">Couldn\'t load feed</string>
     <string name="error_failed_to_refresh_feed">Couldn\'t refresh feed</string>
+    <string name="error_failed_to_load_more">Couldn\'t load more posts</string>
+    <string name="error_failed_to_update_like">Couldn\'t update like</string>
+    <string name="error_failed_to_update_bookmark">Couldn\'t update bookmark</string>
     <string name="error_failed_to_load_profile">Couldn\'t load profile</string>
     <string name="error_failed_to_refresh_profile">Couldn\'t refresh profile</string>
     <string name="error_failed_to_load_post">Couldn\'t load post</string>

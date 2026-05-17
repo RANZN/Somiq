@@ -33,10 +33,6 @@ fun CollectionsScreen(
 
     CollectEffect(viewModel.effect) { effect ->
         when (effect) {
-            is Effect.ShowError -> {
-                // Handle error
-            }
-
             is Effect.CollectionCreated -> {
                 // Handle success
             }

@@ -3,7 +3,7 @@ package com.ranjan.somiq.core.presentation.effect
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
-class GlobalEffectDispatcher {
+object GlobalEffectDispatcher {
     private val _effects = Channel<GlobalUiEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 

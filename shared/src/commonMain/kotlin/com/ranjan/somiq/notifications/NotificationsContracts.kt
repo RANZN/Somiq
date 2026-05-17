@@ -4,7 +4,6 @@ import com.ranjan.somiq.app.home.data.model.NotificationResponse
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.error.BaseScreenError
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
@@ -41,7 +40,4 @@ object NotificationsContract {
         data object Refresh : Intent()
     }
 
-    sealed class Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect()
-    }
 }

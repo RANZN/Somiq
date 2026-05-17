@@ -43,12 +43,9 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
                     }
                 },
                 onFailure = { error ->
-                    setState {
-                        copy(
-                            isLoading = false,
-                            error = error.toAppError(CollectionsContract.ScreenError.LoadCollectionsFailed)
-                        )
-                    }
+                    val appError = error.toAppError(CollectionsContract.ScreenError.LoadCollectionsFailed)
+                    setState { copy(isLoading = false, error = appError) }
+                    showSnackbar(appError)
                 }
             )
         }
@@ -62,9 +59,9 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
                     loadCollections()
                 },
                 onFailure = { error ->
-                    emitEffect(Effect.ShowError(
-                        error.toAppError(CollectionsContract.ScreenError.CreateCollectionFailed)
-                    ))
+                    showSnackbar(
+                        error.toAppError(CollectionsContract.ScreenError.CreateCollectionFailed),
+                    )
                 }
             )
         }

@@ -24,7 +24,6 @@ fun ConversationScreenHost(
         when (effect) {
             is Effect.StartVoiceCall -> onStartVoiceCall(effect.userId)
             is Effect.StartVideoCall -> onStartVideoCall(effect.userId)
-            is Effect.ShowError -> { /* Could show snackbar */ }
         }
     }
 

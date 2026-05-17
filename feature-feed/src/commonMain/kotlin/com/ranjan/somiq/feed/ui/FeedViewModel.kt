@@ -81,6 +81,7 @@ class FeedViewModel(
         setState { copy(loadingMore = true) }
         getFeedPageUseCase(after = cursor).getOrElse { error ->
             setState { copy(loadingMore = false) }
+            showSnackbar(error.toAppError(FeedContract.ScreenError.LoadMoreFailed))
             return
         }.let { result ->
             setState {
@@ -96,12 +97,9 @@ class FeedViewModel(
     private suspend fun refreshFeed() {
         setState { copy(refreshing = true, error = null) }
         getFeedPageUseCase(after = null).getOrElse { error ->
-            setState {
-                copy(
-                    refreshing = false,
-                    error = error.toAppError(FeedContract.ScreenError.RefreshFeedFailed)
-                )
-            }
+            val appError = error.toAppError(FeedContract.ScreenError.RefreshFeedFailed)
+            setState { copy(refreshing = false, error = appError) }
+            showSnackbar(appError)
             return
         }.let { result ->
             setState {
@@ -170,7 +168,6 @@ class FeedViewModel(
                 }
             },
             onFailure = {
-                // Revert on failure
                 setState {
                     copy(
                         posts = posts.map {
@@ -185,6 +182,7 @@ class FeedViewModel(
                         }
                     )
                 }
+                showSnackbar(FeedContract.ScreenError.ToggleLikeFailed)
             }
         )
     }
@@ -231,7 +229,6 @@ class FeedViewModel(
                 }
             },
             onFailure = {
-                // Revert on failure
                 setState {
                     copy(
                         posts = posts.map {
@@ -243,6 +240,7 @@ class FeedViewModel(
                         }
                     )
                 }
+                showSnackbar(FeedContract.ScreenError.ToggleBookmarkFailed)
             }
         )
     }

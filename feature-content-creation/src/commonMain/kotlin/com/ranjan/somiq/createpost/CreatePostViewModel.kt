@@ -33,7 +33,9 @@ class CreatePostViewModel(
         val uri = state.value.selectedImageUri
         val caption = state.value.caption.trim()
         if (uri.isNullOrBlank()) {
-            setState { copy(error = AppError.Custom(CreatePostContract.ScreenError.PleaseSelectImage)) }
+            val appError = AppError.Custom(CreatePostContract.ScreenError.PleaseSelectImage)
+            setState { copy(error = appError) }
+            showSnackbar(appError)
             return
         }
 
@@ -41,7 +43,9 @@ class CreatePostViewModel(
             setState { copy(isLoading = true, error = null) }
             val bytes = readUriToBytes(uri)
             if (bytes == null || bytes.isEmpty()) {
-                setState { copy(isLoading = false, error = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)) }
+                val appError = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)
+                setState { copy(isLoading = false, error = appError) }
+                showSnackbar(appError)
                 return@launch
             }
             val fileName = "post_${Clock.System.now().toEpochMilliseconds()}.jpg"
@@ -58,22 +62,16 @@ class CreatePostViewModel(
                             emitEffect(CreatePostContract.Effect.PostSuccess)
                         },
                         onFailure = { e ->
-                            setState {
-                                copy(
-                                    isLoading = false,
-                                    error = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
-                                )
-                            }
+                            val appError = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
+                            setState { copy(isLoading = false, error = appError) }
+                            showSnackbar(appError)
                         }
                     )
                 },
                 onFailure = { e ->
-                    setState {
-                        copy(
-                            isLoading = false,
-                            error = e.toAppError(CreatePostContract.ScreenError.UploadImageFailed)
-                        )
-                    }
+                    val appError = e.toAppError(CreatePostContract.ScreenError.UploadImageFailed)
+                    setState { copy(isLoading = false, error = appError) }
+                    showSnackbar(appError)
                 }
             )
         }

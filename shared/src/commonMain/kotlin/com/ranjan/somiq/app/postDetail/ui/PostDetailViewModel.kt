@@ -50,12 +50,9 @@ class PostDetailViewModel(
                 setState { copy(post = post, isLoading = false) }
             },
             onFailure = { error ->
-                setState {
-                    copy(
-                        isLoading = false,
-                        error = error.toAppError(PostDetailContract.ScreenError.LoadPostFailed)
-                    )
-                }
+                val appError = error.toAppError(PostDetailContract.ScreenError.LoadPostFailed)
+                setState { copy(isLoading = false, error = appError) }
+                showSnackbar(appError)
             }
         )
     }
@@ -67,12 +64,9 @@ class PostDetailViewModel(
                 setState { copy(comments = comments, isLoadingComments = false) }
             },
             onFailure = { error ->
-                setState {
-                    copy(
-                        isLoadingComments = false,
-                        error = error.toAppError(PostDetailContract.ScreenError.LoadCommentsFailed)
-                    )
-                }
+                val appError = error.toAppError(PostDetailContract.ScreenError.LoadCommentsFailed)
+                setState { copy(isLoadingComments = false, error = appError) }
+                showSnackbar(appError)
             }
         )
     }
@@ -88,9 +82,9 @@ class PostDetailViewModel(
                 loadComments()
             },
             onFailure = { error ->
-                emitEffect(Effect.ShowError(
-                    error.toAppError(PostDetailContract.ScreenError.PostCommentFailed)
-                ))
+                showSnackbar(
+                    error.toAppError(PostDetailContract.ScreenError.PostCommentFailed),
+                )
             }
         )
     }
@@ -101,9 +95,9 @@ class PostDetailViewModel(
                 loadComments()
             },
             onFailure = { error ->
-                emitEffect(Effect.ShowError(
-                    error.toAppError(PostDetailContract.ScreenError.ToggleCommentLikeFailed)
-                ))
+                showSnackbar(
+                    error.toAppError(PostDetailContract.ScreenError.ToggleCommentLikeFailed),
+                )
             }
         )
     }

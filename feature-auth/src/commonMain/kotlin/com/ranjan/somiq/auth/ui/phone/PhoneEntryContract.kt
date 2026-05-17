@@ -1,6 +1,5 @@
 package com.ranjan.somiq.auth.ui.phone
 
-import com.ranjan.somiq.core.presentation.effect.ShowSnackbarEffect
 import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
@@ -29,7 +28,6 @@ object PhoneEntryContract {
 
     sealed interface Effect : BaseUiEffect {
         data class NavigateToOtp(val phone: String) : Effect
-        data class ShowSnackbar(override val message: UiText) : Effect, ShowSnackbarEffect
     }
 }
 

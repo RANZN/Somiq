@@ -51,10 +51,6 @@ fun PostDetailScreen(
 
     CollectEffect(viewModel.effect) { effect ->
         when (effect) {
-            is Effect.ShowError -> {
-                // Handle error (could show snackbar)
-            }
-
             is Effect.CommentPosted -> {
                 // Handle success
             }

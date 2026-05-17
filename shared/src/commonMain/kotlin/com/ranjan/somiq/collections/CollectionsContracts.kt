@@ -35,7 +35,6 @@ object CollectionsContract {
     }
 
     sealed class Effect : BaseUiEffect {
-        data class ShowError(val message: AppError) : Effect()
         data object CollectionCreated : Effect()
     }
 }

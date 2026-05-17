@@ -65,12 +65,9 @@ class SearchViewModel(
         }
         
         searchUseCase(query).getOrElse { error ->
-            setState {
-                copy(
-                    isLoading = false,
-                    error = error.toAppError(SearchContract.ScreenError.SearchFailed)
-                )
-            }
+            val appError = error.toAppError(SearchContract.ScreenError.SearchFailed)
+            setState { copy(isLoading = false, error = appError) }
+            showSnackbar(appError)
             return
         }.let { results ->
             setState {

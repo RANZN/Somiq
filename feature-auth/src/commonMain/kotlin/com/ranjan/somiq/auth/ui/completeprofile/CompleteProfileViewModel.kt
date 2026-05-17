@@ -91,7 +91,7 @@ class CompleteProfileViewModel(
             },
             onFailure = {
                 setState { copy(isCheckingUserId = false, userIdAvailable = null) }
-                emitEffect(Effect.ShowSnackbar(UiText.Resource(Res.string.could_not_check_username)))
+                showSnackbar(UiText.Resource(Res.string.could_not_check_username))
             }
         )
     }
@@ -129,14 +129,14 @@ class CompleteProfileViewModel(
 
     private suspend fun handleSubmit() {
         if (state.value.isCheckingUserId) {
-            emitEffect(Effect.ShowSnackbar(UiText.Resource(Res.string.please_wait_username_check)))
+            showSnackbar(UiText.Resource(Res.string.please_wait_username_check))
             return
         }
 
         val errors = validateLocalFields(state.value)
         if (errors.isNotEmpty()) {
             setState { copy(error = errors) }
-            errors.firstOrNull()?.let { emitEffect(Effect.ShowSnackbar(it.getMessage())) }
+            errors.firstOrNull()?.let { showSnackbar(it.getMessage()) }
             return
         }
 
@@ -162,24 +162,24 @@ class CompleteProfileViewModel(
 
             AuthResult.Failure.PhoneAlreadyInUse -> {
                 setState { copy(isLoading = false) }
-                emitEffect(Effect.ShowSnackbar(UiText.Resource(Res.string.session_expired_start_again)))
+                showSnackbar(UiText.Resource(Res.string.session_expired_start_again))
             }
 
             AuthResult.Failure.UsernameAlreadyInUse -> {
                 val err = UiState.Error.UserId.AlreadyInUse
                 setState { copy(isLoading = false, error = listOf(err)) }
-                emitEffect(Effect.ShowSnackbar(err.getMessage()))
+                showSnackbar(err.getMessage())
             }
 
             AuthResult.Failure.EmailAlreadyInUse -> {
                 setState { copy(isLoading = false) }
-                emitEffect(Effect.ShowSnackbar(UiText.Resource(Res.string.email_already_in_use)))
+                showSnackbar(UiText.Resource(Res.string.email_already_in_use))
             }
 
             is AuthResult.Failure.Unknown -> {
                 val err = UiState.Error.GenericError(result.message)
                 setState { copy(isLoading = false, error = listOf(err)) }
-                emitEffect(Effect.ShowSnackbar(err.getMessage()))
+                showSnackbar(err.getMessage())
             }
 
             else -> setState { copy(isLoading = false) }

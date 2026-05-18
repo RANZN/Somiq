@@ -12,7 +12,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
 import com.ranjan.somiq.navigation.Home
-import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.feed.ui.FeedScreenHost
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
 import org.koin.compose.viewmodel.koinViewModel
@@ -32,7 +31,6 @@ fun HomeNavigationHost(
     onNavigateToFollowers: (String) -> Unit,
     onNavigateToFollowing: (String) -> Unit,
     onNavigateToConversation: (String) -> Unit = {},
-    onNavigateToLogin: () -> Unit,
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToCreatePost: () -> Unit = {},
     onNavigateToCreateStory: () -> Unit = {},
@@ -40,12 +38,6 @@ fun HomeNavigationHost(
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    CollectEffect(viewModel.effect) { effect ->
-        when (effect) {
-            HomeContract.Effect.NavigateToLogin -> onNavigateToLogin()
-        }
-    }
 
     Scaffold(
         bottomBar = {

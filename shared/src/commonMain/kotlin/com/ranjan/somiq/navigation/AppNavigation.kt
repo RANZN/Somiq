@@ -100,10 +100,6 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     onNavigateToFollowers = { },
                     onNavigateToFollowing = { },
                     onNavigateToConversation = { userId -> backStack.add(Conversation(userId)) },
-                    onNavigateToLogin = {
-                        backStack.clear()
-                        backStack.add(OnBoarding.Login)
-                    },
                     onNavigateToNotifications = { backStack.add(Notifications) },
                     onNavigateToCreatePost = { backStack.add(CreatePostScreen) },
                     onNavigateToCreateStory = { backStack.add(CreateStoryScreen) },

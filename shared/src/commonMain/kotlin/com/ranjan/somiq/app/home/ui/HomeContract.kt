@@ -23,5 +23,7 @@ object HomeContract {
         object LoadCurrentUserProfile : Intent
     }
 
-    sealed interface Effect : BaseUiEffect
+    sealed interface Effect : BaseUiEffect{
+        object Logout : Effect
+    }
 }

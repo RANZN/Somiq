@@ -18,14 +18,12 @@ import com.ranjan.somiq.profile.di.profileModule
 import com.ranjan.somiq.profile.di.profileViewModelModule
 import com.ranjan.somiq.reels.di.reelsModule
 import com.ranjan.somiq.reels.di.reelsViewModelModule
-import com.ranjan.somiq.session.sessionModule
 import org.koin.core.module.Module
 
 fun getAllAppModules(): List<Module> = listOf(
     platformDatabaseModule(),
     localDatabaseModule,
     appDataModule,
-    sessionModule,
     authModule,
     authViewModelModule,
     appViewModelModule,

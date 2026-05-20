@@ -56,7 +56,7 @@ class AuthRepositoryImpl(
                                 accessToken = token.accessToken,
                                 refreshToken = token.refreshToken
                             )
-                            authStateManager.setLoggedIn(true)
+                            authStateManager.setUserId(user.id)
                             VerifyOtpResult.LoggedIn(user)
                         }
 
@@ -131,7 +131,7 @@ class AuthRepositoryImpl(
                         accessToken = authResponse.token.accessToken,
                         refreshToken = authResponse.token.refreshToken
                     )
-                    authStateManager.setLoggedIn(true)
+                    authStateManager.setUserId(authResponse.user.id)
                     AuthResult.Success(authResponse.user)
                 }
 
@@ -170,7 +170,7 @@ class AuthRepositoryImpl(
             val refreshToken = tokenProvider.getRefreshToken()
 
             tokenProvider.clearToken()
-            authStateManager.setLoggedIn(false)
+            authStateManager.clearUserId()
 
             if (refreshToken != null) {
                 try {
@@ -184,20 +184,20 @@ class AuthRepositoryImpl(
             true
         } catch (_: Exception) {
             tokenProvider.clearToken()
-            authStateManager.setLoggedIn(false)
+            authStateManager.clearUserId()
             true
         }
     }
 
     override suspend fun isUserLoggedIn(): Boolean {
-        val isLoggedInState = authStateManager.isLoggedIn()
+        val userId = authStateManager.getUserId()
         val hasToken = tokenProvider.getAccessToken() != null || tokenProvider.getRefreshToken() != null
 
-        if (isLoggedInState && !hasToken) {
-            authStateManager.setLoggedIn(false)
+        if (userId != null && !hasToken) {
+            authStateManager.clearUserId()
             return false
         }
 
-        return isLoggedInState && hasToken
+        return userId != null && hasToken
     }
 }

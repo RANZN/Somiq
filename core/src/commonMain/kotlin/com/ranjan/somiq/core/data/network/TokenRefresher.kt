@@ -42,7 +42,7 @@ class TokenRefresherImpl(
         return mutex.withLock {
             if (oldRefreshToken == null) {
                 tokenProvider.clearToken()
-                authStateManager.setLoggedIn(false)
+                authStateManager.clearUserId()
                 return@withLock null
             }
             val currentAccessToken = tokenProvider.getAccessToken()
@@ -76,13 +76,13 @@ class TokenRefresherImpl(
                         refreshToken = tokenResponse.refreshToken
                     )
                 } else {
-                    // Refresh failed, clear tokens
                     tokenProvider.clearToken()
+                    authStateManager.clearUserId()
                     return@withLock null
                 }
             } catch (_: Exception) {
-                // Refresh failed, clear tokens
                 tokenProvider.clearToken()
+                authStateManager.clearUserId()
                 return@withLock null
             }
         }

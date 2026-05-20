@@ -1,7 +1,6 @@
 package com.ranjan.somiq.core.data.local
 
-/**
- * Returns the TokenStorage instance. All targets use [TokenStorageImpl] backed by
- * Preferences DataStore (file on JVM/iOS, [preferencesDataStore] on Android).
- */
-expect fun createTokenStorage(): TokenStorage
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+
+expect fun createTokenDataStore(): DataStore<Preferences>

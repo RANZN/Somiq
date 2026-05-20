@@ -48,6 +48,9 @@ class TokenStorageImpl(
     }
 
     override suspend fun clear() {
-        dataStore.edit { it.clear() }
+        dataStore.edit { prefs ->
+            prefs.remove(KEY_ACCESS_TOKEN)
+            prefs.remove(KEY_REFRESH_TOKEN)
+        }
     }
 }

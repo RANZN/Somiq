@@ -54,5 +54,5 @@ private val navBackStackConfig = SavedStateConfiguration {
 }
 
 @Composable
-fun rememberAppNavBackStack(): NavBackStack<NavKey> =
-    rememberNavBackStack(navBackStackConfig, Splash)
+fun rememberAppNavBackStack(startDestination: NavKey = Splash): NavBackStack<NavKey> =
+    rememberNavBackStack(navBackStackConfig, startDestination)

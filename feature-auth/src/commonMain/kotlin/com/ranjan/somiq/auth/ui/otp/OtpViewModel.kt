@@ -102,7 +102,7 @@ class OtpViewModel(
 
     private suspend fun clearSessionAndNavigateBack() {
         tokenProvider.clearToken()
-        authStateManager.setLoggedIn(false)
+        authStateManager.clearUserId()
         setState { copy(isLoading = false, failedAttempts = 0, error = null) }
         emitEffect(Effect.NavigateBackToPhone)
         showSnackbar(UiText.Resource(Res.string.otp_too_many_failed_attempts))

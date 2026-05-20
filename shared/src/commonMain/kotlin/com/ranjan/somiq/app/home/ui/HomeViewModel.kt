@@ -3,12 +3,10 @@ package com.ranjan.somiq.app.home.ui
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.profile.domain.usecase.GetProfileUseCase
-import com.ranjan.somiq.session.AppSessionController
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val getProfileUseCase: GetProfileUseCase,
-    private val appSessionController: AppSessionController,
 ) : BaseViewModel<HomeContract.UiState, HomeContract.Intent, HomeContract.Effect>(
     HomeContract.UiState()
 ) {
@@ -32,7 +30,9 @@ class HomeViewModel(
                 is HomeContract.Intent.SearchQueryChange -> {
                     setState { copy(searchQuery = intent.query) }
                 }
-                HomeContract.Intent.Logout -> appSessionController.requestEndSession()
+                HomeContract.Intent.Logout -> {
+
+                }
                 HomeContract.Intent.LoadCurrentUserProfile -> {
                     loadCurrentUserProfile()
                 }

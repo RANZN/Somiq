@@ -49,6 +49,10 @@ fun EntryProviderScope<NavKey>.homeEntries(backStack: NavBackStack<NavKey>) {
             onNavigateToNotifications = { backStack.add(Notifications) },
             onNavigateToCreatePost = { backStack.add(CreatePostScreen) },
             onNavigateToCreateStory = { backStack.add(CreateStoryScreen) },
+            logout = {
+                backStack.clear()
+                backStack.add(OnBoarding.Login)
+            }
         )
     }
 

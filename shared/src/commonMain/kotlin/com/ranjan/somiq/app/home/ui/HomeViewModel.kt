@@ -1,12 +1,14 @@
 package com.ranjan.somiq.app.home.ui
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.auth.domain.usecase.LogoutUseCase
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.profile.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val getProfileUseCase: GetProfileUseCase,
+    private val logoutUseCase: LogoutUseCase,
 ) : BaseViewModel<HomeContract.UiState, HomeContract.Intent, HomeContract.Effect>(
     HomeContract.UiState()
 ) {
@@ -27,12 +29,16 @@ class HomeViewModel(
                         )
                     }
                 }
+
                 is HomeContract.Intent.SearchQueryChange -> {
                     setState { copy(searchQuery = intent.query) }
                 }
-                HomeContract.Intent.Logout -> {
 
+                HomeContract.Intent.Logout -> {
+                    logoutUseCase.invoke()
+                    emitEffect(HomeContract.Effect.Logout)
                 }
+
                 HomeContract.Intent.LoadCurrentUserProfile -> {
                     loadCurrentUserProfile()
                 }

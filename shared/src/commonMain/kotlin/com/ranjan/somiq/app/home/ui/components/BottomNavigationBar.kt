@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.ranjan.somiq.app.home.ui.homeBottomTabs
 import com.ranjan.somiq.navigation.Home
 
 private data class BottomNavItem(
@@ -20,27 +21,15 @@ private data class BottomNavItem(
 )
 
 private val bottomNavItems = listOf(
-    BottomNavItem(
-        icon = Icons.AutoMirrored.Filled.Chat,
-        value = Home.ChatLists,
-    ),
-    BottomNavItem(
-        icon = Icons.Default.Home,
-        value = Home.Updates,
-    ),
-    BottomNavItem(
-        icon = Icons.Default.Call,
-        value = Home.Calls,
-    ),
-    BottomNavItem(
-        icon = Icons.Default.Person,
-        value = Home.UserProfile,
-    )
+    BottomNavItem(Icons.AutoMirrored.Filled.Chat, homeBottomTabs[0]),
+    BottomNavItem(Icons.Default.Home, homeBottomTabs[1]),
+    BottomNavItem(Icons.Default.Call, homeBottomTabs[2]),
+    BottomNavItem(Icons.Default.Person, homeBottomTabs[3]),
 )
 
 @Composable
 fun BottomNavigationBar(
-    currentTab: Home,
+    currentTab: () -> Home,
     onTabSelected: (Home) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -55,7 +44,7 @@ fun BottomNavigationBar(
                     )
                 },
                 label = { Text(navItem.name) },
-                selected = navItem == currentTab,
+                selected = navItem == currentTab(),
                 onClick = { onTabSelected(navItem) },
             )
         }

@@ -6,26 +6,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.feed.ui.components.PaginatedLazyList
 import com.ranjan.somiq.core.presentation.error.asString
@@ -42,132 +33,93 @@ fun FeedScreen(
     scrollToTopTrigger: Int = 0,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "SomiQ",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+    Box(modifier = modifier.fillMaxSize()) {
+        when {
+            uiState.showLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
                     )
-                },
-                actions = {
-                    IconButton(onClick = { onIntent(Intent.OnNotificationsClick) }) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "Notifications",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                )
-            )
-        },
-        floatingActionButton = {
-            IconButton(onClick = { onIntent(Intent.OnCreatePostClick) }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Create Post",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+                }
             }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            when {
-                uiState.showLoading -> {
+
+            uiState.showError -> {
+                val pullToRefreshState = rememberPullToRefreshState()
+                PullToRefreshBox(
+                    isRefreshing = uiState.refreshing,
+                    onRefresh = { onIntent(Intent.RefreshFeed) },
+                    state = pullToRefreshState,
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-                uiState.showError -> {
-                    val pullToRefreshState = rememberPullToRefreshState()
-                    PullToRefreshBox(
-                        isRefreshing = uiState.refreshing,
-                        onRefresh = { onIntent(Intent.RefreshFeed) },
-                        state = pullToRefreshState,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clickable { onIntent(Intent.Retry) }
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable { onIntent(Intent.Retry) }
-                            ) {
-                                Text(
-                                    text = uiState.error?.asString().orEmpty(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                                Text(
-                                    text = "Tap to retry or pull to refresh",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-                else -> {
-                    val listState = rememberLazyListState()
-                    LaunchedEffect(scrollToTopTrigger) {
-                        if (scrollToTopTrigger > 0) {
-                            listState.animateScrollToItem(0)
-                        }
-                    }
-                    PaginatedLazyList(
-                        items = uiState.posts,
-                        isLoading = uiState.loadingMore,
-                        hasMore = uiState.hasMore,
-                        onLoadMore = { onIntent(Intent.LoadMore) },
-                        modifier = Modifier.fillMaxSize(),
-                        listState = listState,
-                        key = { it.id },
-                        isRefreshing = uiState.refreshing,
-                        onRefresh = { onIntent(Intent.RefreshFeed) },
-                        topContent = {
-                            item(key = "stories") {
-                                StoriesSection(
-                                    stories = uiState.stories,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    showAddStoryItem = true,
-                                    onAddStoryClick = { onIntent(Intent.OnAddStoryClick) },
-                                    onStoryClick = { storyId -> onIntent(Intent.OnStoryClick(storyId)) }
-                                )
-                            }
-                        },
-                        itemContent = { post ->
-                            PostItem(
-                                post = post,
-                                onLikeClick = { onIntent(Intent.ToggleLike(post.id)) },
-                                onCommentClick = { onIntent(Intent.OnCommentClick(post.id)) },
-                                onShareClick = { onIntent(Intent.OnShareClick(post.id)) },
-                                onSaveClick = { onIntent(Intent.ToggleBookmark(post.id)) },
-                                onMoreClick = { onIntent(Intent.OnMoreClick(post.id)) },
-                                onUserClick = { onIntent(Intent.OnUserClick(post.authorId)) }
+                            Text(
+                                text = uiState.error?.asString().orEmpty(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Text(
+                                text = "Tap to retry or pull to refresh",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 8.dp)
                             )
                         }
-                    )
+                    }
                 }
+            }
+
+            else -> {
+                val listState = rememberLazyListState()
+                LaunchedEffect(scrollToTopTrigger) {
+                    if (scrollToTopTrigger > 0) {
+                        listState.animateScrollToItem(0)
+                    }
+                }
+                PaginatedLazyList(
+                    items = uiState.posts,
+                    isLoading = uiState.loadingMore,
+                    hasMore = uiState.hasMore,
+                    onLoadMore = { onIntent(Intent.LoadMore) },
+                    modifier = Modifier.fillMaxSize(),
+                    listState = listState,
+                    key = { it.id },
+                    isRefreshing = uiState.refreshing,
+                    onRefresh = { onIntent(Intent.RefreshFeed) },
+                    topContent = {
+                        item(key = "stories") {
+                            StoriesSection(
+                                stories = uiState.stories,
+                                modifier = Modifier.fillMaxWidth(),
+                                showAddStoryItem = true,
+                                onAddStoryClick = { onIntent(Intent.OnAddStoryClick) },
+                                onStoryClick = { storyId -> onIntent(Intent.OnStoryClick(storyId)) }
+                            )
+                        }
+                    },
+                    itemContent = { post ->
+                        PostItem(
+                            post = post,
+                            onLikeClick = { onIntent(Intent.ToggleLike(post.id)) },
+                            onCommentClick = { onIntent(Intent.OnCommentClick(post.id)) },
+                            onShareClick = { onIntent(Intent.OnShareClick(post.id)) },
+                            onSaveClick = { onIntent(Intent.ToggleBookmark(post.id)) },
+                            onMoreClick = { onIntent(Intent.OnMoreClick(post.id)) },
+                            onUserClick = { onIntent(Intent.OnUserClick(post.authorId)) }
+                        )
+                    }
+                )
             }
         }
     }

@@ -13,7 +13,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ProfileScreenHost(
     scrollToTopTrigger: Int = 0,
     userId: String? = null,
-    appBarTitle: String? = null,
     onLogout: () -> Unit = {},
     onNavigateToEditProfile: (String) -> Unit = {},
     onNavigateToSettings: (String) -> Unit = {},
@@ -27,10 +26,6 @@ fun ProfileScreenHost(
     LaunchedEffect(userId) {
         viewModel.setUserId(userId)
         viewModel.handleIntent(Intent.LoadProfile)
-    }
-
-    LaunchedEffect(appBarTitle) {
-        viewModel.handleIntent(Intent.SetAppBarConfig(appBarTitle != null, appBarTitle))
     }
 
     CollectEffect(viewModel.effect) { effect ->

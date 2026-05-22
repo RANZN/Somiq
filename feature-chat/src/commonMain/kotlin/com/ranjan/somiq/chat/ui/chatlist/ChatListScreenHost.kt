@@ -9,9 +9,10 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatListScreenHost(
-    onNavigateToConversation: (String) -> Unit = {}
+    viewModelKey: String? = null,
+    onNavigateToConversation: (String) -> Unit = {},
 ) {
-    val viewModel: ChatListViewModel = koinViewModel()
+    val viewModel: ChatListViewModel = koinViewModel(key = viewModelKey)
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     CollectEffect(viewModel.effect) { effect ->

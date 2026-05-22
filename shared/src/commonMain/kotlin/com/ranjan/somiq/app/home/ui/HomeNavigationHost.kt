@@ -42,6 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeNavigationHost(
     modifier: Modifier = Modifier,
+    homeViewModelKey: String,
     onNavigateToUser: (String) -> Unit,
     onNavigateToPost: (String) -> Unit,
     onNavigateToComments: (String) -> Unit,
@@ -59,7 +60,7 @@ fun HomeNavigationHost(
     onNavigateToCreateStory: () -> Unit = {},
     logout: () -> Unit = {},
 ) {
-    val viewModel: HomeViewModel = koinViewModel()
+    val viewModel: HomeViewModel = koinViewModel(key = homeViewModelKey)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val tabs = homeBottomTabs
@@ -171,11 +172,15 @@ fun HomeNavigationHost(
         ) { page ->
             when (tabs[page]) {
                 Home.ChatLists -> {
-                    ChatListScreenHost(onNavigateToConversation = onNavigateToConversation)
+                    ChatListScreenHost(
+                        viewModelKey = homeViewModelKey,
+                        onNavigateToConversation = onNavigateToConversation,
+                    )
                 }
 
                 Home.Updates -> {
                     FeedScreenHost(
+                        viewModelKey = homeViewModelKey,
                         scrollToTopTrigger = state.scrollToTopKey,
                         onCreatePost = onNavigateToCreatePost,
                         onNavigateToNotifications = onNavigateToNotifications,
@@ -191,6 +196,7 @@ fun HomeNavigationHost(
 
                 Home.UserProfile -> {
                     ProfileScreenHost(
+                        viewModelKey = homeViewModelKey,
                         scrollToTopTrigger = state.scrollToTopKey,
                         onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },
                         onNavigateToEditProfile = onNavigateToEditProfile,

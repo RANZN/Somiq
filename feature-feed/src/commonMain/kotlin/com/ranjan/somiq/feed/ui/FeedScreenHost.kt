@@ -9,6 +9,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedScreenHost(
+    viewModelKey: String? = null,
     scrollToTopTrigger: Int = 0,
     onCreatePost: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
@@ -21,7 +22,7 @@ fun FeedScreenHost(
     onShowShareDialog: (String) -> Unit = {},
     onShowMoreOptions: (String) -> Unit = {}
 ) {
-    val viewModel: FeedViewModel = koinViewModel()
+    val viewModel: FeedViewModel = koinViewModel(key = viewModelKey)
     val uiState by viewModel.state.collectAsState()
 
     CollectEffect(viewModel.effect) { effect ->

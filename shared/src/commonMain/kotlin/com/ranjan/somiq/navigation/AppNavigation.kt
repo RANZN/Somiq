@@ -5,7 +5,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
@@ -14,6 +14,7 @@ import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
 import com.ranjan.somiq.splash.SplashScreenHost
 import org.koin.compose.koinInject
+import kotlin.random.Random
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
@@ -22,6 +23,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
     val authStateManager = koinInject<AuthStateManager>()
     val userId by authStateManager.userId.collectAsStateWithLifecycle(initialValue = null)
+    val homeViewModelKey = remember(userId) { "HomeSession-${userId ?: "guest"}-${Random.nextLong()}" }
     val isHomeOnTop = backStack.isHomeOnTop()
 
     Scaffold(
@@ -51,10 +53,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 }
 
                 authEntries(backStack)
-
-                key(userId) {
-                    homeEntries(backStack)
-                }
+                homeEntries(backStack, homeViewModelKey)
             },
         )
     }

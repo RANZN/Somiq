@@ -26,11 +26,7 @@ fun BottomNavigationBar(
                 onClick = { onTabSelected(item) },
                 icon = {
                     Icon(
-                        imageVector = if (selected) {
-                            item.selectedIcon
-                        } else {
-                            item.unselectedIcon
-                        },
+                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
                         contentDescription = stringResource(item.title),
                     )
                 },

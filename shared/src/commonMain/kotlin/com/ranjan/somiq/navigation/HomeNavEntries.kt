@@ -32,17 +32,16 @@ import com.ranjan.somiq.profile.ui.ProfileScreenHost
 
 fun EntryProviderScope<NavKey>.homeEntries(
     backStack: NavBackStack<NavKey>,
-    homeViewModelKey: String,
+    sessionId: String,
 ) {
     entry<HomeGraph> {
         InitializeCoil()
         HomeNavigationHost(
-            homeViewModelKey = homeViewModelKey,
-            onNavigateToUser = { backStack.add(Home.UserProfile) },
+            sessionId = sessionId,
+            onNavigateToUser = { backStack.add(Profile(it)) },
             onNavigateToPost = { postId -> backStack.add(PostDetail(postId)) },
             onNavigateToComments = { postId -> backStack.add(PostDetail(postId)) },
             onNavigateToStory = { storyId -> backStack.add(StoryView(storyId)) },
-            onNavigateToHashtag = { },
             onShowShareDialog = { },
             onShowMoreOptions = { },
             onNavigateToEditProfile = { },

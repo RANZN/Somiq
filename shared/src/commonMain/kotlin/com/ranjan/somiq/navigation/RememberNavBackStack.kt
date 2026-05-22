@@ -18,10 +18,6 @@ private fun PolymorphicModuleBuilder<NavKey>.authNavKeys() {
 
 private fun PolymorphicModuleBuilder<NavKey>.homeNavKeys() {
     subclass(HomeGraph::class, HomeGraph.serializer())
-    subclass(Home.Updates::class, Home.Updates.serializer())
-    subclass(Home.UserProfile::class, Home.UserProfile.serializer())
-    subclass(Home.ChatLists::class, Home.ChatLists.serializer())
-    subclass(Home.Calls::class, Home.Calls.serializer())
     subclass(Chat::class, Chat.serializer())
     subclass(Profile::class, Profile.serializer())
     subclass(PostDetail::class, PostDetail.serializer())

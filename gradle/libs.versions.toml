@@ -25,6 +25,7 @@ kotlinx-serialization = "1.10.0"
 androidx-activity = "1.13.0"
 androidx-core = "1.17.0"
 datastore = "1.2.1"
+immutableCollections = "0.4.0"
 
 # --- AndroidX Lifecycle (JetBrains artifacts for KMP) ---
 androidx-lifecycle = "2.10.0"
@@ -79,6 +80,7 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 # --- kotlinx ---
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
 
 # --- Navigation 3 (KMP) ---
 jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3-ui" }

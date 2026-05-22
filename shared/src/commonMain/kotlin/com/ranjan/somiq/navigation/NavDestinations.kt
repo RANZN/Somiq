@@ -1,6 +1,5 @@
 package com.ranjan.somiq.navigation
 
-import androidx.compose.runtime.Stable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
@@ -21,23 +20,6 @@ sealed interface OnBoarding : NavKey {
 
 @Serializable
 data object HomeGraph : NavKey
-
-@Stable
-@Serializable
-sealed class Home(val name: String) : NavKey {
-
-    @Serializable
-    data object ChatLists : Home("Chats")
-
-    @Serializable
-    data object Updates : Home("Updates")
-
-    @Serializable
-    data object Calls : Home("Calls")
-
-    @Serializable
-    data object UserProfile : Home("Profile")
-}
 
 @Serializable
 data object Chat : NavKey

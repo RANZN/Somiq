@@ -1,51 +1,42 @@
 package com.ranjan.somiq.app.home.ui.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import com.ranjan.somiq.app.home.ui.homeBottomTabs
-import com.ranjan.somiq.navigation.Home
-
-private data class BottomNavItem(
-    val icon: ImageVector,
-    val value: Home,
-)
-
-private val bottomNavItems = listOf(
-    BottomNavItem(Icons.AutoMirrored.Filled.Chat, homeBottomTabs[0]),
-    BottomNavItem(Icons.Default.Home, homeBottomTabs[1]),
-    BottomNavItem(Icons.Default.Call, homeBottomTabs[2]),
-    BottomNavItem(Icons.Default.Person, homeBottomTabs[3]),
-)
+import com.ranjan.somiq.app.home.ui.HomeTab
+import kotlinx.collections.immutable.PersistentList
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BottomNavigationBar(
-    currentTab: () -> Home,
-    onTabSelected: (Home) -> Unit,
+    tabs: PersistentList<HomeTab> = HomeTab.items,
+    currentTab: () -> HomeTab,
+    onTabSelected: (HomeTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationBar(modifier = modifier) {
-        bottomNavItems.forEach { item ->
-            val navItem = item.value
+        tabs.forEach { item ->
+            val selected = item == currentTab()
+
             NavigationBarItem(
+                selected = selected,
+                onClick = { onTabSelected(item) },
                 icon = {
                     Icon(
-                        imageVector = item.icon,
-                        contentDescription = navItem.name,
+                        imageVector = if (selected) {
+                            item.selectedIcon
+                        } else {
+                            item.unselectedIcon
+                        },
+                        contentDescription = stringResource(item.title),
                     )
                 },
-                label = { Text(navItem.name) },
-                selected = navItem == currentTab(),
-                onClick = { onTabSelected(navItem) },
+                label = {
+                    Text(stringResource(item.title))
+                },
             )
         }
     }

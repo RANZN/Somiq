@@ -49,7 +49,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.core)
-
+            api(libs.kotlinx.immutable.collections)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.content.negotiation)

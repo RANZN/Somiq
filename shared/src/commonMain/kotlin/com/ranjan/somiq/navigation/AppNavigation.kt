@@ -23,7 +23,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
     val authStateManager = koinInject<AuthStateManager>()
     val userId by authStateManager.userId.collectAsStateWithLifecycle(initialValue = null)
-    val homeViewModelKey = remember(userId) { "HomeSession-${userId ?: "guest"}-${Random.nextLong()}" }
+    val sessionId = remember(userId) { "${userId}-${Random.nextLong()}" }
     val isHomeOnTop = backStack.isHomeOnTop()
 
     Scaffold(
@@ -53,7 +53,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 }
 
                 authEntries(backStack)
-                homeEntries(backStack, homeViewModelKey)
+                homeEntries(backStack, sessionId)
             },
         )
     }

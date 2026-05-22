@@ -29,7 +29,6 @@ import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
 import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.feed.ui.FeedScreenHost
-import com.ranjan.somiq.navigation.Home
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
 import com.ranjan.somiq.shared.resources.Res
 import com.ranjan.somiq.shared.resources.calls
@@ -41,13 +40,12 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeNavigationHost(
+    sessionId: String,
     modifier: Modifier = Modifier,
-    homeViewModelKey: String,
     onNavigateToUser: (String) -> Unit,
     onNavigateToPost: (String) -> Unit,
     onNavigateToComments: (String) -> Unit,
     onNavigateToStory: (String) -> Unit,
-    onNavigateToHashtag: (String) -> Unit,
     onShowShareDialog: (String) -> Unit,
     onShowMoreOptions: (String) -> Unit,
     onNavigateToEditProfile: (String) -> Unit,
@@ -60,18 +58,16 @@ fun HomeNavigationHost(
     onNavigateToCreateStory: () -> Unit = {},
     logout: () -> Unit = {},
 ) {
-    val viewModel: HomeViewModel = koinViewModel(key = homeViewModelKey)
+    val viewModel: HomeViewModel = koinViewModel(key = sessionId)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val tabs = homeBottomTabs
-    val selectedIndex = tabs.indexOf(state.selectedTab).coerceAtLeast(0)
     val pagerState = rememberPagerState(
-        initialPage = selectedIndex,
-        pageCount = { tabs.size },
+        initialPage = state.selectedTab.getIndex(),
+        pageCount = { HomeTab.items.size },
     )
 
     LaunchedEffect(state.selectedTab) {
-        val target = tabs.indexOf(state.selectedTab)
+        val target = state.selectedTab.getIndex()
         if (target >= 0 && target != pagerState.currentPage) {
             pagerState.animateScrollToPage(target)
         }
@@ -79,7 +75,7 @@ fun HomeNavigationHost(
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.settledPage }.collect { page ->
-            val tab = tabs[page]
+            val tab = HomeTab.fromIndex(page)
             if (tab != state.selectedTab) {
                 viewModel.handleIntent(HomeContract.Intent.SelectTab(tab))
             }
@@ -98,10 +94,10 @@ fun HomeNavigationHost(
             TopAppBar(
                 title = {
                     val title = when (state.selectedTab) {
-                        Home.UserProfile -> state.currentUserName
-                        Home.Calls -> stringResource(Res.string.calls)
-                        Home.ChatLists -> stringResource(Res.string.chats)
-                        Home.Updates -> stringResource(Res.string.updates)
+                        HomeTab.Profile -> state.currentUserName
+                        HomeTab.Calls -> stringResource(Res.string.calls)
+                        HomeTab.ChatLists -> stringResource(Res.string.chats)
+                        HomeTab.Updates -> stringResource(Res.string.updates)
                     }
                     Text(
                         text = title,
@@ -116,7 +112,7 @@ fun HomeNavigationHost(
                 ),
                 actions = {
                     when (state.selectedTab) {
-                        Home.Updates -> {
+                        HomeTab.Updates -> {
                             IconButton(onClick = onNavigateToNotifications) {
                                 Icon(
                                     imageVector = Icons.Default.Favorite,
@@ -126,7 +122,7 @@ fun HomeNavigationHost(
                             }
                         }
 
-                        Home.UserProfile -> {
+                        HomeTab.Profile -> {
                             IconButton(onClick = { viewModel.handleIntent(HomeContract.Intent.Logout) }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ExitToApp,
@@ -150,7 +146,7 @@ fun HomeNavigationHost(
         },
         floatingActionButton = {
             when (state.selectedTab) {
-                Home.Updates -> {
+                HomeTab.Updates -> {
                     FloatingActionButton(onClick = onNavigateToCreatePost) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -168,19 +164,19 @@ fun HomeNavigationHost(
                 .fillMaxSize()
                 .padding(padding),
             state = pagerState,
-            beyondViewportPageCount = tabs.lastIndex,
+            beyondViewportPageCount = HomeTab.items.lastIndex,
         ) { page ->
-            when (tabs[page]) {
-                Home.ChatLists -> {
+            when (HomeTab.fromIndex(page)) {
+                HomeTab.ChatLists -> {
                     ChatListScreenHost(
-                        viewModelKey = homeViewModelKey,
+                        viewModelKey = sessionId,
                         onNavigateToConversation = onNavigateToConversation,
                     )
                 }
 
-                Home.Updates -> {
+                HomeTab.Updates -> {
                     FeedScreenHost(
-                        viewModelKey = homeViewModelKey,
+                        viewModelKey = sessionId,
                         scrollToTopTrigger = state.scrollToTopKey,
                         onCreatePost = onNavigateToCreatePost,
                         onNavigateToNotifications = onNavigateToNotifications,
@@ -194,9 +190,9 @@ fun HomeNavigationHost(
                     )
                 }
 
-                Home.UserProfile -> {
+                HomeTab.Profile -> {
                     ProfileScreenHost(
-                        viewModelKey = homeViewModelKey,
+                        viewModelKey = sessionId,
                         scrollToTopTrigger = state.scrollToTopKey,
                         onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },
                         onNavigateToEditProfile = onNavigateToEditProfile,
@@ -207,7 +203,7 @@ fun HomeNavigationHost(
                     )
                 }
 
-                Home.Calls -> {}
+                HomeTab.Calls -> {}
             }
         }
     }

@@ -190,14 +190,15 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun isUserLoggedIn(): Boolean {
-        val userId = authStateManager.getUserId()
+        if (!authStateManager.isLoggedIn()) return false
+
         val hasToken = tokenProvider.getAccessToken() != null || tokenProvider.getRefreshToken() != null
 
-        if (userId != null && !hasToken) {
+        if (!hasToken) {
             authStateManager.clearUserId()
             return false
         }
 
-        return userId != null && hasToken
+        return true
     }
 }

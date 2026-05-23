@@ -42,6 +42,77 @@ class HomeViewModel(
                 HomeContract.Intent.LoadCurrentUserProfile -> {
                     loadCurrentUserProfile()
                 }
+
+                // Navigation
+                is HomeContract.Intent.NavigateToUser -> emitEffect(
+                    HomeContract.Effect.NavigateToUser(
+                        intent.userId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToPost -> emitEffect(
+                    HomeContract.Effect.NavigateToPost(
+                        intent.postId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToComments -> emitEffect(
+                    HomeContract.Effect.NavigateToComments(
+                        intent.postId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToStory -> emitEffect(
+                    HomeContract.Effect.NavigateToStory(
+                        intent.storyId
+                    )
+                )
+
+                is HomeContract.Intent.ShowShareDialog -> emitEffect(
+                    HomeContract.Effect.ShowShareDialog(
+                        intent.postId
+                    )
+                )
+
+                is HomeContract.Intent.ShowMoreOptions -> emitEffect(
+                    HomeContract.Effect.ShowMoreOptions(
+                        intent.postId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToEditProfile -> emitEffect(
+                    HomeContract.Effect.NavigateToEditProfile(
+                        intent.userId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToSettings -> emitEffect(
+                    HomeContract.Effect.NavigateToSettings(
+                        intent.userId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToFollowers -> emitEffect(
+                    HomeContract.Effect.NavigateToFollowers(
+                        intent.userId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToFollowing -> emitEffect(
+                    HomeContract.Effect.NavigateToFollowing(
+                        intent.userId
+                    )
+                )
+
+                is HomeContract.Intent.NavigateToConversation -> emitEffect(
+                    HomeContract.Effect.NavigateToConversation(
+                        intent.userId
+                    )
+                )
+
+                HomeContract.Intent.NavigateToNotifications -> emitEffect(HomeContract.Effect.NavigateToNotifications)
+                HomeContract.Intent.NavigateToCreatePost -> emitEffect(HomeContract.Effect.NavigateToCreatePost)
+                HomeContract.Intent.NavigateToCreateStory -> emitEffect(HomeContract.Effect.NavigateToCreateStory)
             }
         }
     }

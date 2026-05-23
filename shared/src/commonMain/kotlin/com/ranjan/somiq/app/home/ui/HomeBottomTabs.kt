@@ -9,7 +9,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ranjan.somiq.shared.resources.Res
 import com.ranjan.somiq.shared.resources.calls
@@ -19,7 +19,7 @@ import com.ranjan.somiq.shared.resources.updates
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.StringResource
 
-@Stable
+@Immutable
 sealed interface HomeTab {
 
     val title: StringResource

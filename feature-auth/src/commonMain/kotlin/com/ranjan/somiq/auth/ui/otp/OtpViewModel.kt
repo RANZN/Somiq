@@ -23,12 +23,16 @@ class OtpViewModel(
 ) : BaseViewModel<UiState, Intent, Effect>(UiState(phoneDisplay = phone)) {
 
     override fun onIntent(intent: Intent) {
-        viewModelScope.launch {
-            when (intent) {
-                is Intent.OnOtpChange -> setState {
+        when (intent) {
+            is Intent.OnOtpChange -> {
+                if (state.value.isSixDigitOtp) return
+                setState {
                     copy(otp = intent.otp, error = null, failedAttempts = 0)
                 }
-                Intent.Verify -> verify()
+            }
+
+            Intent.Verify -> viewModelScope.launch {
+                verify()
             }
         }
     }

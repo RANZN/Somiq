@@ -82,6 +82,7 @@ fun OtpScreen(
         OnboardingButton(
             text = "Verify",
             isLoading = uiState.isLoading,
+            enabled = uiState.isSixDigitOtp,
             onClick = { intent(Intent.Verify) },
         )
     }

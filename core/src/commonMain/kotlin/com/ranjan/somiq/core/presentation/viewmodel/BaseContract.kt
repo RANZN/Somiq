@@ -1,5 +1,6 @@
 package com.ranjan.somiq.core.presentation.viewmodel
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 
 /**
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Stable
 @Stable
 interface BaseUiState
 
+@Immutable
 interface BaseUiIntent
 
 interface BaseUiEffect

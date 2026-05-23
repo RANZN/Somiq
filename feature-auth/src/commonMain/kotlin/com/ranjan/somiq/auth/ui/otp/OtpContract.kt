@@ -31,6 +31,8 @@ object OtpContract {
             PHONE_REGISTERED,
             GENERIC,
         }
+
+        val isSixDigitOtp get () = otp.length == 6
     }
 
     sealed interface Intent : BaseUiIntent {

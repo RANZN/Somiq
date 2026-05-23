@@ -20,14 +20,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ranjan.somiq.app.home.ui.HomeContract.Intent
 import com.ranjan.somiq.app.home.ui.components.BottomNavigationBar
 import com.ranjan.somiq.chat.ui.chatlist.ChatListScreenHost
-import com.ranjan.somiq.core.presentation.util.CollectEffect
 import com.ranjan.somiq.feed.ui.FeedScreenHost
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
 import com.ranjan.somiq.shared.resources.Res
@@ -35,40 +33,23 @@ import com.ranjan.somiq.shared.resources.calls
 import com.ranjan.somiq.shared.resources.chats
 import com.ranjan.somiq.shared.resources.updates
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeNavigationHost(
+fun HomeScreen(
     sessionId: String,
+    state: HomeContract.UiState,
+    action: (Intent) -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateToUser: (String) -> Unit,
-    onNavigateToPost: (String) -> Unit,
-    onNavigateToComments: (String) -> Unit,
-    onNavigateToStory: (String) -> Unit,
-    onShowShareDialog: (String) -> Unit,
-    onShowMoreOptions: (String) -> Unit,
-    onNavigateToEditProfile: (String) -> Unit,
-    onNavigateToSettings: (String) -> Unit,
-    onNavigateToFollowers: (String) -> Unit,
-    onNavigateToFollowing: (String) -> Unit,
-    onNavigateToConversation: (String) -> Unit = {},
-    onNavigateToNotifications: () -> Unit = {},
-    onNavigateToCreatePost: () -> Unit = {},
-    onNavigateToCreateStory: () -> Unit = {},
-    logout: () -> Unit = {},
 ) {
-    val viewModel: HomeViewModel = koinViewModel(key = sessionId)
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
     val pagerState = rememberPagerState(
         initialPage = state.selectedTab.getIndex(),
-        pageCount = { HomeTab.items.size },
+        pageCount = { HomeTab.items.size }
     )
 
     LaunchedEffect(state.selectedTab) {
         val target = state.selectedTab.getIndex()
-        if (target >= 0 && target != pagerState.currentPage) {
+        if (target >= 0 && (target != pagerState.currentPage)) {
             pagerState.animateScrollToPage(target)
         }
     }
@@ -77,14 +58,8 @@ fun HomeNavigationHost(
         snapshotFlow { pagerState.settledPage }.collect { page ->
             val tab = HomeTab.fromIndex(page)
             if (tab != state.selectedTab) {
-                viewModel.handleIntent(HomeContract.Intent.SelectTab(tab))
+                action(Intent.SelectTab(tab))
             }
-        }
-    }
-
-    CollectEffect(viewModel.effect) { effect ->
-        when (effect) {
-            HomeContract.Effect.Logout -> logout()
         }
     }
 
@@ -113,7 +88,7 @@ fun HomeNavigationHost(
                 actions = {
                     when (state.selectedTab) {
                         HomeTab.Updates -> {
-                            IconButton(onClick = onNavigateToNotifications) {
+                            IconButton(onClick = { action(Intent.NavigateToNotifications) }) {
                                 Icon(
                                     imageVector = Icons.Default.Favorite,
                                     contentDescription = "Notifications",
@@ -123,7 +98,7 @@ fun HomeNavigationHost(
                         }
 
                         HomeTab.Profile -> {
-                            IconButton(onClick = { viewModel.handleIntent(HomeContract.Intent.Logout) }) {
+                            IconButton(onClick = { action(Intent.Logout) }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                                     contentDescription = "Logout",
@@ -140,14 +115,14 @@ fun HomeNavigationHost(
         bottomBar = {
             BottomNavigationBar(
                 currentTab = { state.selectedTab },
-                onTabSelected = { viewModel.handleIntent(HomeContract.Intent.SelectTab(it)) },
+                onTabSelected = { action(Intent.SelectTab(it)) },
                 modifier = Modifier.navigationBarsPadding(),
             )
         },
         floatingActionButton = {
             when (state.selectedTab) {
                 HomeTab.Updates -> {
-                    FloatingActionButton(onClick = onNavigateToCreatePost) {
+                    FloatingActionButton(onClick = { action(Intent.NavigateToCreatePost) }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Create post",
@@ -170,7 +145,9 @@ fun HomeNavigationHost(
                 HomeTab.ChatLists -> {
                     ChatListScreenHost(
                         viewModelKey = sessionId,
-                        onNavigateToConversation = onNavigateToConversation,
+                        onNavigateToConversation = {
+                            action(Intent.NavigateToConversation(it))
+                        },
                     )
                 }
 
@@ -178,15 +155,15 @@ fun HomeNavigationHost(
                     FeedScreenHost(
                         viewModelKey = sessionId,
                         scrollToTopTrigger = state.scrollToTopKey,
-                        onCreatePost = onNavigateToCreatePost,
-                        onNavigateToNotifications = onNavigateToNotifications,
-                        onNavigateToCreateStory = onNavigateToCreateStory,
-                        onNavigateToUser = onNavigateToUser,
-                        onNavigateToPost = onNavigateToPost,
-                        onNavigateToComments = onNavigateToComments,
-                        onNavigateToStory = onNavigateToStory,
-                        onShowShareDialog = onShowShareDialog,
-                        onShowMoreOptions = onShowMoreOptions,
+                        onCreatePost = { action(Intent.NavigateToCreatePost) },
+                        onNavigateToNotifications = { action(Intent.NavigateToNotifications) },
+                        onNavigateToCreateStory = { action(Intent.NavigateToCreateStory) },
+                        onNavigateToUser = { action(Intent.NavigateToUser(it)) },
+                        onNavigateToPost = { action(Intent.NavigateToPost(it)) },
+                        onNavigateToComments = { action(Intent.NavigateToComments(it)) },
+                        onNavigateToStory = { action(Intent.NavigateToStory(it)) },
+                        onShowShareDialog = { action(Intent.ShowShareDialog(it)) },
+                        onShowMoreOptions = { action(Intent.ShowMoreOptions(it)) },
                     )
                 }
 
@@ -194,12 +171,14 @@ fun HomeNavigationHost(
                     ProfileScreenHost(
                         viewModelKey = sessionId,
                         scrollToTopTrigger = state.scrollToTopKey,
-                        onLogout = { viewModel.handleIntent(HomeContract.Intent.Logout) },
-                        onNavigateToEditProfile = onNavigateToEditProfile,
-                        onNavigateToSettings = onNavigateToSettings,
-                        onNavigateToFollowers = onNavigateToFollowers,
-                        onNavigateToFollowing = onNavigateToFollowing,
-                        onNavigateToPost = onNavigateToPost,
+                        onLogout = { action(Intent.Logout) },
+                        onNavigateToEditProfile = {
+                            action(Intent.NavigateToEditProfile(it))
+                        },
+                        onNavigateToSettings = { action(Intent.NavigateToSettings(it)) },
+                        onNavigateToFollowers = { action(Intent.NavigateToFollowers(it)) },
+                        onNavigateToFollowing = { action(Intent.NavigateToFollowing(it)) },
+                        onNavigateToPost = { action(Intent.NavigateToPost(it)) },
                     )
                 }
 

@@ -53,3 +53,6 @@ data class VoiceCall(val userId: String) : NavKey
 
 @Serializable
 data class VideoCall(val userId: String) : NavKey
+
+@Serializable
+data object Settings : NavKey

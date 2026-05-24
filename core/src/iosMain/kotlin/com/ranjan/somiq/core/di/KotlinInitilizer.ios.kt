@@ -1,15 +1,7 @@
 package com.ranjan.somiq.core.di
 
 import org.koin.core.module.Module
+import org.koin.dsl.module
 
-actual class KotlinInitializer {
-    actual fun init(additionalModules: List<Module>) {
-        initKoin(
-            additionalModules = additionalModules,
-            appDeclaration = {
-                modules(iosModules)
-            }
-        )
-    }
-}
-
+actual val platformModules: Module
+    get() = module { }

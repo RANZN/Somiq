@@ -10,6 +10,7 @@ import com.ranjan.somiq.auth.di.authModule
 import com.ranjan.somiq.auth.di.authViewModelModule
 import com.ranjan.somiq.chat.di.chatModule
 import com.ranjan.somiq.chat.di.chatViewModelModule
+import com.ranjan.somiq.core.di.networkModule
 import com.ranjan.somiq.createpost.di.createPostViewModelModule
 import com.ranjan.somiq.createstory.di.createStoryViewModelModule
 import com.ranjan.somiq.feed.di.feedModule
@@ -20,29 +21,31 @@ import com.ranjan.somiq.reels.di.reelsModule
 import com.ranjan.somiq.reels.di.reelsViewModelModule
 import org.koin.core.module.Module
 
-fun getAllAppModules(): List<Module> = listOf(
-    platformDatabaseModule(),
-    localDatabaseModule,
-    appDataModule,
-    authModule,
-    authViewModelModule,
-    appViewModelModule,
-    feedModule,
-    feedViewModelModule,
-    profileModule,
-    profileViewModelModule,
-    chatModule,
-    chatViewModelModule,
-    homeModule,
-    homeViewModelModule,
-    searchModule,
-    searchViewModelModule,
-    postDetailModule,
-    postDetailViewModelModule,
-    reelsModule,
-    reelsViewModelModule,
-    createPostViewModelModule,
-    createStoryViewModelModule,
-    collectionsModule,
-    appUserViewModelModule,
-)
+val sharedModules
+    get(): List<Module> = listOf(
+        networkModule,
+        platformDatabaseModule(),
+        localDatabaseModule,
+        authModule,
+        authViewModelModule,
+        appDataModule,
+        appViewModelModule,
+        feedModule,
+        feedViewModelModule,
+        profileModule,
+        profileViewModelModule,
+        chatModule,
+        chatViewModelModule,
+        homeModule,
+        homeViewModelModule,
+        searchModule,
+        searchViewModelModule,
+        postDetailModule,
+        postDetailViewModelModule,
+        reelsModule,
+        reelsViewModelModule,
+        createPostViewModelModule,
+        createStoryViewModelModule,
+        collectionsModule,
+        appUserViewModelModule,
+    )

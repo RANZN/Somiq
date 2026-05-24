@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -18,7 +19,7 @@ dependencies {
     releaseImplementation(libs.chucker.release)
 }
 
-android {
+extensions.configure<ApplicationExtension> {
     namespace = "com.ranjan.somiq"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 

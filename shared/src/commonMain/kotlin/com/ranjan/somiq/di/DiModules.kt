@@ -12,6 +12,7 @@ import com.ranjan.somiq.feed.di.feedModule
 import com.ranjan.somiq.navigation.authNavigationModule
 import com.ranjan.somiq.navigation.homeNavigationModule
 import com.ranjan.somiq.navigation.navigationModule
+import com.ranjan.somiq.navigation.settingNavigationModule
 import com.ranjan.somiq.profile.di.profileModule
 import com.ranjan.somiq.reels.di.reelsModule
 import org.koin.core.module.Module
@@ -27,6 +28,7 @@ val sharedModules: List<Module>
         navigationModule,
         authNavigationModule,
         homeNavigationModule,
+        settingNavigationModule,
         feedModule,
         profileModule,
         chatModule,

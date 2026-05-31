@@ -50,7 +50,7 @@ val homeNavigationModule = module {
             onNavigateToNotifications = { backStack.add(Notifications) },
             onNavigateToCreatePost = { backStack.add(CreatePostScreen) },
             onNavigateToCreateStory = { backStack.add(CreateStoryScreen) },
-            navigateToSettings = { }
+            navigateToSettings = { backStack.add(Settings) }
         )
     }
 

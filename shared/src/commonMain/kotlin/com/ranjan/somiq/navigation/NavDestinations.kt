@@ -9,53 +9,58 @@ val LocalNavBackStack = staticCompositionLocalOf<NavBackStack<NavKey>> {
     error("No NavBackStack provided")
 }
 
-@Serializable
-data object Splash : NavKey
-
-@Serializable
-sealed interface OnBoarding : NavKey {
+sealed interface AppNavGraph : NavKey {
     @Serializable
-    data object Login : OnBoarding
+    data object Splash : AppNavGraph
 
     @Serializable
-    data class Otp(val phone: String) : OnBoarding
+    sealed interface OnBoarding : AppNavGraph {
+        @Serializable
+        data object Login : OnBoarding
+
+        @Serializable
+        data class Otp(val phone: String) : OnBoarding
+
+        @Serializable
+        data class CompleteProfile(val signupToken: String) : OnBoarding
+    }
 
     @Serializable
-    data class CompleteProfile(val signupToken: String) : OnBoarding
+    data object HomeGraph : AppNavGraph
+
+    @Serializable
+    data object Chat : AppNavGraph
+
+    @Serializable
+    data class Profile(val userId: String) : AppNavGraph
+
+    @Serializable
+    data class PostDetail(val postId: String) : AppNavGraph
+
+    @Serializable
+    data object Notifications : AppNavGraph
+
+    @Serializable
+    data object CreatePostScreen : AppNavGraph
+
+    @Serializable
+    data object CreateStoryScreen : AppNavGraph
+
+    @Serializable
+    data class StoryView(val storyId: String) : AppNavGraph
+
+    @Serializable
+    data object Collections : AppNavGraph
+
+    @Serializable
+    data class Conversation(val userId: String) : AppNavGraph
+
+    @Serializable
+    data class VoiceCall(val userId: String) : AppNavGraph
+
+    @Serializable
+    data class VideoCall(val userId: String) : AppNavGraph
+
+    @Serializable
+    data object Settings : AppNavGraph
 }
-
-@Serializable
-data object HomeGraph : NavKey
-
-@Serializable
-data object Chat : NavKey
-
-@Serializable
-data class Profile(val userId: String) : NavKey
-
-@Serializable
-data class PostDetail(val postId: String) : NavKey
-
-@Serializable
-data object Notifications : NavKey
-
-@Serializable
-data object CreatePostScreen : NavKey
-
-@Serializable
-data object CreateStoryScreen : NavKey
-
-@Serializable
-data class StoryView(val storyId: String) : NavKey
-
-@Serializable
-data object Collections : NavKey
-
-@Serializable
-data class Conversation(val userId: String) : NavKey
-
-@Serializable
-data class VoiceCall(val userId: String) : NavKey
-
-@Serializable
-data class VideoCall(val userId: String) : NavKey

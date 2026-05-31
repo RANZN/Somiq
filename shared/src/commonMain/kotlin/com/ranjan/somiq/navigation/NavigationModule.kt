@@ -1,5 +1,6 @@
 package com.ranjan.somiq.navigation
 
+import com.ranjan.somiq.navigation.AppNavGraph.*
 import org.koin.dsl.navigation3.navigation
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.dsl.module

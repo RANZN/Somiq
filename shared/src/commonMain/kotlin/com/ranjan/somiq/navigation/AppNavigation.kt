@@ -16,7 +16,7 @@ import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
-    val backStack = rememberAppNavBackStack(Splash)
+    val backStack = rememberAppNavBackStack(AppNavGraph.Splash)
     val snackbarHostState = LocalSnackbar.current
 
     val isHomeOnTop = backStack.isHomeOnTop()

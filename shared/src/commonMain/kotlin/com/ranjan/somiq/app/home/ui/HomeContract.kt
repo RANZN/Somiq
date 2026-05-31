@@ -17,7 +17,7 @@ object HomeContract {
     sealed interface Intent : BaseUiIntent {
         data class SelectTab(val tab: HomeTab) : Intent
         data class SearchQueryChange(val query: String) : Intent
-        data object Logout : Intent
+        data object Setting : Intent
         data object LoadCurrentUserProfile : Intent
 
         // Navigation Intents
@@ -38,7 +38,7 @@ object HomeContract {
     }
 
     sealed interface Effect : BaseUiEffect {
-        data object Logout : Effect
+        data object Setting : Effect
 
         // Navigation Effects
         data class NavigateToUser(val userId: String) : Effect

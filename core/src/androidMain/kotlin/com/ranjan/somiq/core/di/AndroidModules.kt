@@ -4,8 +4,9 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import org.koin.dsl.module
 
-val androidModules = module {
-    single<ChuckerInterceptor> {
-        ChuckerInterceptor.Builder(get<Context>()).build()
+actual val platformModules
+    get() = module {
+        single<ChuckerInterceptor> {
+            ChuckerInterceptor.Builder(get<Context>()).build()
+        }
     }
-}

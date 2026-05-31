@@ -6,9 +6,9 @@ import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ranjan.somiq.shared.resources.Res
@@ -41,7 +41,7 @@ sealed interface HomeTab {
     data object Calls : HomeTab {
         override val title = Res.string.calls
         override val selectedIcon = Icons.Filled.Call
-        override val unselectedIcon = Icons.Outlined.Search
+        override val unselectedIcon = Icons.Outlined.Call
     }
 
     data object Profile : HomeTab {

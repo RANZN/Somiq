@@ -7,8 +7,12 @@ import com.ranjan.somiq.auth.domain.usecase.CompleteSignupUseCase
 import com.ranjan.somiq.auth.domain.usecase.LogoutUseCase
 import com.ranjan.somiq.auth.domain.usecase.VerifyOtpUseCase
 import com.ranjan.somiq.auth.domain.usecase.UserLoginStatus
+import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileViewModel
+import com.ranjan.somiq.auth.ui.otp.OtpViewModel
+import com.ranjan.somiq.auth.ui.phone.PhoneEntryViewModel
 import com.ranjan.somiq.core.di.NonAuthClient
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val authModule = module {
@@ -26,4 +30,8 @@ val authModule = module {
     factoryOf(::CompleteSignupUseCase)
     factoryOf(::CheckUserIdUseCase)
     factoryOf(::LogoutUseCase)
+
+    viewModelOf(::PhoneEntryViewModel)
+    viewModelOf(::OtpViewModel)
+    viewModelOf(::CompleteProfileViewModel)
 }

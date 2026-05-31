@@ -11,7 +11,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeNavigationHost(
-    sessionId: String,
     modifier: Modifier = Modifier,
     onNavigateToUser: (String) -> Unit,
     onNavigateToPost: (String) -> Unit,
@@ -27,14 +26,14 @@ fun HomeNavigationHost(
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToCreatePost: () -> Unit = {},
     onNavigateToCreateStory: () -> Unit = {},
-    logout: () -> Unit = {},
+    navigateToSettings: () -> Unit = {},
 ) {
-    val viewModel: HomeViewModel = koinViewModel(key = sessionId)
+    val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     CollectEffect(viewModel.effect) { effect ->
         when (effect) {
-            HomeContract.Effect.Logout -> logout()
+            HomeContract.Effect.Setting -> navigateToSettings()
             is HomeContract.Effect.NavigateToUser -> onNavigateToUser(effect.userId)
             is HomeContract.Effect.NavigateToPost -> onNavigateToPost(effect.postId)
             is HomeContract.Effect.NavigateToComments -> onNavigateToComments(effect.postId)
@@ -53,7 +52,6 @@ fun HomeNavigationHost(
     }
 
     HomeScreen(
-        sessionId = sessionId,
         state = state,
         action = viewModel::handleIntent,
         modifier = modifier,

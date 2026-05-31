@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,7 +37,6 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    sessionId: String,
     state: HomeContract.UiState,
     action: (Intent) -> Unit,
     modifier: Modifier = Modifier,
@@ -98,10 +97,10 @@ fun HomeScreen(
                         }
 
                         HomeTab.Profile -> {
-                            IconButton(onClick = { action(Intent.Logout) }) {
+                            IconButton(onClick = { action(Intent.Setting) }) {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                    contentDescription = "Logout",
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings",
                                     tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
@@ -144,7 +143,6 @@ fun HomeScreen(
             when (HomeTab.fromIndex(page)) {
                 HomeTab.ChatLists -> {
                     ChatListScreenHost(
-                        viewModelKey = sessionId,
                         onNavigateToConversation = {
                             action(Intent.NavigateToConversation(it))
                         },
@@ -153,7 +151,6 @@ fun HomeScreen(
 
                 HomeTab.Updates -> {
                     FeedScreenHost(
-                        viewModelKey = sessionId,
                         scrollToTopTrigger = state.scrollToTopKey,
                         onCreatePost = { action(Intent.NavigateToCreatePost) },
                         onNavigateToNotifications = { action(Intent.NavigateToNotifications) },
@@ -169,9 +166,7 @@ fun HomeScreen(
 
                 HomeTab.Profile -> {
                     ProfileScreenHost(
-                        viewModelKey = sessionId,
                         scrollToTopTrigger = state.scrollToTopKey,
-                        onLogout = { action(Intent.Logout) },
                         onNavigateToEditProfile = {
                             action(Intent.NavigateToEditProfile(it))
                         },

@@ -41,7 +41,7 @@ private val appNavBackStackConfig = SavedStateConfiguration {
 }
 
 @Composable
-fun rememberAppNavBackStack(startDestination: NavKey = Splash): NavBackStack<NavKey> =
+fun rememberAppNavBackStack(startDestination: NavKey): NavBackStack<NavKey> =
     rememberNavBackStack(appNavBackStackConfig, startDestination)
 
 fun NavBackStack<NavKey>.isHomeOnTop(): Boolean = lastOrNull() == HomeGraph

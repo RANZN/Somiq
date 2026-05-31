@@ -11,17 +11,15 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProfileScreenHost(
-    viewModelKey: String? = null,
     scrollToTopTrigger: Int = 0,
     userId: String? = null,
-    onLogout: () -> Unit = {},
     onNavigateToEditProfile: (String) -> Unit = {},
     onNavigateToSettings: (String) -> Unit = {},
     onNavigateToFollowers: (String) -> Unit = {},
     onNavigateToFollowing: (String) -> Unit = {},
     onNavigateToPost: (String) -> Unit = {}
 ) {
-    val viewModel: ProfileViewModel = koinViewModel(key = viewModelKey)
+    val viewModel: ProfileViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(userId) {
@@ -35,7 +33,6 @@ fun ProfileScreenHost(
             is Effect.NavigateToSettings -> onNavigateToSettings(effect.userId)
             is Effect.NavigateToFollowers -> onNavigateToFollowers(effect.userId)
             is Effect.NavigateToFollowing -> onNavigateToFollowing(effect.userId)
-            Effect.Logout -> onLogout()
         }
     }
 

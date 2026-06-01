@@ -1,49 +1,34 @@
 package com.ranjan.somiq.di
 
 import com.ranjan.somiq.app.home.di.homeModule
-import com.ranjan.somiq.app.home.di.homeViewModelModule
 import com.ranjan.somiq.app.postDetail.di.postDetailModule
-import com.ranjan.somiq.app.postDetail.di.postDetailViewModelModule
 import com.ranjan.somiq.app.search.di.searchModule
-import com.ranjan.somiq.app.search.di.searchViewModelModule
 import com.ranjan.somiq.auth.di.authModule
-import com.ranjan.somiq.auth.di.authViewModelModule
 import com.ranjan.somiq.chat.di.chatModule
-import com.ranjan.somiq.chat.di.chatViewModelModule
 import com.ranjan.somiq.core.di.networkModule
 import com.ranjan.somiq.createpost.di.createPostViewModelModule
 import com.ranjan.somiq.createstory.di.createStoryViewModelModule
 import com.ranjan.somiq.feed.di.feedModule
-import com.ranjan.somiq.feed.di.feedViewModelModule
+import com.ranjan.somiq.navigation.navigationModule
 import com.ranjan.somiq.profile.di.profileModule
-import com.ranjan.somiq.profile.di.profileViewModelModule
 import com.ranjan.somiq.reels.di.reelsModule
-import com.ranjan.somiq.reels.di.reelsViewModelModule
 import org.koin.core.module.Module
 
 val sharedModules
     get(): List<Module> = listOf(
+        navigationModule,
         networkModule,
-        platformDatabaseModule(),
         localDatabaseModule,
-        authModule,
-        authViewModelModule,
         appDataModule,
         appViewModelModule,
+        authModule,
         feedModule,
-        feedViewModelModule,
         profileModule,
-        profileViewModelModule,
         chatModule,
-        chatViewModelModule,
         homeModule,
-        homeViewModelModule,
         searchModule,
-        searchViewModelModule,
         postDetailModule,
-        postDetailViewModelModule,
         reelsModule,
-        reelsViewModelModule,
         createPostViewModelModule,
         createStoryViewModelModule,
         collectionsModule,

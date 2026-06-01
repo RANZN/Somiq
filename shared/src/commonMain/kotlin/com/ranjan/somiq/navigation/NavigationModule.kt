@@ -8,6 +8,7 @@ import com.ranjan.somiq.splash.SplashScreenHost
 
 @OptIn(KoinExperimentalAPI::class)
 val navigationModule = module {
+    includes(authNavigationModule, homeNavigationModule, settingNavigationModule)
     navigation<Splash> {
         val backStack = LocalNavBackStack.current
         SplashScreenHost(

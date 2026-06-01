@@ -1,18 +1,18 @@
 package com.ranjan.somiq.navigation
 
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileScreenHost
 import com.ranjan.somiq.auth.ui.otp.OtpScreenHost
 import com.ranjan.somiq.auth.ui.phone.PhoneEntryScreenHost
-import com.ranjan.somiq.navigation.AppNavGraph.*
-import org.koin.core.annotation.KoinExperimentalAPI
-import org.koin.dsl.module
-import org.koin.dsl.navigation3.navigation
+import com.ranjan.somiq.navigation.AppNavGraph.HomeGraph
+import com.ranjan.somiq.navigation.AppNavGraph.OnBoarding
 
-@OptIn(KoinExperimentalAPI::class)
-val authNavigationModule = module {
 
-    navigation<OnBoarding.Login> {
-        val backStack = LocalNavBackStack.current
+fun EntryProviderScope<NavKey>.authEntries(backStack: NavBackStack<NavKey>) {
+
+    entry<OnBoarding.Login> {
         PhoneEntryScreenHost(
             navigateToOtp = { phone ->
                 backStack.add(OnBoarding.Otp(phone = phone))
@@ -20,8 +20,7 @@ val authNavigationModule = module {
         )
     }
 
-    navigation<OnBoarding.Otp> { key: OnBoarding.Otp ->
-        val backStack = LocalNavBackStack.current
+    entry<OnBoarding.Otp> { key: OnBoarding.Otp ->
         OtpScreenHost(
             phone = key.phone,
             navigateCompleteProfile = { signupToken ->
@@ -35,8 +34,7 @@ val authNavigationModule = module {
         )
     }
 
-    navigation<OnBoarding.CompleteProfile> { key: OnBoarding.CompleteProfile ->
-        val backStack = LocalNavBackStack.current
+    entry<OnBoarding.CompleteProfile> { key: OnBoarding.CompleteProfile ->
         CompleteProfileScreenHost(
             signupToken = key.signupToken,
             navigateHome = {

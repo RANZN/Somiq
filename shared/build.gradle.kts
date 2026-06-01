@@ -58,9 +58,9 @@ kotlin {
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.compose.navigation3)
             api(libs.koin.core)
 
+            implementation(libs.room.compiler)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.ktor.client.core)

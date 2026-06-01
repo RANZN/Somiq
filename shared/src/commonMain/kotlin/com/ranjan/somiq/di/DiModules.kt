@@ -9,14 +9,12 @@ import com.ranjan.somiq.core.di.networkModule
 import com.ranjan.somiq.createpost.di.createPostViewModelModule
 import com.ranjan.somiq.createstory.di.createStoryViewModelModule
 import com.ranjan.somiq.feed.di.feedModule
-import com.ranjan.somiq.navigation.navigationModule
 import com.ranjan.somiq.profile.di.profileModule
 import com.ranjan.somiq.reels.di.reelsModule
 import org.koin.core.module.Module
 
 val sharedModules
     get(): List<Module> = listOf(
-        navigationModule,
         networkModule,
         localDatabaseModule,
         appDataModule,

@@ -14,6 +14,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.ranjan.somiq.app.home.ui.HomeNavigationHost
 import com.ranjan.somiq.app.postDetail.ui.PostDetailScreen
 import com.ranjan.somiq.chat.ui.conversation.ConversationScreenHost
@@ -24,17 +27,23 @@ import com.ranjan.somiq.core.di.InitializeCoil
 import com.ranjan.somiq.createpost.CreatePostEntry
 import com.ranjan.somiq.createstory.CreateStoryEntry
 import com.ranjan.somiq.feed.ui.storyview.StoryViewScreenHost
-import com.ranjan.somiq.navigation.AppNavGraph.*
+import com.ranjan.somiq.navigation.AppNavGraph.Collections
+import com.ranjan.somiq.navigation.AppNavGraph.Conversation
+import com.ranjan.somiq.navigation.AppNavGraph.CreatePostScreen
+import com.ranjan.somiq.navigation.AppNavGraph.CreateStoryScreen
+import com.ranjan.somiq.navigation.AppNavGraph.HomeGraph
+import com.ranjan.somiq.navigation.AppNavGraph.Notifications
+import com.ranjan.somiq.navigation.AppNavGraph.PostDetail
+import com.ranjan.somiq.navigation.AppNavGraph.Profile
+import com.ranjan.somiq.navigation.AppNavGraph.Settings
+import com.ranjan.somiq.navigation.AppNavGraph.StoryView
+import com.ranjan.somiq.navigation.AppNavGraph.VideoCall
+import com.ranjan.somiq.navigation.AppNavGraph.VoiceCall
 import com.ranjan.somiq.notifications.NotificationsScreen
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
-import org.koin.core.annotation.KoinExperimentalAPI
-import org.koin.dsl.module
-import org.koin.dsl.navigation3.navigation
 
-@OptIn(KoinExperimentalAPI::class)
-val homeNavigationModule = module {
-    navigation<HomeGraph> {
-        val backStack = LocalNavBackStack.current
+fun EntryProviderScope<NavKey>.homeEntries(backStack: NavBackStack<NavKey>) {
+    entry<HomeGraph> {
         InitializeCoil()
         HomeNavigationHost(
             onNavigateToUser = { backStack.add(Profile(it)) },
@@ -55,26 +64,22 @@ val homeNavigationModule = module {
         )
     }
 
-    navigation<CreatePostScreen> {
-        val backStack = LocalNavBackStack.current
+    entry<CreatePostScreen> {
         CreatePostEntry(onBack = { backStack.removeLastOrNull() })
     }
 
-    navigation<CreateStoryScreen> {
-        val backStack = LocalNavBackStack.current
+    entry<CreateStoryScreen> {
         CreateStoryEntry(onBack = { backStack.removeLastOrNull() })
     }
 
-    navigation<StoryView> { key: StoryView ->
-        val backStack = LocalNavBackStack.current
+    entry<StoryView> { key: StoryView ->
         StoryViewScreenHost(
             storyId = key.storyId,
             onBack = { backStack.removeLastOrNull() },
         )
     }
 
-    navigation<Profile> { key: Profile ->
-        val backStack = LocalNavBackStack.current
+    entry<Profile> { key: Profile ->
         ProfileScreenWithBack(
             userId = key.userId,
             onBack = { backStack.removeLastOrNull() },
@@ -87,8 +92,7 @@ val homeNavigationModule = module {
         )
     }
 
-    navigation<Conversation> { key: Conversation ->
-        val backStack = LocalNavBackStack.current
+    entry<Conversation> { key: Conversation ->
         ConversationScreenHost(
             otherUserId = key.userId,
             otherUserName = "User",
@@ -97,8 +101,7 @@ val homeNavigationModule = module {
         )
     }
 
-    navigation<VoiceCall> { key: VoiceCall ->
-        val backStack = LocalNavBackStack.current
+    entry<VoiceCall> { key: VoiceCall ->
         VoiceCallScreenHost(
             otherUserId = key.userId,
             otherUserName = "User",
@@ -106,8 +109,7 @@ val homeNavigationModule = module {
         )
     }
 
-    navigation<VideoCall> { key: VideoCall ->
-        val backStack = LocalNavBackStack.current
+    entry<VideoCall> { key: VideoCall ->
         VideoCallScreenHost(
             otherUserId = key.userId,
             otherUserName = "User",
@@ -115,17 +117,17 @@ val homeNavigationModule = module {
         )
     }
 
-    navigation<PostDetail> { key: PostDetail ->
+    entry<PostDetail> { key: PostDetail ->
         PostDetailScreen(
             postId = key.postId,
         )
     }
 
-    navigation<Notifications> {
+    entry<Notifications> {
         NotificationsScreen()
     }
 
-    navigation<Collections> {
+    entry<Collections> {
         CollectionsScreen()
     }
 }

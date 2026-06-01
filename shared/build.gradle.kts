@@ -52,11 +52,13 @@ kotlin {
             implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
             implementation(libs.material.icons.extended)
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.navigation3)
             api(libs.koin.core)
 
             implementation(libs.room.runtime)

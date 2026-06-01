@@ -5,9 +5,10 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.ranjan.somiq.navigation.AppNavGraph.*
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
+import kotlinx.serialization.modules.polymorphic
 
 private fun PolymorphicModuleBuilder<NavKey>.authNavKeys() {
     subclass(Splash::class, Splash.serializer())
@@ -29,6 +30,7 @@ private fun PolymorphicModuleBuilder<NavKey>.homeNavKeys() {
     subclass(Conversation::class, Conversation.serializer())
     subclass(VoiceCall::class, VoiceCall.serializer())
     subclass(VideoCall::class, VideoCall.serializer())
+    subclass(Settings::class, Settings.serializer())
 }
 
 private val appNavBackStackConfig = SavedStateConfiguration {
@@ -41,7 +43,7 @@ private val appNavBackStackConfig = SavedStateConfiguration {
 }
 
 @Composable
-fun rememberAppNavBackStack(startDestination: NavKey = Splash): NavBackStack<NavKey> =
+fun rememberAppNavBackStack(startDestination: NavKey): NavBackStack<NavKey> =
     rememberNavBackStack(appNavBackStackConfig, startDestination)
 
 fun NavBackStack<NavKey>.isHomeOnTop(): Boolean = lastOrNull() == HomeGraph

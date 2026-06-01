@@ -32,7 +32,6 @@ class ProfileViewModel(
                 is Intent.RefreshProfile -> refreshProfile()
                 is Intent.SetAppBarConfig -> setState { copy(showAppBar = intent.show, appBarTitle = intent.title) }
                 is Intent.SelectTab -> setState { copy(selectedTab = intent.tab) }
-                is Intent.OnLogoutClick -> emitEffect(Effect.Logout)
                 is Intent.ClearError -> setState { copy(error = null) }
                 is Intent.Retry -> {
                     setState { copy(error = null) }

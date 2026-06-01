@@ -14,9 +14,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.EntryProviderScope
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import com.ranjan.somiq.app.home.ui.HomeNavigationHost
 import com.ranjan.somiq.app.postDetail.ui.PostDetailScreen
 import com.ranjan.somiq.chat.ui.conversation.ConversationScreenHost
@@ -27,17 +24,19 @@ import com.ranjan.somiq.core.di.InitializeCoil
 import com.ranjan.somiq.createpost.CreatePostEntry
 import com.ranjan.somiq.createstory.CreateStoryEntry
 import com.ranjan.somiq.feed.ui.storyview.StoryViewScreenHost
+import com.ranjan.somiq.navigation.AppNavGraph.*
 import com.ranjan.somiq.notifications.NotificationsScreen
 import com.ranjan.somiq.profile.ui.ProfileScreenHost
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.dsl.module
+import org.koin.dsl.navigation3.navigation
 
-fun EntryProviderScope<NavKey>.homeEntries(
-    backStack: NavBackStack<NavKey>,
-    sessionId: String,
-) {
-    entry<HomeGraph> {
+@OptIn(KoinExperimentalAPI::class)
+val homeNavigationModule = module {
+    navigation<HomeGraph> {
+        val backStack = LocalNavBackStack.current
         InitializeCoil()
         HomeNavigationHost(
-            sessionId = sessionId,
             onNavigateToUser = { backStack.add(Profile(it)) },
             onNavigateToPost = { postId -> backStack.add(PostDetail(postId)) },
             onNavigateToComments = { postId -> backStack.add(PostDetail(postId)) },
@@ -52,29 +51,30 @@ fun EntryProviderScope<NavKey>.homeEntries(
             onNavigateToNotifications = { backStack.add(Notifications) },
             onNavigateToCreatePost = { backStack.add(CreatePostScreen) },
             onNavigateToCreateStory = { backStack.add(CreateStoryScreen) },
-            logout = {
-                backStack.clear()
-                backStack.add(OnBoarding.Login)
-            }
+            navigateToSettings = { backStack.add(Settings) }
         )
     }
 
-    entry<CreatePostScreen> {
+    navigation<CreatePostScreen> {
+        val backStack = LocalNavBackStack.current
         CreatePostEntry(onBack = { backStack.removeLastOrNull() })
     }
 
-    entry<CreateStoryScreen> {
+    navigation<CreateStoryScreen> {
+        val backStack = LocalNavBackStack.current
         CreateStoryEntry(onBack = { backStack.removeLastOrNull() })
     }
 
-    entry<StoryView> { key ->
+    navigation<StoryView> { key: StoryView ->
+        val backStack = LocalNavBackStack.current
         StoryViewScreenHost(
             storyId = key.storyId,
             onBack = { backStack.removeLastOrNull() },
         )
     }
 
-    entry<Profile> { key ->
+    navigation<Profile> { key: Profile ->
+        val backStack = LocalNavBackStack.current
         ProfileScreenWithBack(
             userId = key.userId,
             onBack = { backStack.removeLastOrNull() },
@@ -87,7 +87,8 @@ fun EntryProviderScope<NavKey>.homeEntries(
         )
     }
 
-    entry<Conversation> { key ->
+    navigation<Conversation> { key: Conversation ->
+        val backStack = LocalNavBackStack.current
         ConversationScreenHost(
             otherUserId = key.userId,
             otherUserName = "User",
@@ -96,7 +97,8 @@ fun EntryProviderScope<NavKey>.homeEntries(
         )
     }
 
-    entry<VoiceCall> { key ->
+    navigation<VoiceCall> { key: VoiceCall ->
+        val backStack = LocalNavBackStack.current
         VoiceCallScreenHost(
             otherUserId = key.userId,
             otherUserName = "User",
@@ -104,7 +106,8 @@ fun EntryProviderScope<NavKey>.homeEntries(
         )
     }
 
-    entry<VideoCall> { key ->
+    navigation<VideoCall> { key: VideoCall ->
+        val backStack = LocalNavBackStack.current
         VideoCallScreenHost(
             otherUserId = key.userId,
             otherUserName = "User",
@@ -112,15 +115,17 @@ fun EntryProviderScope<NavKey>.homeEntries(
         )
     }
 
-    entry<PostDetail> { key ->
-        PostDetailScreen(postId = key.postId)
+    navigation<PostDetail> { key: PostDetail ->
+        PostDetailScreen(
+            postId = key.postId,
+        )
     }
 
-    entry<Notifications> {
+    navigation<Notifications> {
         NotificationsScreen()
     }
 
-    entry<Collections> {
+    navigation<Collections> {
         CollectionsScreen()
     }
 }

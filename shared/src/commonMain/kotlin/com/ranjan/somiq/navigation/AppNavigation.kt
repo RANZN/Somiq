@@ -4,57 +4,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.entryProvider
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import org.koin.compose.navigation3.koinEntryProvider
+import org.koin.core.annotation.KoinExperimentalAPI
 import androidx.navigation3.ui.NavDisplay
-import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
-import com.ranjan.somiq.splash.SplashScreenHost
-import org.koin.compose.koinInject
-import kotlin.random.Random
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
-    val backStack = rememberAppNavBackStack()
+    val backStack = rememberAppNavBackStack(AppNavGraph.Splash)
     val snackbarHostState = LocalSnackbar.current
 
-    val authStateManager = koinInject<AuthStateManager>()
-    val userId by authStateManager.userId.collectAsStateWithLifecycle(initialValue = null)
-    val sessionId = remember(userId) { "${userId}-${Random.nextLong()}" }
     val isHomeOnTop = backStack.isHomeOnTop()
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        snackbarHost = {
-            if (!isHomeOnTop) {
-                SnackbarHost(snackbarHostState)
-            }
-        },
-    ) {
-        NavDisplay(
-            modifier = Modifier.fillMaxSize(),
-            backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
-            entryProvider = entryProvider {
-                entry<Splash> {
-                    SplashScreenHost(
-                        navigateToHome = {
-                            backStack.clear()
-                            backStack.add(HomeGraph)
-                        },
-                        navigateToLogin = {
-                            backStack.clear()
-                            backStack.add(OnBoarding.Login)
-                        },
-                    )
+    CompositionLocalProvider(LocalNavBackStack provides backStack) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            snackbarHost = {
+                if (!isHomeOnTop) {
+                    SnackbarHost(snackbarHostState)
                 }
-
-                authEntries(backStack)
-                homeEntries(backStack, sessionId)
             },
-        )
+        ) {
+            NavDisplay(
+                modifier = Modifier.fillMaxSize(),
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
+                entryDecorators = listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator(),
+                ),
+                entryProvider = koinEntryProvider()
+            )
+        }
     }
 }

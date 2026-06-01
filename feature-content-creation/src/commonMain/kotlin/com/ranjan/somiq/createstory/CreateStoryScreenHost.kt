@@ -9,9 +9,9 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun CreateStoryScreenHost(
     onBack: () -> Unit,
-    onRequestPickImage: () -> Unit,
-    viewModel: CreateStoryViewModel = koinViewModel()
+    onRequestPickImage: (onResult: (String) -> Unit) -> Unit,
 ) {
+    val viewModel: CreateStoryViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
     CollectEffect(viewModel.effect) { effect ->
@@ -22,7 +22,11 @@ fun CreateStoryScreenHost(
 
     CreateStoryScreen(
         state = state,
-        onPickImageClick = onRequestPickImage,
+        onPickImageClick = {
+            onRequestPickImage { uri ->
+                viewModel.handleIntent(CreateStoryContract.Intent.ImagePicked(uri))
+            }
+        },
         onPostClick = { viewModel.handleIntent(CreateStoryContract.Intent.Post) },
         onBack = onBack
     )

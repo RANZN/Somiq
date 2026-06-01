@@ -1,11 +1,14 @@
 package com.ranjan.somiq.core.di
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.data.local.AuthStateManagerImpl
 import com.ranjan.somiq.core.data.local.DeviceIdProvider
 import com.ranjan.somiq.core.data.local.DeviceIdProviderImpl
-import com.ranjan.somiq.core.data.local.createTokenStorage
+import com.ranjan.somiq.core.data.local.createTokenDataStore
 import com.ranjan.somiq.core.data.local.TokenStorage
+import com.ranjan.somiq.core.data.local.TokenStorageImpl
 import com.ranjan.somiq.core.data.network.TokenProvider
 import com.ranjan.somiq.core.data.network.TokenProviderImpl
 import com.ranjan.somiq.core.data.network.TokenRefresher
@@ -26,9 +29,8 @@ val networkModule = module {
         provideNonAuthHttpClient()
     }
 
-    single<TokenStorage> {
-        createTokenStorage()
-    }
+    single<DataStore<Preferences>> { createTokenDataStore() }
+    singleOf(::TokenStorageImpl) bind TokenStorage::class
     single<DeviceIdProvider> { DeviceIdProviderImpl(get()) }
 
     singleOf(::TokenProviderImpl) bind TokenProvider::class

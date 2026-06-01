@@ -35,5 +35,5 @@ private object TokenDataStoreFactory {
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-actual fun createTokenStorage(): TokenStorage =
-    TokenStorageImpl(TokenDataStoreFactory.create(GlobalScope))
+actual fun createTokenDataStore(): DataStore<Preferences> =
+    TokenDataStoreFactory.create(GlobalScope)

@@ -1,73 +1,66 @@
 package com.ranjan.somiq.navigation
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-@Serializable
-data object Splash : NavKey
-
-@Serializable
-sealed interface OnBoarding : NavKey {
-    @Serializable
-    data object Login : OnBoarding
-
-    @Serializable
-    data class Otp(val phone: String) : OnBoarding
-
-    @Serializable
-    data class CompleteProfile(val signupToken: String) : OnBoarding
+val LocalNavBackStack = staticCompositionLocalOf<NavBackStack<NavKey>> {
+    error("No NavBackStack provided")
 }
 
-@Serializable
-data object HomeGraph : NavKey
-
-@Stable
-@Serializable
-sealed class Home(val name: String) : NavKey {
+sealed interface AppNavGraph : NavKey {
+    @Serializable
+    data object Splash : AppNavGraph
 
     @Serializable
-    data object ChatLists : Home("Chats")
+    sealed interface OnBoarding : AppNavGraph {
+        @Serializable
+        data object Login : OnBoarding
+
+        @Serializable
+        data class Otp(val phone: String) : OnBoarding
+
+        @Serializable
+        data class CompleteProfile(val signupToken: String) : OnBoarding
+    }
 
     @Serializable
-    data object Updates : Home("Updates")
+    data object HomeGraph : AppNavGraph
 
     @Serializable
-    data object Calls : Home("Calls")
+    data object Chat : AppNavGraph
 
     @Serializable
-    data object UserProfile : Home("Profile")
+    data class Profile(val userId: String) : AppNavGraph
+
+    @Serializable
+    data class PostDetail(val postId: String) : AppNavGraph
+
+    @Serializable
+    data object Notifications : AppNavGraph
+
+    @Serializable
+    data object CreatePostScreen : AppNavGraph
+
+    @Serializable
+    data object CreateStoryScreen : AppNavGraph
+
+    @Serializable
+    data class StoryView(val storyId: String) : AppNavGraph
+
+    @Serializable
+    data object Collections : AppNavGraph
+
+    @Serializable
+    data class Conversation(val userId: String) : AppNavGraph
+
+    @Serializable
+    data class VoiceCall(val userId: String) : AppNavGraph
+
+    @Serializable
+    data class VideoCall(val userId: String) : AppNavGraph
+
+    @Serializable
+    data object Settings : AppNavGraph
 }
-
-@Serializable
-data object Chat : NavKey
-
-@Serializable
-data class Profile(val userId: String) : NavKey
-
-@Serializable
-data class PostDetail(val postId: String) : NavKey
-
-@Serializable
-data object Notifications : NavKey
-
-@Serializable
-data object CreatePostScreen : NavKey
-
-@Serializable
-data object CreateStoryScreen : NavKey
-
-@Serializable
-data class StoryView(val storyId: String) : NavKey
-
-@Serializable
-data object Collections : NavKey
-
-@Serializable
-data class Conversation(val userId: String) : NavKey
-
-@Serializable
-data class VoiceCall(val userId: String) : NavKey
-
-@Serializable
-data class VideoCall(val userId: String) : NavKey

@@ -49,7 +49,6 @@ object ProfileContract {
         object RefreshProfile : Intent
         data class SetAppBarConfig(val show: Boolean, val title: String?) : Intent
         data class SelectTab(val tab: ProfileTab) : Intent
-        object OnLogoutClick : Intent
         object ClearError : Intent
         object Retry : Intent
     }
@@ -59,6 +58,5 @@ object ProfileContract {
         data class NavigateToSettings(val userId: String) : Effect
         data class NavigateToFollowers(val userId: String) : Effect
         data class NavigateToFollowing(val userId: String) : Effect
-        object Logout : Effect
     }
 }

@@ -5,54 +5,45 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.ranjan.somiq.navigation.AppNavGraph.*
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
+import kotlinx.serialization.modules.polymorphic
 
 private fun PolymorphicModuleBuilder<NavKey>.authNavKeys() {
+    subclass(Splash::class, Splash.serializer())
     subclass(OnBoarding.Login::class, OnBoarding.Login.serializer())
     subclass(OnBoarding.Otp::class, OnBoarding.Otp.serializer())
     subclass(OnBoarding.CompleteProfile::class, OnBoarding.CompleteProfile.serializer())
 }
 
 private fun PolymorphicModuleBuilder<NavKey>.homeNavKeys() {
-    subclass(Home.Updates::class, Home.Updates.serializer())
-    subclass(Home.UserProfile::class, Home.UserProfile.serializer())
-}
-
-private fun PolymorphicModuleBuilder<NavKey>.chatNavKeys() {
-    subclass(Chat::class, Chat.serializer())
-    subclass(Conversation::class, Conversation.serializer())
-    subclass(VoiceCall::class, VoiceCall.serializer())
-    subclass(VideoCall::class, VideoCall.serializer())
-}
-
-private fun PolymorphicModuleBuilder<NavKey>.rootAndOtherNavKeys() {
-    subclass(Splash::class, Splash.serializer())
     subclass(HomeGraph::class, HomeGraph.serializer())
+    subclass(Chat::class, Chat.serializer())
+    subclass(Profile::class, Profile.serializer())
     subclass(PostDetail::class, PostDetail.serializer())
     subclass(Notifications::class, Notifications.serializer())
     subclass(CreatePostScreen::class, CreatePostScreen.serializer())
+    subclass(CreateStoryScreen::class, CreateStoryScreen.serializer())
+    subclass(StoryView::class, StoryView.serializer())
     subclass(Collections::class, Collections.serializer())
+    subclass(Conversation::class, Conversation.serializer())
+    subclass(VoiceCall::class, VoiceCall.serializer())
+    subclass(VideoCall::class, VideoCall.serializer())
+    subclass(Settings::class, Settings.serializer())
 }
 
-/**
- * Single implementation for all platforms (Android, JVM, iOS).
- * Uses the two-arg rememberNavBackStack(config, initialKey) so the same API works
- * everywhere: Android doesn't have reflection for NavKey on non-Android targets,
- * so polymorphic serialization via SavedStateConfiguration is required for KMP.
- */
-private val navBackStackConfig = SavedStateConfiguration {
+private val appNavBackStackConfig = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
-            rootAndOtherNavKeys()
             authNavKeys()
             homeNavKeys()
-            chatNavKeys()
         }
     }
 }
 
 @Composable
-fun rememberAppNavBackStack(): NavBackStack<NavKey> =
-    rememberNavBackStack(navBackStackConfig, Splash)
+fun rememberAppNavBackStack(startDestination: NavKey): NavBackStack<NavKey> =
+    rememberNavBackStack(appNavBackStackConfig, startDestination)
+
+fun NavBackStack<NavKey>.isHomeOnTop(): Boolean = lastOrNull() == HomeGraph

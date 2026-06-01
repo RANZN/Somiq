@@ -19,9 +19,9 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(
-    viewModel: NotificationsViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val viewModel: NotificationsViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {

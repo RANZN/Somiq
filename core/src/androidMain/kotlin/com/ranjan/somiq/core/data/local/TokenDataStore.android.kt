@@ -20,5 +20,5 @@ private object TokenDataStoreFactory : KoinComponent {
     fun create(scope: CoroutineScope): DataStore<Preferences> = context.tokenDataStore
 }
 
-actual fun createTokenStorage(): TokenStorage =
-    TokenStorageImpl(TokenDataStoreFactory.create(GlobalScope))
+actual fun createTokenDataStore(): DataStore<Preferences> =
+    TokenDataStoreFactory.create(GlobalScope)

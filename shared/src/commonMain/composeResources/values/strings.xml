@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">SomiQ</string>
     <string name="app_name_txt">SomiQ</string>
+    <string name="chats">Chats</string>
+    <string name="calls">Calls</string>
+    <string name="updates">Updates</string>
+    <string name="profile">Profile</string>
     <string name="welcome_back">Welcome Back!</string>
     <string name="email_or_phone">Email</string>
     <string name="password">Password</string>

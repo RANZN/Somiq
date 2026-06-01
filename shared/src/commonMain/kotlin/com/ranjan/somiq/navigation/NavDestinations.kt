@@ -1,13 +1,7 @@
 package com.ranjan.somiq.navigation
 
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
-
-val LocalNavBackStack = staticCompositionLocalOf<NavBackStack<NavKey>> {
-    error("No NavBackStack provided")
-}
 
 sealed interface AppNavGraph : NavKey {
     @Serializable

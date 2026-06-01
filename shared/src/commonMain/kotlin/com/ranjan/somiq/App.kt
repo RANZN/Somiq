@@ -12,15 +12,19 @@ import com.ranjan.somiq.di.sharedModules
 import com.ranjan.somiq.navigation.AppNavigation
 import com.ranjan.somiq.presentation.theme.MyApplicationTheme
 import org.koin.compose.KoinApplication
+import org.koin.core.KoinApplication
 import org.koin.dsl.koinConfiguration
 
 @Composable
 @Preview
-fun App() {
-    KoinApplication(configuration = koinConfiguration {
-        modules(platformModules)
-        modules(sharedModules)
-    }) {
+fun App(koinConfig: (KoinApplication.() -> Unit) = {}) {
+    KoinApplication(
+        configuration = koinConfiguration {
+            koinConfig()
+            modules(platformModules)
+            modules(sharedModules)
+        }
+    ) {
         MyApplicationTheme {
             val snackbarHostState = remember { SnackbarHostState() }
             CompositionLocalProvider(LocalSnackbar provides snackbarHostState) {

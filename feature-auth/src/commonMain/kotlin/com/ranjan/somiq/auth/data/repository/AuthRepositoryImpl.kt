@@ -166,27 +166,20 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun logoutUser(): Boolean {
-        return try {
-            val refreshToken = tokenProvider.getRefreshToken()
+        val refreshToken = tokenProvider.getRefreshToken()
 
-            tokenProvider.clearToken()
-            authStateManager.clearUserId()
+        tokenProvider.clearToken()
+        authStateManager.clearUserId()
 
-            if (refreshToken != null) {
-                try {
-                    authHttpClient.post("$BASE_URL/auth/logout") {
-                        header(HttpHeaders.Authorization, "Bearer $refreshToken")
-                    }
-                } catch (_: Exception) {
+        refreshToken?.let {
+            runCatching {
+                authHttpClient.post("$BASE_URL/auth/logout") {
+                    header(HttpHeaders.Authorization, "Bearer $it")
                 }
             }
-
-            true
-        } catch (_: Exception) {
-            tokenProvider.clearToken()
-            authStateManager.clearUserId()
-            true
         }
+
+        return true
     }
 
     override suspend fun isUserLoggedIn(): Boolean {

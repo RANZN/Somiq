@@ -98,13 +98,7 @@ fun PostDetailScreen(
                     val post = uiState.post!!
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = post.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = post.content,
+                            text = post.caption,
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(8.dp))

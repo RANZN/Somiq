@@ -48,6 +48,7 @@ fun HomeNavigationHost(
             HomeContract.Effect.NavigateToNotifications -> onNavigateToNotifications()
             HomeContract.Effect.NavigateToCreatePost -> onNavigateToCreatePost()
             HomeContract.Effect.NavigateToCreateStory -> onNavigateToCreateStory()
+            HomeContract.Effect.NavigateToNewChat -> {}
         }
     }
 

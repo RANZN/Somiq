@@ -45,17 +45,18 @@ object ProfileContract {
     }
 
     sealed interface Intent : BaseUiIntent {
-        object LoadProfile : Intent
+        data class LoadProfile(val userId: String?) : Intent
         object RefreshProfile : Intent
         data class SetAppBarConfig(val show: Boolean, val title: String?) : Intent
         data class SelectTab(val tab: ProfileTab) : Intent
         object ClearError : Intent
         object Retry : Intent
+        object Setting : Intent
     }
 
     sealed interface Effect : BaseUiEffect {
         data class NavigateToEditProfile(val userId: String) : Effect
-        data class NavigateToSettings(val userId: String) : Effect
+        data object NavigateToSettings : Effect
         data class NavigateToFollowers(val userId: String) : Effect
         data class NavigateToFollowing(val userId: String) : Effect
     }

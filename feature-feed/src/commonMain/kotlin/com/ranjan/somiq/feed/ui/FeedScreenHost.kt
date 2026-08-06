@@ -1,14 +1,34 @@
 package com.ranjan.somiq.feed.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.core.presentation.model.ScreenUiConfig
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.FontWeight
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.updates
+import org.jetbrains.compose.resources.stringResource
 import com.ranjan.somiq.feed.ui.FeedContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreenHost(
+    onConfigureUi: (ScreenUiConfig) -> Unit = {},
     scrollToTopTrigger: Int = 0,
     onCreatePost: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
@@ -37,6 +57,48 @@ fun FeedScreenHost(
             Effect.NavigateToChat -> onNavigateToChat()
             Effect.NavigateToCreateStory -> onNavigateToCreateStory()
         }
+    }
+
+    val config = remember {
+        ScreenUiConfig(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(Res.string.updates),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    actions = {
+                        IconButton(onClick = onNavigateToNotifications) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Notifications",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                            )
+                        }
+                    },
+                )
+            },
+            fab = {
+                FloatingActionButton(
+                    onClick = onCreatePost
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Create post")
+                }
+            }
+        )
+    }
+
+
+    LaunchedEffect(Unit) {
+        onConfigureUi(config)
     }
 
     FeedScreen(

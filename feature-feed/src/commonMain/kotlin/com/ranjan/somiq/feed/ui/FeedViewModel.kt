@@ -55,7 +55,7 @@ class FeedViewModel(
 
     private suspend fun loadFeed() {
         setState { copy(loading = true, error = null) }
-        getFeedPageUseCase(after = null).getOrElse { error ->
+        getFeedPageUseCase().getOrElse { error ->
             setState {
                 copy(
                     loading = false,

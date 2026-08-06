@@ -17,18 +17,10 @@ class ProfileViewModel(
 
     private var userId: String? = null
 
-    fun setUserId(userId: String?) {
-        this.userId = userId
-    }
-
-    init {
-        handleIntent(Intent.LoadProfile)
-    }
-
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
             when (intent) {
-                is Intent.LoadProfile -> loadProfile()
+                is Intent.LoadProfile -> loadProfile(intent.userId)
                 is Intent.RefreshProfile -> refreshProfile()
                 is Intent.SetAppBarConfig -> setState { copy(showAppBar = intent.show, appBarTitle = intent.title) }
                 is Intent.SelectTab -> setState { copy(selectedTab = intent.tab) }
@@ -37,11 +29,13 @@ class ProfileViewModel(
                     setState { copy(error = null) }
                     loadProfile()
                 }
+                Intent.Setting -> emitEffect(Effect.NavigateToSettings)
             }
         }
     }
 
-    private suspend fun loadProfile() {
+    private suspend fun loadProfile(userId: String? = this.userId) {
+        this.userId = userId
         setState { copy(isLoading = true, error = null) }
         getProfileUseCase(userId).getOrElse { error ->
             setState {

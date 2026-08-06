@@ -6,11 +6,11 @@ import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.platform.readUriToBytes
 import com.ranjan.somiq.feed.data.model.CreatePostRequest
+import com.ranjan.somiq.feed.data.model.PostMedia
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 class CreatePostViewModel(
     private val createPostUseCase: CreatePostUseCase,
@@ -21,14 +21,25 @@ class CreatePostViewModel(
 
     override fun onIntent(intent: CreatePostContract.Intent) {
         when (intent) {
-            is CreatePostContract.Intent.CaptionChange -> setState { copy(caption = intent.value, error = null) }
-            is CreatePostContract.Intent.ImagePicked -> setState { copy(selectedImageUri = intent.uri, error = null) }
+            is CreatePostContract.Intent.CaptionChange -> setState {
+                copy(
+                    caption = intent.value,
+                    error = null
+                )
+            }
+
+            is CreatePostContract.Intent.ImagePicked -> setState {
+                copy(
+                    selectedImageUri = intent.uri,
+                    error = null
+                )
+            }
+
             is CreatePostContract.Intent.ClearError -> setState { copy(error = null) }
             is CreatePostContract.Intent.Post -> post()
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     private fun post() {
         val uri = state.value.selectedImageUri
         val caption = state.value.caption.trim()
@@ -48,28 +59,25 @@ class CreatePostViewModel(
                 showSnackbar(appError)
                 return@launch
             }
-            val fileName = "post_${Clock.System.now().toEpochMilliseconds()}.jpg"
-            feedRepository.uploadImage(bytes, fileName).fold(
-                onSuccess = { imageUrl ->
-                    val request = CreatePostRequest(
-                        title = caption.take(100).ifBlank { "Post" },
-                        content = caption,
-                        mediaUrls = listOf(imageUrl)
+            val fileName = "post_${Clock.System.now().toEpochMilliseconds()}"
+
+            val request = CreatePostRequest(
+                caption = caption,
+                mediaUrls = listOf(
+                    PostMedia(
+                        name = fileName,
+                        byte = bytes
                     )
-                    createPostUseCase(request).fold(
-                        onSuccess = {
-                            setState { copy(isLoading = false) }
-                            emitEffect(CreatePostContract.Effect.PostSuccess)
-                        },
-                        onFailure = { e ->
-                            val appError = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
-                            setState { copy(isLoading = false, error = appError) }
-                            showSnackbar(appError)
-                        }
-                    )
+                ),
+            )
+
+            createPostUseCase(request).fold(
+                onSuccess = {
+                    setState { copy(isLoading = false) }
+                    emitEffect(CreatePostContract.Effect.PostSuccess)
                 },
                 onFailure = { e ->
-                    val appError = e.toAppError(CreatePostContract.ScreenError.UploadImageFailed)
+                    val appError = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
                     setState { copy(isLoading = false, error = appError) }
                     showSnackbar(appError)
                 }

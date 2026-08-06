@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Bookmark
@@ -73,45 +71,18 @@ fun PostItem(
                     imageUrl = post.mediaUrls.first(),
                     contentDescription = "Post image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit,
-                    placeholder = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
-                    error = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "📷",
-                                style = MaterialTheme.typography.displayMedium
-                            )
-                        }
-                    }
+                    contentScale = ContentScale.Fit
                 )
             }
         } else {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "📷",
+                    text = post.caption,
                     style = MaterialTheme.typography.displayMedium
                 )
             }
@@ -138,7 +109,7 @@ fun PostItem(
 
         PostCaption(
             username = post.authorUsername ?: post.authorName,
-            caption = post.content,
+            caption = post.caption,
             onUserClick = onUserClick
         )
 
@@ -182,19 +153,6 @@ private fun PostHeader(
                         .size(32.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop,
-                    placeholder = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
                     error = {
                         Box(
                             modifier = Modifier
@@ -226,7 +184,9 @@ private fun PostHeader(
                     )
                 }
             }
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = username,
                     style = MaterialTheme.typography.bodyMedium,

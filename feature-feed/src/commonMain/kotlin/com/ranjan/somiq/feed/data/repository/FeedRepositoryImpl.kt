@@ -13,13 +13,15 @@ import com.ranjan.somiq.feed.data.model.UploadResponse
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
 
 class FeedRepositoryImpl(
     private val httpClient: HttpClient
@@ -107,8 +109,39 @@ class FeedRepositoryImpl(
     override suspend fun createPost(request: CreatePostRequest): Result<Post> {
         return safeApiCall(
             apiCall = {
-                httpClient.post("$BASE_URL/v1/posts") {
-                    setBody(request)
+                if (request.mediaUrls.isNotEmpty()) {
+                    httpClient.submitFormWithBinaryData(
+                        url = "$BASE_URL/v1/posts",
+                        formData = formData {
+                            append(key = "caption", value = request.caption)
+
+                            // Append all media files (images or videos)
+                            request.mediaUrls.forEach { media ->
+                                append(
+                                    key = media.name,
+                                    value = media.byte,
+                                    headers = Headers.build {
+                                        val contentType =
+                                            if (media.name.endsWith(".mp4", ignoreCase = true)) {
+                                                "video/mp4"
+                                            } else {
+                                                "image/jpeg"
+                                            }
+                                        append(HttpHeaders.ContentType, contentType)
+                                        append(
+                                            HttpHeaders.ContentDisposition,
+                                            "filename=\"${media.name}\""
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    )
+                } else {
+                    httpClient.post("$BASE_URL/v1/posts") {
+                        contentType(ContentType.Application.Json)
+                        setBody(request)
+                    }
                 }
             }
         )

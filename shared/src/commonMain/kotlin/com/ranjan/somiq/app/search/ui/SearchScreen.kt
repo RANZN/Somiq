@@ -25,6 +25,7 @@ import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.app.search.data.model.User
 import com.ranjan.somiq.app.search.ui.SearchContract.Intent
 import com.ranjan.somiq.app.search.ui.SearchContract.UiState
+
 @Composable
 fun SearchScreen(
     uiState: UiState,
@@ -195,20 +196,12 @@ private fun PostSearchItem(
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Column {
-            Text(
-                text = post.title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = post.content.take(100) + if (post.content.length > 100) "..." else "",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
+        Text(
+            text = post.caption.take(100) + if (post.caption.length > 100) "..." else "",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
 

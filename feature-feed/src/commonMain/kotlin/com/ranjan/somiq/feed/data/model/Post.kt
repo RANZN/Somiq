@@ -13,8 +13,7 @@ data class StoryResponse(
 data class Post(
     @SerialName("postId")
     val id: String,
-    val title: String,
-    val content: String,
+    val caption: String,
     @SerialName("authorId")
     val authorId: String,
     val authorName: String,

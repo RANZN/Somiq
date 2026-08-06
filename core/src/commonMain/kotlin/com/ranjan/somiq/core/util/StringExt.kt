@@ -18,3 +18,24 @@ fun Long.toMinSecFormat(): String {
     val secStr = if (seconds < 10) "0$seconds" else "$seconds"
     return "$minStr:$secStr"
 }
+
+fun Long.toTimeAgo(): String {
+    val now = currentTimeMillis()
+    val diff = now - this
+    if (diff < 0) return "just now"
+    val seconds = diff / 1000
+    val minutes = seconds / 60
+    val hours = minutes / 60
+    val days = hours / 24
+
+    return when {
+        seconds < 60 -> "just now"
+        minutes < 60 -> "${minutes}m ago"
+        hours < 24 -> "${hours}h ago"
+        days < 30 -> "${days}d ago"
+        else -> {
+            val months = days / 30
+            if (months < 12) "${months}mo ago" else "${months / 12}y ago"
+        }
+    }
+}

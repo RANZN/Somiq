@@ -24,7 +24,9 @@ val postDetailModule = module {
     viewModel { parameters ->
         PostDetailViewModel(
             postId = parameters.get(),
-            feedRepository = get(),
+            getPostUseCase = get(),
+            toggleLikeUseCase = get(),
+            toggleBookmarkUseCase = get(),
             getCommentsUseCase = get(),
             createCommentUseCase = get(),
             toggleCommentLikeUseCase = get()

@@ -1,10 +1,11 @@
-package com.ranjan.somiq.profile.domain.model
+package com.ranjan.somiq.profile.data.model
 
-import androidx.compose.runtime.Stable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Stable
-data class ProfileResponse(
-    val user: User,
+@Serializable
+data class ProfileResponseDto(
+    val user: UserDto,
     val postsCount: Long = 0,
     val reelsCount: Long = 0,
     val followersCount: Long = 0,
@@ -12,8 +13,9 @@ data class ProfileResponse(
     val isFollowing: Boolean = false
 )
 
-@Stable
-data class User(
+@Serializable
+data class UserDto(
+    @SerialName("userId")
     val id: String,
     val name: String,
     val email: String? = null,
@@ -23,7 +25,8 @@ data class User(
     val bio: String? = null
 )
 
-data class UpdateProfileRequest(
+@Serializable
+data class UpdateProfileRequestDto(
     val name: String? = null,
     val username: String? = null,
     val bio: String? = null,

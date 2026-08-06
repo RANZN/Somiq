@@ -1,11 +1,11 @@
 package com.ranjan.somiq.app.search.data.model
 
-import com.ranjan.somiq.feed.domain.model.Post
+import com.ranjan.somiq.feed.data.model.PostDto
 import com.ranjan.somiq.reels.data.model.Reel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class SearchUserDto(
     val id: String,
     val name: String,
     val email: String? = null,
@@ -16,8 +16,8 @@ data class User(
 )
 
 @Serializable
-data class SearchResult(
-    val users: List<User>,
-    val posts: List<Post>,
+data class SearchResultResponse(
+    val users: List<SearchUserDto>,
+    val posts: List<PostDto>,
     val reels: List<Reel>
 )

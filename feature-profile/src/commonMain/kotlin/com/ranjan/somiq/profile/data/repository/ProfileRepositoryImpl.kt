@@ -2,13 +2,18 @@ package com.ranjan.somiq.profile.data.repository
 
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
+import com.ranjan.somiq.profile.data.mapper.toDomain
+import com.ranjan.somiq.profile.data.model.ProfileResponseDto
+import com.ranjan.somiq.profile.data.model.UpdateProfileRequestDto
 import com.ranjan.somiq.profile.domain.model.ProfileResponse
-import com.ranjan.somiq.profile.domain.model.UpdateProfileRequest
 import com.ranjan.somiq.profile.domain.repository.ProfileRepository
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 
 class ProfileRepositoryImpl(
     private val httpClient: HttpClient
@@ -21,7 +26,10 @@ class ProfileRepositoryImpl(
             "$BASE_URL/v1/account"
         }
         return safeApiCall(
-            apiCall = { httpClient.get(url) }
+            apiCall = { httpClient.get(url) },
+            onSuccess = { response ->
+                response.body<ProfileResponseDto>().toDomain()
+            }
         )
     }
 
@@ -34,8 +42,9 @@ class ProfileRepositoryImpl(
         return safeApiCall(
             apiCall = {
                 httpClient.put("$BASE_URL/v1/account/profile") {
+                    contentType(ContentType.Application.Json)
                     setBody(
-                        UpdateProfileRequest(
+                        UpdateProfileRequestDto(
                             name = name,
                             username = username,
                             bio = bio,
@@ -43,6 +52,9 @@ class ProfileRepositoryImpl(
                         )
                     )
                 }
+            },
+            onSuccess = { response ->
+                response.body<ProfileResponseDto>().toDomain()
             }
         )
     }

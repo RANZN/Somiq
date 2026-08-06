@@ -1,8 +1,8 @@
 package com.ranjan.somiq.feed.domain.model
 
-import kotlinx.serialization.Serializable
+import androidx.compose.runtime.Stable
 
-@Serializable
+@Stable
 data class ToggleResponse(
     val isLiked: Boolean,
     val isBookmarked: Boolean,

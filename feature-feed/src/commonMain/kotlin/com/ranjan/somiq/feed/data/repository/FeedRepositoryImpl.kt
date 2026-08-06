@@ -3,13 +3,13 @@ package com.ranjan.somiq.feed.data.repository
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
+import com.ranjan.somiq.feed.data.model.*
+import com.ranjan.somiq.feed.data.mapper.*
 import com.ranjan.somiq.feed.domain.model.CreatePostRequest
 import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
 import com.ranjan.somiq.feed.domain.model.Post
 import com.ranjan.somiq.feed.domain.model.Story
-import com.ranjan.somiq.feed.data.model.StoryResponse
 import com.ranjan.somiq.feed.domain.model.ToggleResponse
-import com.ranjan.somiq.feed.data.model.UploadResponse
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -33,54 +33,77 @@ class FeedRepositoryImpl(
             if (!after.isNullOrBlank()) append("&after=$after")
         }
         return safeApiCall(
-            apiCall = { httpClient.get(url) }
+            apiCall = { httpClient.get(url) },
+            onSuccess = { response ->
+                val dtoResult = response.body<PaginationResult<PostDto>>()
+                PaginationResult(
+                    data = dtoResult.data.map { it.toDomain() },
+                    nextCursor = dtoResult.nextCursor
+                )
+            }
         )
     }
 
     override suspend fun getPostsByUser(userId: String): Result<List<Post>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts?authorId=$userId") },
-            onSuccess = { response -> response.body<PaginationResult<Post>>().data }
+            onSuccess = { response ->
+                response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
+            }
         )
     }
 
     override suspend fun getBookmarkedPosts(): Result<List<Post>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts/bookmarks") },
-            onSuccess = { response -> response.body<PaginationResult<Post>>().data }
+            onSuccess = { response ->
+                response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
+            }
         )
     }
 
     override suspend fun getPost(postId: String): Result<Post> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/posts/$postId") }
+            apiCall = { httpClient.get("$BASE_URL/v1/posts/$postId") },
+            onSuccess = { response ->
+                response.body<PostDto>().toDomain()
+            }
         )
     }
 
     override suspend fun getStories(): Result<List<Story>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/stories") },
-            onSuccess = { response -> response.body<StoryResponse>().data }
+            onSuccess = { response ->
+                response.body<StoryResponse>().data.map { it.toDomain() }
+            }
         )
     }
 
     override suspend fun getMyStories(): Result<List<Story>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/stories/me") },
-            onSuccess = { response -> response.body<List<Story>>() }
+            onSuccess = { response ->
+                response.body<List<StoryDto>>().map { it.toDomain() }
+            }
         )
     }
 
     override suspend fun getUserStories(userId: String): Result<List<Story>> {
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/stories/user/$userId") },
-            onSuccess = { response -> response.body<List<Story>>() }
+            onSuccess = { response ->
+                response.body<List<StoryDto>>().map { it.toDomain() }
+            }
         )
     }
 
     override suspend fun getStory(storyId: String): Result<Story> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/stories/$storyId") }
+            apiCall = { httpClient.get("$BASE_URL/v1/stories/$storyId") },
+            onSuccess = { response ->
+                response.body<StoryDto>().toDomain()
+            }
         )
     }
 
@@ -88,21 +111,31 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = {
                 httpClient.post("$BASE_URL/v1/stories") {
-                    setBody(request)
+                    contentType(ContentType.Application.Json)
+                    setBody(request.toDto())
                 }
+            },
+            onSuccess = { response ->
+                response.body<StoryDto>().toDomain()
             }
         )
     }
 
     override suspend fun toggleLike(postId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/like") }
+            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/like") },
+            onSuccess = { response ->
+                response.body<ToggleResponseDto>().toDomain()
+            }
         )
     }
 
     override suspend fun toggleBookmark(postId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") }
+            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") },
+            onSuccess = { response ->
+                response.body<ToggleResponseDto>().toDomain()
+            }
         )
     }
 
@@ -140,9 +173,12 @@ class FeedRepositoryImpl(
                 } else {
                     httpClient.post("$BASE_URL/v1/posts") {
                         contentType(ContentType.Application.Json)
-                        setBody(request)
+                        setBody(request.toDto())
                     }
                 }
+            },
+            onSuccess = { response ->
+                response.body<PostDto>().toDomain()
             }
         )
     }

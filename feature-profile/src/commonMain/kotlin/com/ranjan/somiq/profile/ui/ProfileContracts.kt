@@ -14,7 +14,7 @@ import com.ranjan.somiq.feed.domain.model.Post
 import com.ranjan.somiq.feed.domain.model.Story
 import com.ranjan.somiq.profile.domain.model.ProfileResponse
 
-enum class ProfileTab { MyStories, Saved }
+enum class ProfileTab { MyPosts, Saved }
 
 object ProfileContract {
     sealed class ScreenError : BaseScreenError {
@@ -33,7 +33,7 @@ object ProfileContract {
         val myPosts: List<Post> = emptyList(),
         val myStories: List<Story> = emptyList(),
         val savedPosts: List<Post> = emptyList(),
-        val selectedTab: ProfileTab = ProfileTab.MyStories,
+        val selectedTab: ProfileTab = ProfileTab.MyPosts,
         val isLoading: Boolean = false,
         val error: AppError? = null,
         val refreshing: Boolean = false,

@@ -1,5 +1,7 @@
 package com.ranjan.somiq.app.postDetail.ui
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import com.ranjan.somiq.app.postDetail.data.model.CommentResponse
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.model.UiText
@@ -29,6 +31,7 @@ object PostDetailContract {
         }
     }
 
+    @Stable
     data class UiState(
         val isLoading: Boolean = false,
         val post: Post? = null,
@@ -38,12 +41,14 @@ object PostDetailContract {
         val commentText: String = ""
     ) : BaseUiState
 
+    @Immutable
     sealed class Intent : BaseUiIntent {
-        data object LoadPost : Intent()
-        data object LoadComments : Intent()
+        data object Initialize : Intent()
         data class UpdateCommentText(val text: String) : Intent()
         data object PostComment : Intent()
         data class ToggleCommentLike(val commentId: String) : Intent()
+        data object ToggleLike : Intent()
+        data object ToggleBookmark : Intent()
         data object Refresh : Intent()
     }
 

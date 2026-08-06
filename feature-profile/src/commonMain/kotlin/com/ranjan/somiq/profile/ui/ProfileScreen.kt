@@ -13,17 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,9 +37,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
+import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.feed.domain.model.Post
 import com.ranjan.somiq.feed.domain.model.Story
-import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.profile.ui.ProfileContract.Intent
 import com.ranjan.somiq.profile.ui.ProfileContract.UiState
 
@@ -55,15 +52,10 @@ fun ProfileScreen(
     scrollToTopTrigger: Int = 0,
     modifier: Modifier = Modifier
 ) {
-    val storiesRowState = rememberLazyListState()
     val gridState = rememberLazyGridState()
     LaunchedEffect(scrollToTopTrigger) {
         if (scrollToTopTrigger > 0) {
-            if (uiState.isOwnProfile && uiState.selectedTab == ProfileTab.MyStories) {
-                storiesRowState.animateScrollToItem(0)
-            } else {
-                gridState.animateScrollToItem(0)
-            }
+            gridState.animateScrollToItem(0)
         }
     }
     Box(modifier = modifier.fillMaxSize()) {
@@ -184,7 +176,7 @@ fun ProfileScreen(
 
                     if (uiState.isOwnProfile) {
                         val selectedTabIndex = when (uiState.selectedTab) {
-                            ProfileTab.MyStories -> 0
+                            ProfileTab.MyPosts -> 0
                             ProfileTab.Saved -> 1
                         }
                         SecondaryTabRow(
@@ -194,13 +186,13 @@ fun ProfileScreen(
                             contentColor = MaterialTheme.colorScheme.primary,
                         ) {
                             Tab(
-                                selected = uiState.selectedTab == ProfileTab.MyStories,
-                                onClick = { onIntent(Intent.SelectTab(ProfileTab.MyStories)) },
-                                text = { Text("My Stories") },
+                                selected = uiState.selectedTab == ProfileTab.MyPosts,
+                                onClick = { onIntent(Intent.SelectTab(ProfileTab.MyPosts)) },
+                                text = { Text("My Posts") },
                                 icon = {
                                     Icon(
-                                        imageVector = Icons.Default.PhotoCamera,
-                                        contentDescription = "My Stories"
+                                        imageVector = Icons.Default.GridOn,
+                                        contentDescription = "My Posts"
                                     )
                                 }
                             )
@@ -218,8 +210,8 @@ fun ProfileScreen(
                         }
 
                         when (uiState.selectedTab) {
-                            ProfileTab.MyStories -> {
-                                if (uiState.myStories.isEmpty()) {
+                            ProfileTab.MyPosts -> {
+                                if (uiState.myPosts.isEmpty()) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -228,29 +220,31 @@ fun ProfileScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "No stories yet",
+                                            text = "No posts yet",
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                 } else {
-                                    LazyRow(
-                                        state = storiesRowState,
+                                    LazyVerticalGrid(
+                                        state = gridState,
+                                        columns = GridCells.Fixed(3),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .weight(1f)
                                             .padding(top = 8.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        contentPadding = PaddingValues(
-                                            horizontal = 8.dp,
-                                            vertical = 8.dp
-                                        )
+                                        contentPadding = PaddingValues(vertical = 8.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                        verticalArrangement = Arrangement.spacedBy(2.dp)
                                     ) {
                                         items(
-                                            items = uiState.myStories,
+                                            items = uiState.myPosts,
                                             key = { it.id }
-                                        ) { story ->
-                                            StoryThumbnail(story = story)
+                                        ) { post ->
+                                            PostGridThumbnail(
+                                                post = post,
+                                                onClick = { onPostClick(post.id) }
+                                            )
                                         }
                                     }
                                 }

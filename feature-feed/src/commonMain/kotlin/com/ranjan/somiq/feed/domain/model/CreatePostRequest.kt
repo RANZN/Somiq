@@ -1,14 +1,10 @@
 package com.ranjan.somiq.feed.domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class CreatePostRequest(
     val caption: String,
     val mediaUrls: List<PostMedia> = emptyList()
 )
 
-@Serializable
 data class PostMedia(
     val name: String,
     val byte: ByteArray,

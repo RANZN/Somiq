@@ -18,7 +18,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ranjan.somiq.app.home.ui.HomeNavigationHost
-import com.ranjan.somiq.app.postDetail.ui.PostDetailScreen
+import com.ranjan.somiq.app.postDetail.ui.PostDetailHostScreen
 import com.ranjan.somiq.chat.ui.conversation.ConversationScreenHost
 import com.ranjan.somiq.chat.ui.videocall.VideoCallScreenHost
 import com.ranjan.somiq.chat.ui.voicecall.VoiceCallScreenHost
@@ -118,8 +118,9 @@ fun EntryProviderScope<NavKey>.homeEntries(backStack: NavBackStack<NavKey>) {
     }
 
     entry<PostDetail> { key: PostDetail ->
-        PostDetailScreen(
+        PostDetailHostScreen(
             postId = key.postId,
+            onBackClick = { backStack.removeLastOrNull() }
         )
     }
 

@@ -10,11 +10,11 @@ import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.error_failed_to_load_profile
 import com.ranjan.somiq.core.resources.error_failed_to_refresh_profile
-import com.ranjan.somiq.feed.data.model.Post
-import com.ranjan.somiq.feed.data.model.Story
-import com.ranjan.somiq.profile.data.model.ProfileResponse
+import com.ranjan.somiq.feed.domain.model.Post
+import com.ranjan.somiq.feed.domain.model.Story
+import com.ranjan.somiq.profile.domain.model.ProfileResponse
 
-enum class ProfileTab { MyStories, Saved }
+enum class ProfileTab { MyPosts, Saved }
 
 object ProfileContract {
     sealed class ScreenError : BaseScreenError {
@@ -33,7 +33,7 @@ object ProfileContract {
         val myPosts: List<Post> = emptyList(),
         val myStories: List<Story> = emptyList(),
         val savedPosts: List<Post> = emptyList(),
-        val selectedTab: ProfileTab = ProfileTab.MyStories,
+        val selectedTab: ProfileTab = ProfileTab.MyPosts,
         val isLoading: Boolean = false,
         val error: AppError? = null,
         val refreshing: Boolean = false,
@@ -45,17 +45,18 @@ object ProfileContract {
     }
 
     sealed interface Intent : BaseUiIntent {
-        object LoadProfile : Intent
+        data class LoadProfile(val userId: String?) : Intent
         object RefreshProfile : Intent
         data class SetAppBarConfig(val show: Boolean, val title: String?) : Intent
         data class SelectTab(val tab: ProfileTab) : Intent
         object ClearError : Intent
         object Retry : Intent
+        object Setting : Intent
     }
 
     sealed interface Effect : BaseUiEffect {
         data class NavigateToEditProfile(val userId: String) : Effect
-        data class NavigateToSettings(val userId: String) : Effect
+        data object NavigateToSettings : Effect
         data class NavigateToFollowers(val userId: String) : Effect
         data class NavigateToFollowing(val userId: String) : Effect
     }

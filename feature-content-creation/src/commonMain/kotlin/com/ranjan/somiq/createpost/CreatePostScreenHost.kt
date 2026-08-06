@@ -25,8 +25,11 @@ fun CreatePostScreenHost(
         onCaptionChange = { viewModel.handleIntent(CreatePostContract.Intent.CaptionChange(it)) },
         onPickImageClick = {
             onRequestPickImage { uri ->
-                viewModel.handleIntent(CreatePostContract.Intent.ImagePicked(uri))
+                viewModel.handleIntent(CreatePostContract.Intent.ImagesPicked(listOf(uri)))
             }
+        },
+        onRemoveImageClick = { index ->
+            viewModel.handleIntent(CreatePostContract.Intent.RemoveImage(index))
         },
         onPostClick = { viewModel.handleIntent(CreatePostContract.Intent.Post) },
         onBack = onBack

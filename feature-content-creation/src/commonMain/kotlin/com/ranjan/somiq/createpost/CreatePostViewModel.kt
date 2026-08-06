@@ -1,79 +1,64 @@
 package com.ranjan.somiq.createpost
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.domain.PostUploadService
 import com.ranjan.somiq.core.presentation.error.AppError
-import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.core.platform.readUriToBytes
-import com.ranjan.somiq.feed.data.model.CreatePostRequest
-import com.ranjan.somiq.feed.domain.repository.FeedRepository
-import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 class CreatePostViewModel(
-    private val createPostUseCase: CreatePostUseCase,
-    private val feedRepository: FeedRepository
+    private val postUploadManager: PostUploadService
 ) : BaseViewModel<CreatePostContract.UiState, CreatePostContract.Intent, CreatePostContract.Effect>(
     CreatePostContract.UiState()
 ) {
 
     override fun onIntent(intent: CreatePostContract.Intent) {
         when (intent) {
-            is CreatePostContract.Intent.CaptionChange -> setState { copy(caption = intent.value, error = null) }
-            is CreatePostContract.Intent.ImagePicked -> setState { copy(selectedImageUri = intent.uri, error = null) }
+            is CreatePostContract.Intent.CaptionChange -> setState {
+                copy(
+                    caption = intent.value,
+                    error = null
+                )
+            }
+
+            is CreatePostContract.Intent.ImagesPicked -> setState {
+                copy(
+                    selectedImageUris = selectedImageUris + intent.uris,
+                    error = null
+                )
+            }
+
+            is CreatePostContract.Intent.RemoveImage -> setState {
+                val updatedUris = selectedImageUris.toMutableList().apply {
+                    if (intent.index in indices) {
+                        removeAt(intent.index)
+                    }
+                }
+                copy(
+                    selectedImageUris = updatedUris,
+                    error = null
+                )
+            }
+
             is CreatePostContract.Intent.ClearError -> setState { copy(error = null) }
             is CreatePostContract.Intent.Post -> post()
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     private fun post() {
-        val uri = state.value.selectedImageUri
+        val uris = state.value.selectedImageUris
         val caption = state.value.caption.trim()
-        if (uri.isNullOrBlank()) {
+        if (uris.isEmpty()) {
             val appError = AppError.Custom(CreatePostContract.ScreenError.PleaseSelectImage)
             setState { copy(error = appError) }
             showSnackbar(appError)
             return
         }
 
+        // Delegate to background upload manager and trigger success effect immediately
+        postUploadManager.uploadPost(caption, uris)
         viewModelScope.launch {
-            setState { copy(isLoading = true, error = null) }
-            val bytes = readUriToBytes(uri)
-            if (bytes == null || bytes.isEmpty()) {
-                val appError = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)
-                setState { copy(isLoading = false, error = appError) }
-                showSnackbar(appError)
-                return@launch
-            }
-            val fileName = "post_${Clock.System.now().toEpochMilliseconds()}.jpg"
-            feedRepository.uploadImage(bytes, fileName).fold(
-                onSuccess = { imageUrl ->
-                    val request = CreatePostRequest(
-                        title = caption.take(100).ifBlank { "Post" },
-                        content = caption,
-                        mediaUrls = listOf(imageUrl)
-                    )
-                    createPostUseCase(request).fold(
-                        onSuccess = {
-                            setState { copy(isLoading = false) }
-                            emitEffect(CreatePostContract.Effect.PostSuccess)
-                        },
-                        onFailure = { e ->
-                            val appError = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
-                            setState { copy(isLoading = false, error = appError) }
-                            showSnackbar(appError)
-                        }
-                    )
-                },
-                onFailure = { e ->
-                    val appError = e.toAppError(CreatePostContract.ScreenError.UploadImageFailed)
-                    setState { copy(isLoading = false, error = appError) }
-                    showSnackbar(appError)
-                }
-            )
+            emitEffect(CreatePostContract.Effect.PostSuccess)
         }
     }
 }

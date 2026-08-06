@@ -26,7 +26,7 @@ import kotlinx.serialization.json.Json
 expect fun createHttpClient(shared: HttpClientConfig<*>.() -> Unit): HttpClient
 
 fun createBaseHttpClient(
-    config: HttpClientConfig<*>.() -> Unit
+    config: HttpClientConfig<*>.() -> Unit = {}
 ): HttpClient = createHttpClient {
     setupCommonPlugins()
     config()
@@ -78,7 +78,7 @@ fun HttpClientConfig<*>.setupCommonPlugins() {
     }
 }
 
-fun provideNonAuthHttpClient(): HttpClient = createBaseHttpClient { }
+fun provideNonAuthHttpClient(): HttpClient = createBaseHttpClient()
 
 fun provideAuthHttpClient(
     tokenProvider: TokenProvider,

@@ -1,6 +1,6 @@
 package com.ranjan.somiq.profile.domain.repository
 
-import com.ranjan.somiq.profile.data.model.ProfileResponse
+import com.ranjan.somiq.profile.domain.model.ProfileResponse
 
 interface ProfileRepository {
     suspend fun getProfile(userId: String? = null): Result<ProfileResponse>

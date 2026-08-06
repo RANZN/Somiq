@@ -31,14 +31,15 @@ interface CreatePostContract {
     @Stable
     data class UiState(
         val caption: String = "",
-        val selectedImageUri: String? = null,
+        val selectedImageUris: List<String> = emptyList(),
         val isLoading: Boolean = false,
         val error: AppError? = null
     ) : BaseUiState
 
     sealed interface Intent : BaseUiIntent {
         data class CaptionChange(val value: String) : Intent
-        data class ImagePicked(val uri: String) : Intent
+        data class ImagesPicked(val uris: List<String>) : Intent
+        data class RemoveImage(val index: Int) : Intent
         data object Post : Intent
         data object ClearError : Intent
     }

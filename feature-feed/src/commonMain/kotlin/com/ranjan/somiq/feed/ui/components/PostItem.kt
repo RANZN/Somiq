@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Bookmark
@@ -25,6 +23,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import com.ranjan.somiq.core.util.toTimeAgo
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,7 +37,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
-import com.ranjan.somiq.feed.data.model.Post
+import com.ranjan.somiq.feed.domain.model.Post
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun PostItem(
@@ -62,56 +66,71 @@ fun PostItem(
             onMoreClick = onMoreClick
         )
 
-        // Display post image with double-tap to like
+        // Display post images with swipeable pager and double-tap to like
         if (post.mediaUrls.isNotEmpty()) {
-            DoubleTapToLikeBox(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onDoubleTap = onLikeClick
+            val pagerState = rememberPagerState(pageCount = { post.mediaUrls.size })
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                AppAsyncImage(
-                    imageUrl = post.mediaUrls.first(),
-                    contentDescription = "Post image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit,
-                    placeholder = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.primary
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(380.dp)
+                ) { page ->
+                    DoubleTapToLikeBox(
+                        modifier = Modifier.fillMaxSize(),
+                        onDoubleTap = onLikeClick
+                    ) {
+                        AppAsyncImage(
+                            imageUrl = post.mediaUrls[page],
+                            contentDescription = "Post image $page",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
+                // Dot Indicators
+                if (post.mediaUrls.size > 1) {
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(100)
                             )
-                        }
-                    },
-                    error = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "📷",
-                                style = MaterialTheme.typography.displayMedium
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(post.mediaUrls.size) { index ->
+                            val active = pagerState.currentPage == index
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        color = if (active)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            Color.White.copy(alpha = 0.6f)
+                                    )
                             )
                         }
                     }
-                )
+                }
             }
         } else {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "📷",
+                    text = post.caption,
                     style = MaterialTheme.typography.displayMedium
                 )
             }
@@ -138,12 +157,12 @@ fun PostItem(
 
         PostCaption(
             username = post.authorUsername ?: post.authorName,
-            caption = post.content,
+            caption = post.caption,
             onUserClick = onUserClick
         )
 
         Text(
-            text = post.createdAt.toString(),
+            text = post.createdAt.toTimeAgo(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -182,19 +201,6 @@ private fun PostHeader(
                         .size(32.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop,
-                    placeholder = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
                     error = {
                         Box(
                             modifier = Modifier
@@ -226,7 +232,9 @@ private fun PostHeader(
                     )
                 }
             }
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = username,
                     style = MaterialTheme.typography.bodyMedium,

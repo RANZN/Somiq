@@ -1,21 +1,11 @@
-package com.ranjan.somiq.feed.data.model
+package com.ranjan.somiq.feed.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import androidx.compose.runtime.Stable
 
-@Serializable
-data class StoryResponse(
-    val data: List<Story>,
-    val nextCursor: String? = null
-)
-
-@Serializable
+@Stable
 data class Post(
-    @SerialName("postId")
     val id: String,
-    val title: String,
-    val content: String,
-    @SerialName("authorId")
+    val caption: String,
     val authorId: String,
     val authorName: String,
     val authorUsername: String?,
@@ -29,13 +19,11 @@ data class Post(
     val isBookmarked: Boolean = false
 )
 
-@Serializable
+@Stable
 data class Story(
-    @SerialName("storyId")
     val id: String,
     val mediaUrl: String,
     val mediaType: MediaType,
-    @SerialName("authorId")
     val authorId: String,
     val authorName: String,
     val authorUsername: String?,
@@ -46,13 +34,11 @@ data class Story(
     val isViewed: Boolean = false
 )
 
-@Serializable
 enum class MediaType {
     IMAGE,
     VIDEO
 }
 
-@Serializable
 data class CreateStoryRequest(
     val mediaUrl: String,
     val mediaType: MediaType

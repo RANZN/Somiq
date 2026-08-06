@@ -1,6 +1,6 @@
 package com.ranjan.somiq.profile.domain.usecase
 
-import com.ranjan.somiq.profile.data.model.ProfileResponse
+import com.ranjan.somiq.profile.domain.model.ProfileResponse
 import com.ranjan.somiq.profile.domain.repository.ProfileRepository
 
 class GetProfileUseCase(

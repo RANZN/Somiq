@@ -2,8 +2,8 @@ package com.ranjan.somiq.profile.data.repository
 
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
-import com.ranjan.somiq.profile.data.model.ProfileResponse
-import com.ranjan.somiq.profile.data.model.UpdateProfileRequest
+import com.ranjan.somiq.profile.domain.model.ProfileResponse
+import com.ranjan.somiq.profile.domain.model.UpdateProfileRequest
 import com.ranjan.somiq.profile.domain.repository.ProfileRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get

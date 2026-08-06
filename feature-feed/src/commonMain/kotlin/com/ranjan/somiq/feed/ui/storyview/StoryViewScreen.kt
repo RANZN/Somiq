@@ -16,7 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
 import com.ranjan.somiq.core.presentation.error.asString
-import com.ranjan.somiq.feed.data.model.MediaType
+import com.ranjan.somiq.feed.domain.model.MediaType
 
 @Composable
 fun StoryViewScreen(

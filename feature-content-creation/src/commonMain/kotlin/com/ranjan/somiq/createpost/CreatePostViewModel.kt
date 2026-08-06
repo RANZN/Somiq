@@ -5,16 +5,14 @@ import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.platform.readUriToBytes
-import com.ranjan.somiq.feed.data.model.CreatePostRequest
-import com.ranjan.somiq.feed.data.model.PostMedia
-import com.ranjan.somiq.feed.domain.repository.FeedRepository
+import com.ranjan.somiq.feed.domain.model.CreatePostRequest
+import com.ranjan.somiq.feed.domain.model.PostMedia
 import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 
 class CreatePostViewModel(
-    private val createPostUseCase: CreatePostUseCase,
-    private val feedRepository: FeedRepository
+    private val createPostUseCase: CreatePostUseCase
 ) : BaseViewModel<CreatePostContract.UiState, CreatePostContract.Intent, CreatePostContract.Effect>(
     CreatePostContract.UiState()
 ) {

@@ -3,12 +3,12 @@ package com.ranjan.somiq.feed.data.repository
 import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
-import com.ranjan.somiq.feed.data.model.CreatePostRequest
-import com.ranjan.somiq.feed.data.model.CreateStoryRequest
-import com.ranjan.somiq.feed.data.model.Post
-import com.ranjan.somiq.feed.data.model.Story
+import com.ranjan.somiq.feed.domain.model.CreatePostRequest
+import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
+import com.ranjan.somiq.feed.domain.model.Post
+import com.ranjan.somiq.feed.domain.model.Story
 import com.ranjan.somiq.feed.data.model.StoryResponse
-import com.ranjan.somiq.feed.data.model.ToggleResponse
+import com.ranjan.somiq.feed.domain.model.ToggleResponse
 import com.ranjan.somiq.feed.data.model.UploadResponse
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import io.ktor.client.HttpClient

@@ -10,9 +10,9 @@ import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.error_failed_to_load_profile
 import com.ranjan.somiq.core.resources.error_failed_to_refresh_profile
-import com.ranjan.somiq.feed.data.model.Post
-import com.ranjan.somiq.feed.data.model.Story
-import com.ranjan.somiq.profile.data.model.ProfileResponse
+import com.ranjan.somiq.feed.domain.model.Post
+import com.ranjan.somiq.feed.domain.model.Story
+import com.ranjan.somiq.profile.domain.model.ProfileResponse
 
 enum class ProfileTab { MyStories, Saved }
 

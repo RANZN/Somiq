@@ -1,4 +1,4 @@
-package com.ranjan.somiq.profile.data.model
+package com.ranjan.somiq.profile.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

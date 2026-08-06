@@ -1,11 +1,11 @@
 package com.ranjan.somiq.feed.domain.repository
 
-import com.ranjan.somiq.feed.data.model.CreatePostRequest
-import com.ranjan.somiq.feed.data.model.CreateStoryRequest
-import com.ranjan.somiq.feed.data.model.Post
-import com.ranjan.somiq.feed.data.model.Story
+import com.ranjan.somiq.feed.domain.model.CreatePostRequest
+import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
+import com.ranjan.somiq.feed.domain.model.Post
+import com.ranjan.somiq.feed.domain.model.Story
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
-import com.ranjan.somiq.feed.data.model.ToggleResponse
+import com.ranjan.somiq.feed.domain.model.ToggleResponse
 
 interface FeedRepository {
     suspend fun getFeedPage(after: String? = null, limit: Int = 20): Result<PaginationResult<Post>>

@@ -1,6 +1,6 @@
 package com.ranjan.somiq.app.search.data.model
 
-import com.ranjan.somiq.feed.data.model.Post
+import com.ranjan.somiq.feed.domain.model.Post
 import com.ranjan.somiq.reels.data.model.Reel
 import kotlinx.serialization.Serializable
 

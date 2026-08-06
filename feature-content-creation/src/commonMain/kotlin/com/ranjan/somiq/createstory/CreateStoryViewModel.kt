@@ -5,8 +5,8 @@ import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.platform.readUriToBytes
-import com.ranjan.somiq.feed.data.model.CreateStoryRequest
-import com.ranjan.somiq.feed.data.model.MediaType
+import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
+import com.ranjan.somiq.feed.domain.model.MediaType
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
 import kotlinx.coroutines.launch
 import kotlin.time.Clock

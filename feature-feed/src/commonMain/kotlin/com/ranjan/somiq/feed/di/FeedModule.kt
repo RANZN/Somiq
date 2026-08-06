@@ -7,6 +7,9 @@ import com.ranjan.somiq.feed.domain.usecase.GetFeedPageUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetStoriesUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleBookmarkUseCase
 import com.ranjan.somiq.feed.domain.usecase.ToggleLikeUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetPostsByUserUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetMyStoriesUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetBookmarkedPostsUseCase
 import com.ranjan.somiq.feed.ui.FeedViewModel
 import com.ranjan.somiq.feed.ui.storyview.StoryViewViewModel
 import io.ktor.client.HttpClient
@@ -25,6 +28,9 @@ val feedModule = module {
     factoryOf(::ToggleLikeUseCase)
     factoryOf(::ToggleBookmarkUseCase)
     factoryOf(::CreatePostUseCase)
+    factoryOf(::GetPostsByUserUseCase)
+    factoryOf(::GetMyStoriesUseCase)
+    factoryOf(::GetBookmarkedPostsUseCase)
 
     viewModelOf(::FeedViewModel)
     viewModelOf(::StoryViewViewModel)

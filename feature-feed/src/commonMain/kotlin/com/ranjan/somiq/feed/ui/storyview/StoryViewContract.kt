@@ -9,7 +9,7 @@ import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.error_failed_to_load_story
-import com.ranjan.somiq.feed.data.model.Story
+import com.ranjan.somiq.feed.domain.model.Story
 
 object StoryViewContract {
 

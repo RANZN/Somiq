@@ -1,4 +1,4 @@
-package com.ranjan.somiq.feed.data.model
+package com.ranjan.somiq.feed.domain.model
 
 import kotlinx.serialization.Serializable
 

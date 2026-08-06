@@ -1,13 +1,7 @@
-package com.ranjan.somiq.feed.data.model
+package com.ranjan.somiq.feed.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class StoryResponse(
-    val data: List<Story>,
-    val nextCursor: String? = null
-)
 
 @Serializable
 data class Post(

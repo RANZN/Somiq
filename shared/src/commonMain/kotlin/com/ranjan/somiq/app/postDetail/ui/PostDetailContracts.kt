@@ -12,7 +12,7 @@ import com.ranjan.somiq.core.resources.error_failed_to_load_comments
 import com.ranjan.somiq.core.resources.error_failed_to_load_post
 import com.ranjan.somiq.core.resources.error_failed_to_post_comment
 import com.ranjan.somiq.core.resources.error_failed_to_toggle_comment_like
-import com.ranjan.somiq.feed.data.model.Post
+import com.ranjan.somiq.feed.domain.model.Post
 
 object PostDetailContract {
     sealed class ScreenError : BaseScreenError {

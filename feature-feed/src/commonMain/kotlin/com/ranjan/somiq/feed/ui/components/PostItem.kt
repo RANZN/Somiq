@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
-import com.ranjan.somiq.feed.data.model.Post
+import com.ranjan.somiq.feed.domain.model.Post
 
 @Composable
 fun PostItem(

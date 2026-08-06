@@ -13,8 +13,8 @@ import com.ranjan.somiq.core.resources.error_failed_to_load_more
 import com.ranjan.somiq.core.resources.error_failed_to_refresh_feed
 import com.ranjan.somiq.core.resources.error_failed_to_update_bookmark
 import com.ranjan.somiq.core.resources.error_failed_to_update_like
-import com.ranjan.somiq.feed.data.model.Post
-import com.ranjan.somiq.feed.data.model.Story
+import com.ranjan.somiq.feed.domain.model.Post
+import com.ranjan.somiq.feed.domain.model.Story
 
 object FeedContract {
     sealed class ScreenError : BaseScreenError {

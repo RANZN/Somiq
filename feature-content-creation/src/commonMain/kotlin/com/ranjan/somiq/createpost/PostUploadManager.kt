@@ -5,9 +5,7 @@ import com.ranjan.somiq.core.domain.UploadState
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.platform.readUriToBytes
-import com.ranjan.somiq.core.util.currentTimeMillis
 import com.ranjan.somiq.feed.domain.model.CreatePostRequest
-import com.ranjan.somiq.feed.domain.model.PostMedia
 import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,25 +23,23 @@ class PostUploadManager(
 
     private val uploadScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    override fun uploadPost(caption: String, imageUri: String) {
-        _uploadState.value = UploadState.Uploading(caption, imageUri)
+    override fun uploadPost(caption: String, imageUris: List<String>) {
+        _uploadState.value = UploadState.Uploading(caption, imageUris)
         uploadScope.launch {
-            val bytes = readUriToBytes(imageUri)
-            if (bytes == null || bytes.isEmpty()) {
-                val appError = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)
-                _uploadState.value = UploadState.Failed(appError)
-                return@launch
+            val mediaList = mutableListOf<ByteArray>()
+            for (uri in imageUris) {
+                val bytes = readUriToBytes(uri)
+                if (bytes == null || bytes.isEmpty()) {
+                    val appError = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)
+                    _uploadState.value = UploadState.Failed(appError)
+                    return@launch
+                }
+                mediaList.add(bytes)
             }
-            val fileName = "post_${currentTimeMillis()}"
 
             val request = CreatePostRequest(
                 caption = caption,
-                mediaUrls = listOf(
-                    PostMedia(
-                        name = fileName,
-                        byte = bytes
-                    )
-                ),
+                media = mediaList,
             )
 
             createPostUseCase(request).fold(

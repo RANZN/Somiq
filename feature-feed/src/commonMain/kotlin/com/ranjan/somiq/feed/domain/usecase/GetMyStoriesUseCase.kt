@@ -1,10 +1,10 @@
 package com.ranjan.somiq.feed.domain.usecase
 
 import com.ranjan.somiq.feed.domain.model.Story
-import com.ranjan.somiq.feed.domain.repository.FeedRepository
+import com.ranjan.somiq.feed.domain.repository.StoryRepository
 
 class GetMyStoriesUseCase(
-    private val repository: FeedRepository
+    private val repository: StoryRepository
 ) {
     suspend operator fun invoke(): Result<List<Story>> {
         return repository.getMyStories()

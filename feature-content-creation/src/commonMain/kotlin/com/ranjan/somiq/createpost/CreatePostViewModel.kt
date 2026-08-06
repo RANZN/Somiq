@@ -21,9 +21,21 @@ class CreatePostViewModel(
                 )
             }
 
-            is CreatePostContract.Intent.ImagePicked -> setState {
+            is CreatePostContract.Intent.ImagesPicked -> setState {
                 copy(
-                    selectedImageUri = intent.uri,
+                    selectedImageUris = selectedImageUris + intent.uris,
+                    error = null
+                )
+            }
+
+            is CreatePostContract.Intent.RemoveImage -> setState {
+                val updatedUris = selectedImageUris.toMutableList().apply {
+                    if (intent.index in indices) {
+                        removeAt(intent.index)
+                    }
+                }
+                copy(
+                    selectedImageUris = updatedUris,
                     error = null
                 )
             }
@@ -34,9 +46,9 @@ class CreatePostViewModel(
     }
 
     private fun post() {
-        val uri = state.value.selectedImageUri
+        val uris = state.value.selectedImageUris
         val caption = state.value.caption.trim()
-        if (uri.isNullOrBlank()) {
+        if (uris.isEmpty()) {
             val appError = AppError.Custom(CreatePostContract.ScreenError.PleaseSelectImage)
             setState { copy(error = appError) }
             showSnackbar(appError)
@@ -44,7 +56,7 @@ class CreatePostViewModel(
         }
 
         // Delegate to background upload manager and trigger success effect immediately
-        postUploadManager.uploadPost(caption, uri)
+        postUploadManager.uploadPost(caption, uris)
         viewModelScope.launch {
             emitEffect(CreatePostContract.Effect.PostSuccess)
         }

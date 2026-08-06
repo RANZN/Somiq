@@ -18,9 +18,22 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
+import com.ranjan.somiq.feed.data.cache.InMemoryPostCache
+import org.koin.core.module.dsl.singleOf
+
+import com.ranjan.somiq.feed.domain.repository.StoryRepository
+import com.ranjan.somiq.feed.data.repository.StoryRepositoryImpl
+
 val feedModule = module {
-    factory<FeedRepository> {
+    singleOf(::InMemoryPostCache)
+    single<FeedRepository> {
         FeedRepositoryImpl(
+            httpClient = get<HttpClient>(),
+            cache = get<InMemoryPostCache>()
+        )
+    }
+    single<StoryRepository> {
+        StoryRepositoryImpl(
             httpClient = get<HttpClient>()
         )
     }

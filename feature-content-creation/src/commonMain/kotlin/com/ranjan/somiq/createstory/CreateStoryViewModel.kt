@@ -8,12 +8,14 @@ import com.ranjan.somiq.core.platform.readUriToBytes
 import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
 import com.ranjan.somiq.feed.domain.model.MediaType
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
+import com.ranjan.somiq.feed.domain.repository.StoryRepository
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class CreateStoryViewModel(
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val storyRepository: StoryRepository
 ) : BaseViewModel<CreateStoryContract.UiState, CreateStoryContract.Intent, CreateStoryContract.Effect>(
     CreateStoryContract.UiState()
 ) {
@@ -49,7 +51,7 @@ class CreateStoryViewModel(
             feedRepository.uploadImage(bytes, fileName).fold(
                 onSuccess = { mediaUrl ->
                     val request = CreateStoryRequest(mediaUrl = mediaUrl, mediaType = MediaType.IMAGE)
-                    feedRepository.createStory(request).fold(
+                    storyRepository.createStory(request).fold(
                         onSuccess = {
                             setState { copy(isLoading = false) }
                             emitEffect(CreateStoryContract.Effect.StorySuccess)

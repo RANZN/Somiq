@@ -50,12 +50,12 @@ fun CreateStoryRequest.toDto(): CreateStoryRequestDto = CreateStoryRequestDto(
 
 fun CreatePostRequest.toDto(): CreatePostRequestDto = CreatePostRequestDto(
     caption = caption,
-    mediaUrls = mediaUrls.map { it.toDto() }
-)
-
-fun PostMedia.toDto(): PostMediaDto = PostMediaDto(
-    name = name,
-    byte = byte
+    mediaUrls = media.mapIndexed { index, bytes ->
+        PostMediaDto(
+            name = "media_$index.jpg",
+            byte = bytes
+        )
+    }
 )
 
 fun ToggleResponseDto.toDomain(): ToggleResponse = ToggleResponse(

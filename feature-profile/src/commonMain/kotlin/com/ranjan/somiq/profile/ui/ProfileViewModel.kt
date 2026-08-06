@@ -3,10 +3,11 @@ package com.ranjan.somiq.profile.ui
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.feed.domain.usecase.GetPostsByUserUseCase
-import com.ranjan.somiq.feed.domain.usecase.GetMyStoriesUseCase
 import com.ranjan.somiq.feed.domain.usecase.GetBookmarkedPostsUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetMyStoriesUseCase
+import com.ranjan.somiq.feed.domain.usecase.GetPostsByUserUseCase
 import com.ranjan.somiq.profile.domain.usecase.GetProfileUseCase
+import com.ranjan.somiq.profile.domain.usecase.LoadOwnProfileUseCase
 import com.ranjan.somiq.profile.ui.ProfileContract.Effect
 import com.ranjan.somiq.profile.ui.ProfileContract.Intent
 import com.ranjan.somiq.profile.ui.ProfileContract.UiState
@@ -16,10 +17,28 @@ class ProfileViewModel(
     private val getProfileUseCase: GetProfileUseCase,
     private val getPostsByUserUseCase: GetPostsByUserUseCase,
     private val getMyStoriesUseCase: GetMyStoriesUseCase,
-    private val getBookmarkedPostsUseCase: GetBookmarkedPostsUseCase
+    private val getBookmarkedPostsUseCase: GetBookmarkedPostsUseCase,
+    private val loadOwnProfileUseCase: LoadOwnProfileUseCase
 ) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     private var userId: String? = null
+
+    init {
+        observeOwnPostsAndSaved()
+    }
+
+    private fun observeOwnPostsAndSaved() {
+        viewModelScope.launch {
+            getPostsByUserUseCase.myPostsFlow.collect { posts ->
+                setState { copy(myPosts = posts) }
+            }
+        }
+        viewModelScope.launch {
+            getBookmarkedPostsUseCase.bookmarkedPostsFlow.collect { saved ->
+                setState { copy(savedPosts = saved) }
+            }
+        }
+    }
 
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
@@ -41,26 +60,50 @@ class ProfileViewModel(
     private suspend fun loadProfile(userId: String? = this.userId) {
         this.userId = userId
         setState { copy(isLoading = true, error = null) }
-        getProfileUseCase(userId).getOrElse { error ->
-            setState {
-                copy(
-                    isLoading = false,
-                    error = error.toAppError(ProfileContract.ScreenError.LoadProfileFailed)
-                )
-            }
-            return
-        }.let { profile ->
-            setState {
-                copy(
-                    profile = profile,
-                    isLoading = false,
-                    error = null
-                )
-            }
-            if (userId == null) {
-                loadOwnPostsStoriesAndSaved(profile.user.id)
+        
+        if (userId == null) {
+            val result = loadOwnProfileUseCase()
+            if (result.isSuccess) {
+                val profile = result.getOrThrow()
+                setState {
+                    copy(
+                        profile = profile,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+                getMyStoriesUseCase().getOrElse { emptyList() }.let { stories ->
+                    setState { copy(myStories = stories) }
+                }
             } else {
+                val error = result.exceptionOrNull() ?: Exception("Unknown error")
+                setState {
+                    copy(
+                        isLoading = false,
+                        error = error.toAppError(ProfileContract.ScreenError.LoadProfileFailed)
+                    )
+                }
+            }
+        } else {
+            val result = getProfileUseCase(userId)
+            if (result.isSuccess) {
+                val profile = result.getOrThrow()
+                setState {
+                    copy(
+                        profile = profile,
+                        isLoading = false,
+                        error = null
+                    )
+                }
                 loadUserPosts(profile.user.id)
+            } else {
+                val error = result.exceptionOrNull() ?: Exception("Unknown error")
+                setState {
+                    copy(
+                        isLoading = false,
+                        error = error.toAppError(ProfileContract.ScreenError.LoadProfileFailed)
+                    )
+                }
             }
         }
     }
@@ -71,39 +114,47 @@ class ProfileViewModel(
         }
     }
 
-
     private suspend fun refreshProfile() {
         setState { copy(refreshing = true, error = null) }
-        getProfileUseCase(userId).getOrElse { error ->
-            val appError = error.toAppError(ProfileContract.ScreenError.RefreshProfileFailed)
-            setState { copy(refreshing = false, error = appError) }
-            showSnackbar(appError)
-            return
-        }.let { profile ->
-            setState {
-                copy(
-                    profile = profile,
-                    refreshing = false,
-                    error = null
-                )
-            }
-            if (userId == null) {
-                loadOwnPostsStoriesAndSaved(profile.user.id)
+        
+        if (userId == null) {
+            val result = loadOwnProfileUseCase()
+            if (result.isSuccess) {
+                val profile = result.getOrThrow()
+                setState {
+                    copy(
+                        profile = profile,
+                        refreshing = false,
+                        error = null
+                    )
+                }
+                getMyStoriesUseCase().getOrElse { emptyList() }.let { stories ->
+                    setState { copy(myStories = stories) }
+                }
             } else {
-                loadUserPosts(profile.user.id)
+                val error = result.exceptionOrNull() ?: Exception("Unknown error")
+                val appError = error.toAppError(ProfileContract.ScreenError.RefreshProfileFailed)
+                setState { copy(refreshing = false, error = appError) }
+                showSnackbar(appError)
             }
-        }
-    }
-
-    private suspend fun loadOwnPostsStoriesAndSaved(profileUserId: String) {
-        getPostsByUserUseCase(profileUserId).getOrElse { emptyList() }.let { posts ->
-            setState { copy(myPosts = posts) }
-        }
-        getMyStoriesUseCase().getOrElse { emptyList() }.let { stories ->
-            setState { copy(myStories = stories) }
-        }
-        getBookmarkedPostsUseCase().getOrElse { emptyList() }.let { saved ->
-            setState { copy(savedPosts = saved) }
+        } else {
+            val result = getProfileUseCase(userId)
+            if (result.isSuccess) {
+                val profile = result.getOrThrow()
+                setState {
+                    copy(
+                        profile = profile,
+                        refreshing = false,
+                        error = null
+                    )
+                }
+                loadUserPosts(profile.user.id)
+            } else {
+                val error = result.exceptionOrNull() ?: Exception("Unknown error")
+                val appError = error.toAppError(ProfileContract.ScreenError.RefreshProfileFailed)
+                setState { copy(refreshing = false, error = appError) }
+                showSnackbar(appError)
+            }
         }
     }
 }

@@ -5,13 +5,13 @@ import com.ranjan.somiq.core.presentation.error.AppError
 
 sealed interface UploadState {
     data object Idle : UploadState
-    data class Uploading(val caption: String, val imageUri: String) : UploadState
+    data class Uploading(val caption: String, val imageUris: List<String>) : UploadState
     data object Success : UploadState
     data class Failed(val error: AppError) : UploadState
 }
 
 interface PostUploadService {
     val uploadState: StateFlow<UploadState>
-    fun uploadPost(caption: String, imageUri: String)
+    fun uploadPost(caption: String, imageUris: List<String>)
     fun resetToIdle()
 }

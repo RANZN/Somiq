@@ -6,11 +6,10 @@ import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.feed.data.model.*
 import com.ranjan.somiq.feed.data.mapper.*
 import com.ranjan.somiq.feed.domain.model.CreatePostRequest
-import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
 import com.ranjan.somiq.feed.domain.model.Post
-import com.ranjan.somiq.feed.domain.model.Story
 import com.ranjan.somiq.feed.domain.model.ToggleResponse
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
+import com.ranjan.somiq.feed.data.cache.InMemoryPostCache
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.formData
@@ -22,10 +21,16 @@ import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import kotlinx.coroutines.flow.StateFlow
+import com.ranjan.somiq.core.util.currentTimeMillis
 
 class FeedRepositoryImpl(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val cache: InMemoryPostCache
 ) : FeedRepository {
+
+    override val myPostsFlow: StateFlow<List<Post>> = cache.myPostsFlow
+    override val bookmarkedPostsFlow: StateFlow<List<Post>> = cache.bookmarkedPostsFlow
 
     override suspend fun getFeedPage(after: String?, limit: Int): Result<PaginationResult<Post>> {
         val url = buildString {
@@ -36,8 +41,10 @@ class FeedRepositoryImpl(
             apiCall = { httpClient.get(url) },
             onSuccess = { response ->
                 val dtoResult = response.body<PaginationResult<PostDto>>()
+                val posts = dtoResult.data.map { it.toDomain() }
+                cache.cachePosts(posts)
                 PaginationResult(
-                    data = dtoResult.data.map { it.toDomain() },
+                    data = posts,
                     nextCursor = dtoResult.nextCursor
                 )
             }
@@ -48,7 +55,10 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts?authorId=$userId") },
             onSuccess = { response ->
-                response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
+                val posts = response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
+                cache.cachePosts(posts)
+                cache.setMyPosts(posts)
+                posts
             }
         )
     }
@@ -57,7 +67,10 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts/bookmarks") },
             onSuccess = { response ->
-                response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
+                val posts = response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
+                cache.cachePosts(posts)
+                cache.setBookmarkedPosts(posts)
+                posts
             }
         )
     }
@@ -66,57 +79,9 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = { httpClient.get("$BASE_URL/v1/posts/$postId") },
             onSuccess = { response ->
-                response.body<PostDto>().toDomain()
-            }
-        )
-    }
-
-    override suspend fun getStories(): Result<List<Story>> {
-        return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/stories") },
-            onSuccess = { response ->
-                response.body<StoryResponse>().data.map { it.toDomain() }
-            }
-        )
-    }
-
-    override suspend fun getMyStories(): Result<List<Story>> {
-        return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/stories/me") },
-            onSuccess = { response ->
-                response.body<List<StoryDto>>().map { it.toDomain() }
-            }
-        )
-    }
-
-    override suspend fun getUserStories(userId: String): Result<List<Story>> {
-        return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/stories/user/$userId") },
-            onSuccess = { response ->
-                response.body<List<StoryDto>>().map { it.toDomain() }
-            }
-        )
-    }
-
-    override suspend fun getStory(storyId: String): Result<Story> {
-        return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/stories/$storyId") },
-            onSuccess = { response ->
-                response.body<StoryDto>().toDomain()
-            }
-        )
-    }
-
-    override suspend fun createStory(request: CreateStoryRequest): Result<Story> {
-        return safeApiCall(
-            apiCall = {
-                httpClient.post("$BASE_URL/v1/stories") {
-                    contentType(ContentType.Application.Json)
-                    setBody(request.toDto())
-                }
-            },
-            onSuccess = { response ->
-                response.body<StoryDto>().toDomain()
+                val post = response.body<PostDto>().toDomain()
+                cache.cachePost(post)
+                post
             }
         )
     }
@@ -125,7 +90,9 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/like") },
             onSuccess = { response ->
-                response.body<ToggleResponseDto>().toDomain()
+                val toggleResult = response.body<ToggleResponseDto>().toDomain()
+                cache.updateLikeStatus(postId, toggleResult.isLiked, toggleResult.likesCount)
+                toggleResult
             }
         )
     }
@@ -134,7 +101,9 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") },
             onSuccess = { response ->
-                response.body<ToggleResponseDto>().toDomain()
+                val toggleResult = response.body<ToggleResponseDto>().toDomain()
+                cache.updateBookmarkStatus(postId, toggleResult.isBookmarked, toggleResult.bookmarksCount)
+                toggleResult
             }
         )
     }
@@ -142,28 +111,23 @@ class FeedRepositoryImpl(
     override suspend fun createPost(request: CreatePostRequest): Result<Post> {
         return safeApiCall(
             apiCall = {
-                if (request.mediaUrls.isNotEmpty()) {
+                if (request.media.isNotEmpty()) {
                     httpClient.submitFormWithBinaryData(
                         url = "$BASE_URL/v1/posts",
                         formData = formData {
                             append(key = "caption", value = request.caption)
 
-                            // Append all media files (images or videos)
-                            request.mediaUrls.forEach { media ->
+                            // Append all media files
+                            request.media.forEachIndexed { index, byte ->
+                                val fileName = "media_${index}_${currentTimeMillis()}.jpg"
                                 append(
-                                    key = media.name,
-                                    value = media.byte,
+                                    key = fileName,
+                                    value = byte,
                                     headers = Headers.build {
-                                        val contentType =
-                                            if (media.name.endsWith(".mp4", ignoreCase = true)) {
-                                                "video/mp4"
-                                            } else {
-                                                "image/jpeg"
-                                            }
-                                        append(HttpHeaders.ContentType, contentType)
+                                        append(HttpHeaders.ContentType, "image/jpeg")
                                         append(
                                             HttpHeaders.ContentDisposition,
-                                            "filename=\"${media.name}\""
+                                            "filename=\"$fileName\""
                                         )
                                     }
                                 )
@@ -178,7 +142,9 @@ class FeedRepositoryImpl(
                 }
             },
             onSuccess = { response ->
-                response.body<PostDto>().toDomain()
+                val createdPost = response.body<PostDto>().toDomain()
+                cache.addPostToMyPosts(createdPost)
+                createdPost
             }
         )
     }

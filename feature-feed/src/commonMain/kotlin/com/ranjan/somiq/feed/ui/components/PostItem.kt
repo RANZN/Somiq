@@ -38,6 +38,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.ranjan.somiq.core.presentation.component.AppAsyncImage
 import com.ranjan.somiq.feed.domain.model.Post
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun PostItem(
@@ -61,19 +66,61 @@ fun PostItem(
             onMoreClick = onMoreClick
         )
 
-        // Display post image with double-tap to like
+        // Display post images with swipeable pager and double-tap to like
         if (post.mediaUrls.isNotEmpty()) {
-            DoubleTapToLikeBox(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onDoubleTap = onLikeClick
+            val pagerState = rememberPagerState(pageCount = { post.mediaUrls.size })
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                AppAsyncImage(
-                    imageUrl = post.mediaUrls.first(),
-                    contentDescription = "Post image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
-                )
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(380.dp)
+                ) { page ->
+                    DoubleTapToLikeBox(
+                        modifier = Modifier.fillMaxSize(),
+                        onDoubleTap = onLikeClick
+                    ) {
+                        AppAsyncImage(
+                            imageUrl = post.mediaUrls[page],
+                            contentDescription = "Post image $page",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
+                // Dot Indicators
+                if (post.mediaUrls.size > 1) {
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(100)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(post.mediaUrls.size) { index ->
+                            val active = pagerState.currentPage == index
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        color = if (active)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            Color.White.copy(alpha = 0.6f)
+                                    )
+                            )
+                        }
+                    }
+                }
             }
         } else {
             Box(

@@ -44,7 +44,7 @@ fun UploadProgressBanner(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         val imageUri = when (state) {
-            is UploadState.Uploading -> state.imageUri
+            is UploadState.Uploading -> state.imageUris.firstOrNull()
             else -> null
         }
 

@@ -11,17 +11,31 @@ import com.ranjan.somiq.feed.ui.FeedContract.Effect
 import com.ranjan.somiq.feed.ui.FeedContract.Intent
 import com.ranjan.somiq.feed.ui.FeedContract.UiState
 import kotlinx.coroutines.launch
+import com.ranjan.somiq.core.domain.PostUploadService
 
 class FeedViewModel(
     private val getFeedPageUseCase: GetFeedPageUseCase,
     private val getStoriesUseCase: GetStoriesUseCase,
     private val toggleLikeUseCase: ToggleLikeUseCase,
-    private val toggleBookmarkUseCase: ToggleBookmarkUseCase
+    private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+    private val postUploadService: PostUploadService
 ) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     init {
         handleIntent(Intent.LoadFeed)
         handleIntent(Intent.LoadStories)
+        observeUploadState()
+    }
+
+    private fun observeUploadState() {
+        viewModelScope.launch {
+            postUploadService.uploadState.collect { uploadState ->
+                setState { copy(uploadState = uploadState) }
+                if (uploadState is com.ranjan.somiq.core.domain.UploadState.Success) {
+                    refreshFeed()
+                }
+            }
+        }
     }
 
     override fun onIntent(intent: Intent) {
@@ -44,6 +58,7 @@ class FeedViewModel(
                 is Intent.OnChatClick -> emitEffect(Effect.NavigateToChat)
                 is Intent.OnAddStoryClick -> emitEffect(Effect.NavigateToCreateStory)
                 is Intent.ClearError -> setState { copy(error = null) }
+                is Intent.DismissUploadProgress -> postUploadService.resetToIdle()
                 is Intent.Retry -> {
                     setState { copy(error = null) }
                     loadFeed()

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -14,16 +15,16 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.feed.ui.components.PaginatedLazyList
 import com.ranjan.somiq.core.presentation.error.asString
 import com.ranjan.somiq.feed.ui.FeedContract.Intent
 import com.ranjan.somiq.feed.ui.FeedContract.UiState
 import com.ranjan.somiq.feed.ui.components.PostItem
 import com.ranjan.somiq.feed.ui.components.StoriesSection
+import com.ranjan.somiq.feed.ui.components.PaginatedLazyList
+import com.ranjan.somiq.feed.ui.components.UploadProgressBanner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,6 +106,14 @@ fun FeedScreen(
                                 showAddStoryItem = true,
                                 onAddStoryClick = { onIntent(Intent.OnAddStoryClick) },
                                 onStoryClick = { storyId -> onIntent(Intent.OnStoryClick(storyId)) }
+                            )
+                        }
+
+                        // Display post upload progress loader directly below stories
+                        item(key = "upload_progress") {
+                            UploadProgressBanner(
+                                state = uiState.uploadState,
+                                onSuccessFinished = { onIntent(Intent.DismissUploadProgress) }
                             )
                         }
                     },

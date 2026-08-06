@@ -1,18 +1,13 @@
 package com.ranjan.somiq.createpost
 
 import androidx.lifecycle.viewModelScope
+import com.ranjan.somiq.core.domain.PostUploadService
 import com.ranjan.somiq.core.presentation.error.AppError
-import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
-import com.ranjan.somiq.core.platform.readUriToBytes
-import com.ranjan.somiq.feed.domain.model.CreatePostRequest
-import com.ranjan.somiq.feed.domain.model.PostMedia
-import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 
 class CreatePostViewModel(
-    private val createPostUseCase: CreatePostUseCase
+    private val postUploadManager: PostUploadService
 ) : BaseViewModel<CreatePostContract.UiState, CreatePostContract.Intent, CreatePostContract.Effect>(
     CreatePostContract.UiState()
 ) {
@@ -48,38 +43,10 @@ class CreatePostViewModel(
             return
         }
 
+        // Delegate to background upload manager and trigger success effect immediately
+        postUploadManager.uploadPost(caption, uri)
         viewModelScope.launch {
-            setState { copy(isLoading = true, error = null) }
-            val bytes = readUriToBytes(uri)
-            if (bytes == null || bytes.isEmpty()) {
-                val appError = AppError.Custom(CreatePostContract.ScreenError.CouldNotReadImage)
-                setState { copy(isLoading = false, error = appError) }
-                showSnackbar(appError)
-                return@launch
-            }
-            val fileName = "post_${Clock.System.now().toEpochMilliseconds()}"
-
-            val request = CreatePostRequest(
-                caption = caption,
-                mediaUrls = listOf(
-                    PostMedia(
-                        name = fileName,
-                        byte = bytes
-                    )
-                ),
-            )
-
-            createPostUseCase(request).fold(
-                onSuccess = {
-                    setState { copy(isLoading = false) }
-                    emitEffect(CreatePostContract.Effect.PostSuccess)
-                },
-                onFailure = { e ->
-                    val appError = e.toAppError(CreatePostContract.ScreenError.CreatePostFailed)
-                    setState { copy(isLoading = false, error = appError) }
-                    showSnackbar(appError)
-                }
-            )
+            emitEffect(CreatePostContract.Effect.PostSuccess)
         }
     }
 }

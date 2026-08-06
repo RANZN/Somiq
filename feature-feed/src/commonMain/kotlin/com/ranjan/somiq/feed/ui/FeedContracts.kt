@@ -15,6 +15,7 @@ import com.ranjan.somiq.core.resources.error_failed_to_update_bookmark
 import com.ranjan.somiq.core.resources.error_failed_to_update_like
 import com.ranjan.somiq.feed.domain.model.Post
 import com.ranjan.somiq.feed.domain.model.Story
+import com.ranjan.somiq.core.domain.UploadState
 
 object FeedContract {
     sealed class ScreenError : BaseScreenError {
@@ -41,7 +42,8 @@ object FeedContract {
         val loading: Boolean = false,
         val loadingMore: Boolean = false,
         val error: AppError? = null,
-        val refreshing: Boolean = false
+        val refreshing: Boolean = false,
+        val uploadState: UploadState = UploadState.Idle
     ) : BaseUiState {
         val hasMore: Boolean
             get() = nextCursor != null
@@ -73,6 +75,7 @@ object FeedContract {
 
         object ClearError : Intent
         object Retry : Intent
+        object DismissUploadProgress : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

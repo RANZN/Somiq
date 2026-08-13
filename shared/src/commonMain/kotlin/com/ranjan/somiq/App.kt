@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.ranjan.somiq.core.di.InitializeCoil
 import com.ranjan.somiq.core.di.platformModules
 import com.ranjan.somiq.core.presentation.snackbar.CollectGlobalUiEffects
 import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
@@ -25,6 +26,7 @@ fun App(koinConfig: (KoinApplication.() -> Unit) = {}) {
             modules(sharedModules)
         }
     ) {
+        InitializeCoil()
         MyApplicationTheme {
             val snackbarHostState = remember { SnackbarHostState() }
             CompositionLocalProvider(LocalSnackbar provides snackbarHostState) {

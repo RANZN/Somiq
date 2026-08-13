@@ -5,6 +5,8 @@ import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.core.platform.readUriToBytes
+import com.ranjan.somiq.core.platform.MediaPicker
+import com.ranjan.somiq.core.platform.MediaType as PickerMediaType
 import com.ranjan.somiq.feed.domain.model.CreateStoryRequest
 import com.ranjan.somiq.feed.domain.model.MediaType
 import com.ranjan.somiq.feed.domain.repository.FeedRepository
@@ -15,7 +17,8 @@ import kotlin.time.ExperimentalTime
 
 class CreateStoryViewModel(
     private val feedRepository: FeedRepository,
-    private val storyRepository: StoryRepository
+    private val storyRepository: StoryRepository,
+    private val mediaPicker: MediaPicker
 ) : BaseViewModel<CreateStoryContract.UiState, CreateStoryContract.Intent, CreateStoryContract.Effect>(
     CreateStoryContract.UiState()
 ) {
@@ -24,7 +27,17 @@ class CreateStoryViewModel(
         when (intent) {
             is CreateStoryContract.Intent.ImagePicked -> setState { copy(selectedImageUri = intent.uri, error = null) }
             is CreateStoryContract.Intent.ClearError -> setState { copy(error = null) }
-            is CreateStoryContract.Intent.Post -> post()
+            
+            CreateStoryContract.Intent.PickImage -> {
+                viewModelScope.launch {
+                    val uri = mediaPicker.pickMedia(PickerMediaType.IMAGE)
+                    if (uri != null) {
+                        onIntent(CreateStoryContract.Intent.ImagePicked(uri))
+                    }
+                }
+            }
+
+            CreateStoryContract.Intent.Post -> post()
         }
     }
 

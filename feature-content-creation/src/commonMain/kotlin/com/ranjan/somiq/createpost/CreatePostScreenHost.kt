@@ -9,7 +9,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun CreatePostScreenHost(
     onBack: () -> Unit,
-    onRequestPickImage: (onResult: (String) -> Unit) -> Unit,
 ) {
     val viewModel: CreatePostViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -24,9 +23,7 @@ fun CreatePostScreenHost(
         state = state,
         onCaptionChange = { viewModel.handleIntent(CreatePostContract.Intent.CaptionChange(it)) },
         onPickImageClick = {
-            onRequestPickImage { uri ->
-                viewModel.handleIntent(CreatePostContract.Intent.ImagesPicked(listOf(uri)))
-            }
+            viewModel.handleIntent(CreatePostContract.Intent.PickImage)
         },
         onRemoveImageClick = { index ->
             viewModel.handleIntent(CreatePostContract.Intent.RemoveImage(index))

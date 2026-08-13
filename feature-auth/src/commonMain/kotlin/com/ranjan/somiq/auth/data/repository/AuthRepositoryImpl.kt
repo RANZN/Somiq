@@ -23,6 +23,11 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import com.ranjan.somiq.core.data.network.safeApiCall
+import com.ranjan.somiq.auth.data.model.UploadResponse
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.http.Headers
 
 class AuthRepositoryImpl(
     private val nonAuthHttpClient: HttpClient,
@@ -163,6 +168,33 @@ class AuthRepositoryImpl(
         }
         require(response.status == HttpStatusCode.OK) { "Server error" }
         response.body<CheckUserIdResponse>().available
+    }
+
+    override suspend fun uploadProfilePicture(
+        signupToken: String,
+        imageBytes: ByteArray,
+        fileName: String
+    ): Result<String> {
+        return safeApiCall(
+            apiCall = {
+                nonAuthHttpClient.submitFormWithBinaryData(
+                    url = "$BASE_URL/v1/media/upload",
+                    formData = formData {
+                        append(
+                            key = "file",
+                            value = imageBytes,
+                            headers = Headers.build {
+                                append(HttpHeaders.ContentType, "image/jpeg")
+                                append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
+                            }
+                        )
+                    }
+                ) {
+                    header(HttpHeaders.Authorization, "Bearer $signupToken")
+                }
+            },
+            onSuccess = { response -> response.body<UploadResponse>().url }
+        )
     }
 
     override suspend fun logoutUser(): Boolean {

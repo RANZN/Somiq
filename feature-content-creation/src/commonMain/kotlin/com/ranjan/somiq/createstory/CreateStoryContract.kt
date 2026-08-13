@@ -37,6 +37,7 @@ interface CreateStoryContract {
         data class ImagePicked(val uri: String) : Intent
         data object Post : Intent
         data object ClearError : Intent
+        data object PickImage : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

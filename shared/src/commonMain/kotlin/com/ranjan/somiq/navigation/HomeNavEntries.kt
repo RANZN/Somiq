@@ -24,8 +24,8 @@ import com.ranjan.somiq.chat.ui.videocall.VideoCallScreenHost
 import com.ranjan.somiq.chat.ui.voicecall.VoiceCallScreenHost
 import com.ranjan.somiq.collections.CollectionsScreen
 import com.ranjan.somiq.core.di.InitializeCoil
-import com.ranjan.somiq.createpost.CreatePostEntry
-import com.ranjan.somiq.createstory.CreateStoryEntry
+import com.ranjan.somiq.createpost.CreatePostScreenHost
+import com.ranjan.somiq.createstory.CreateStoryScreenHost
 import com.ranjan.somiq.feed.ui.storyview.StoryViewScreenHost
 import com.ranjan.somiq.navigation.AppNavGraph.Collections
 import com.ranjan.somiq.navigation.AppNavGraph.Conversation
@@ -44,7 +44,6 @@ import com.ranjan.somiq.profile.ui.ProfileScreenHost
 
 fun EntryProviderScope<NavKey>.homeEntries(backStack: NavBackStack<NavKey>) {
     entry<HomeGraph> {
-        InitializeCoil()
         HomeNavigationHost(
             onNavigateToUser = { backStack.add(Profile(it)) },
             onNavigateToPost = { postId -> backStack.add(PostDetail(postId)) },
@@ -65,11 +64,11 @@ fun EntryProviderScope<NavKey>.homeEntries(backStack: NavBackStack<NavKey>) {
     }
 
     entry<CreatePostScreen> {
-        CreatePostEntry(onBack = { backStack.removeLastOrNull() })
+        CreatePostScreenHost(onBack = { backStack.removeLastOrNull() })
     }
 
     entry<CreateStoryScreen> {
-        CreateStoryEntry(onBack = { backStack.removeLastOrNull() })
+        CreateStoryScreenHost(onBack = { backStack.removeLastOrNull() })
     }
 
     entry<StoryView> { key: StoryView ->

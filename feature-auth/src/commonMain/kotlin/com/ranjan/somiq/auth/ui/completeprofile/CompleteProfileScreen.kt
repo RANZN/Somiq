@@ -82,7 +82,7 @@ fun CompleteProfileScreen(
 
         OptionalProfileAvatar(
             name = uiState.name,
-            profilePictureUrl = uiState.profilePictureUrl,
+            profilePictureUrl = uiState.selectedLocalImageUri ?: uiState.profilePictureUrl,
             onClick = { intent(Intent.AddPhotoClick) },
             modifier = Modifier.fillMaxWidth(),
         )

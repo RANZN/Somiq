@@ -15,6 +15,7 @@ interface AuthRepository {
     ): AuthResult
 
     suspend fun checkUserIdAvailable(userId: String): Result<Boolean>
+    suspend fun uploadProfilePicture(signupToken: String, imageBytes: ByteArray, fileName: String): Result<String>
     suspend fun logoutUser(): Boolean
     suspend fun isUserLoggedIn(): Boolean
 }

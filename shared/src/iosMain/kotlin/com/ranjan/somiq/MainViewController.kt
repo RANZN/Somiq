@@ -9,7 +9,9 @@ import platform.UIKit.UIViewController
 fun MainViewController(): UIViewController {
     lateinit var controller: UIViewController
     val coreModule = module {
-        single<MediaPicker> { IosMediaPicker(controller) }
+        single<MediaPicker> {
+            IosMediaPicker(controller) // creating this with controller without controller is assigned is completely fine. As koin resolves it when it is initialized.
+        }
     }
     controller = ComposeUIViewController {
         App(

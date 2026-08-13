@@ -42,6 +42,7 @@ interface CreatePostContract {
         data class RemoveImage(val index: Int) : Intent
         data object Post : Intent
         data object ClearError : Intent
+        data object PickImage : Intent
     }
 
     sealed interface Effect : BaseUiEffect {

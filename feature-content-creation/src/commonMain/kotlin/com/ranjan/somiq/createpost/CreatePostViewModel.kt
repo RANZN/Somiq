@@ -4,10 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.domain.PostUploadService
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
+import com.ranjan.somiq.core.platform.MediaPicker
+import com.ranjan.somiq.core.platform.MediaType
 import kotlinx.coroutines.launch
 
 class CreatePostViewModel(
-    private val postUploadManager: PostUploadService
+    private val postUploadManager: PostUploadService,
+    private val mediaPicker: MediaPicker
 ) : BaseViewModel<CreatePostContract.UiState, CreatePostContract.Intent, CreatePostContract.Effect>(
     CreatePostContract.UiState()
 ) {
@@ -41,7 +44,17 @@ class CreatePostViewModel(
             }
 
             is CreatePostContract.Intent.ClearError -> setState { copy(error = null) }
-            is CreatePostContract.Intent.Post -> post()
+            
+            CreatePostContract.Intent.PickImage -> {
+                viewModelScope.launch {
+                    val uri = mediaPicker.pickMedia(MediaType.IMAGE)
+                    if (uri != null) {
+                        onIntent(CreatePostContract.Intent.ImagesPicked(listOf(uri)))
+                    }
+                }
+            }
+
+            CreatePostContract.Intent.Post -> post()
         }
     }
 

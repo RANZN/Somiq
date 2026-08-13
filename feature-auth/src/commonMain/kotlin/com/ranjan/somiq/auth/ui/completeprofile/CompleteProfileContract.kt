@@ -4,14 +4,31 @@ import androidx.compose.runtime.Stable
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.core.presentation.error.BaseScreenError
+import com.ranjan.somiq.core.presentation.model.UiText
+import com.ranjan.somiq.core.resources.Res
+import com.ranjan.somiq.core.resources.error_failed_to_upload_image
+import com.ranjan.somiq.core.resources.could_not_save_profile
 
 object CompleteProfileContract {
+
+    sealed class ScreenError : BaseScreenError {
+        data object UploadImageFailed : ScreenError()
+        data object CompleteSignupFailed : ScreenError()
+
+        override fun toUiText(): UiText = when (this) {
+            UploadImageFailed -> UiText.Resource(Res.string.error_failed_to_upload_image)
+            CompleteSignupFailed -> UiText.Resource(Res.string.could_not_save_profile)
+        }
+    }
+
     @Stable
     data class UiState(
         val name: String = "",
         val userId: String = "",
         val email: String = "",
         val profilePictureUrl: String? = null,
+        val selectedLocalImageUri: String? = null,
         val isLoading: Boolean = false,
         /** Null until check-user-id runs for the current username (debounce or focus lost). */
         val userIdAvailable: Boolean? = null,

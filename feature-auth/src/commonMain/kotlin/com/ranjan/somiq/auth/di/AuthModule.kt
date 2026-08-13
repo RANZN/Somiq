@@ -14,6 +14,7 @@ import com.ranjan.somiq.core.di.NonAuthClient
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import com.ranjan.somiq.auth.domain.usecase.UploadProfilePictureUseCase
 
 val authModule = module {
     factory<AuthRepository> {
@@ -30,6 +31,7 @@ val authModule = module {
     factoryOf(::CompleteSignupUseCase)
     factoryOf(::CheckUserIdUseCase)
     factoryOf(::LogoutUseCase)
+    factoryOf(::UploadProfilePictureUseCase)
 
     viewModelOf(::PhoneEntryViewModel)
     viewModelOf(::OtpViewModel)

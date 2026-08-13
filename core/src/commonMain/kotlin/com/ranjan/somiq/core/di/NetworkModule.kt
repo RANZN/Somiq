@@ -50,4 +50,10 @@ val networkModule = module {
             tokenRefresher = get()
         )
     }
+
+    single {
+        AppImageLoaderFactory(
+            httpClient = get()
+        )
+    }
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
+import com.ranjan.somiq.core.di.LocalAppImageLoader
 
 @Composable
 fun AppAsyncImage(
@@ -54,6 +55,7 @@ fun AppAsyncImage(
 
     SubcomposeAsyncImage(
         model = imageUrl,
+        imageLoader = LocalAppImageLoader.current,
         contentDescription = contentDescription,
         modifier = modifier,
         contentScale = contentScale,

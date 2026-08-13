@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.auth.domain.model.AuthResult
 import com.ranjan.somiq.auth.domain.usecase.CheckUserIdUseCase
 import com.ranjan.somiq.auth.domain.usecase.CompleteSignupUseCase
+import com.ranjan.somiq.auth.domain.usecase.UploadProfilePictureUseCase
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.Effect
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.Intent
 import com.ranjan.somiq.auth.ui.completeprofile.CompleteProfileContract.UiState
@@ -15,14 +16,24 @@ import com.ranjan.somiq.core.resources.email_already_in_use
 import com.ranjan.somiq.core.resources.please_wait_username_check
 import com.ranjan.somiq.core.resources.session_expired_start_again
 import com.ranjan.somiq.core.util.isValidEmail
+import com.ranjan.somiq.core.platform.readUriToBytes
+import com.ranjan.somiq.core.util.currentTimeMillis
+import com.ranjan.somiq.core.presentation.error.toUiText
+import com.ranjan.somiq.core.presentation.error.toAppError
+import com.ranjan.somiq.core.presentation.model.resolve
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.ranjan.somiq.core.platform.MediaPicker
+import com.ranjan.somiq.core.platform.MediaType
+import kotlin.time.Duration.Companion.milliseconds
 
 class CompleteProfileViewModel(
     private val signupToken: String,
     private val completeSignupUseCase: CompleteSignupUseCase,
     private val checkUserIdUseCase: CheckUserIdUseCase,
+    private val uploadProfilePictureUseCase: UploadProfilePictureUseCase,
+    private val mediaPicker: MediaPicker,
 ) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
 
     private var userIdDebounceJob: Job? = null
@@ -34,7 +45,14 @@ class CompleteProfileViewModel(
                 is Intent.OnUserIdChange -> handleUserIdChange(intent.userId)
                 is Intent.OnUserIdFocusChanged -> handleUserIdFocus(intent.isFocused)
                 is Intent.OnEmailChange -> setState { copy(email = intent.email) }
-                Intent.AddPhotoClick -> { /* Optional: open image picker & set profilePictureUrl when wired */ }
+                Intent.AddPhotoClick -> {
+                    viewModelScope.launch {
+                        val uri = mediaPicker.pickMedia(MediaType.IMAGE)
+                        if (uri != null) {
+                            setState { copy(selectedLocalImageUri = uri, error = emptyList()) }
+                        }
+                    }
+                }
                 Intent.Submit -> handleSubmit()
             }
         }
@@ -53,7 +71,7 @@ class CompleteProfileViewModel(
             return
         }
         userIdDebounceJob = viewModelScope.launch {
-            delay(USERNAME_CHECK_DEBOUNCE_MS)
+            delay(USERNAME_CHECK_DEBOUNCE_MS.milliseconds)
             runUserIdAvailabilityCheck()
         }
     }
@@ -141,17 +159,53 @@ class CompleteProfileViewModel(
         }
 
         setState { copy(isLoading = true, error = emptyList()) }
-        runCompleteSignup()
+        
+        // Step 1: Upload image if selected
+        val localImageUri = state.value.selectedLocalImageUri
+        var uploadedUrl = state.value.profilePictureUrl
+
+        if (!localImageUri.isNullOrBlank()) {
+            val bytes = readUriToBytes(localImageUri)
+            if (bytes == null || bytes.isEmpty()) {
+                val err = UiState.Error.GenericError("Could not read selected profile picture.")
+                setState { copy(isLoading = false, error = listOf(err)) }
+                showSnackbar(err.getMessage())
+                return
+            }
+
+            val uploadResult = uploadProfilePictureUseCase(
+                signupToken = signupToken,
+                imageBytes = bytes,
+                fileName = "profile_${currentTimeMillis()}.jpg"
+            )
+
+            uploadResult.fold(
+                onSuccess = { serverUrl ->
+                    uploadedUrl = serverUrl
+                    setState { copy(profilePictureUrl = serverUrl) }
+                },
+                onFailure = { error ->
+                    val appError = error.toAppError(CompleteProfileContract.ScreenError.UploadImageFailed)
+                    val err = UiState.Error.GenericError(appError.toUiText().resolve())
+                    setState { copy(isLoading = false, error = listOf(err)) }
+                    showSnackbar(err.getMessage())
+                    return
+                }
+            )
+        }
+
+        // Step 2: Complete signup
+        runCompleteSignup(uploadedUrl)
     }
 
-    private suspend fun runCompleteSignup() {
+    private suspend fun runCompleteSignup(profilePictureUrl: String?) {
         val s = state.value
         val result = completeSignupUseCase(
             signupToken = signupToken,
             name = s.name.trim(),
             userId = s.userId.trim(),
             email = s.email.trim().takeIf { it.isNotEmpty() },
-            profilePictureUrl = s.profilePictureUrl,
+            profilePictureUrl = profilePictureUrl,
         )
 
         when (result) {
@@ -187,7 +241,7 @@ class CompleteProfileViewModel(
     }
 
     private companion object {
-        const val USERNAME_CHECK_DEBOUNCE_MS = 450L
+        const val USERNAME_CHECK_DEBOUNCE_MS = 500L
         /** Call check-user-id when username length is at least this (after trim). */
         const val MIN_USERNAME_LEN_FOR_CHECK = 3
     }

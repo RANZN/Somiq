@@ -23,7 +23,6 @@ import com.ranjan.somiq.chat.ui.conversation.ConversationScreenHost
 import com.ranjan.somiq.chat.ui.videocall.VideoCallScreenHost
 import com.ranjan.somiq.chat.ui.voicecall.VoiceCallScreenHost
 import com.ranjan.somiq.collections.CollectionsScreen
-import com.ranjan.somiq.core.di.InitializeCoil
 import com.ranjan.somiq.createpost.CreatePostScreenHost
 import com.ranjan.somiq.createstory.CreateStoryScreenHost
 import com.ranjan.somiq.feed.ui.storyview.StoryViewScreenHost

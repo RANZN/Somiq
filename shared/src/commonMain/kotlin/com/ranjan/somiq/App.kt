@@ -9,7 +9,6 @@ import coil3.compose.LocalPlatformContext
 import com.ranjan.somiq.core.di.AppImageLoaderFactory
 import com.ranjan.somiq.core.di.LocalAppImageLoader
 import com.ranjan.somiq.core.di.platformModules
-import com.ranjan.somiq.core.presentation.snackbar.CollectGlobalUiEffects
 import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
 import com.ranjan.somiq.di.sharedModules
 import com.ranjan.somiq.navigation.AppNavigation
@@ -41,7 +40,6 @@ fun App(koinConfig: (KoinApplication.() -> Unit) = {}) {
                 LocalSnackbar provides snackbarHostState,
                 LocalAppImageLoader provides imageLoader,
             ) {
-                CollectGlobalUiEffects()
                 AppNavigation()
             }
         }

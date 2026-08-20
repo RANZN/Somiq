@@ -1,11 +1,5 @@
 package com.ranjan.somiq.feed.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.core.presentation.model.ScreenUiConfig
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
@@ -17,12 +11,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontWeight
+import com.ranjan.somiq.core.presentation.model.ScreenUiConfig
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.updates
-import org.jetbrains.compose.resources.stringResource
 import com.ranjan.somiq.feed.ui.FeedContract.Effect
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,9 +42,8 @@ fun FeedScreenHost(
     onShowMoreOptions: (String) -> Unit = {}
 ) {
     val viewModel: FeedViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsState()
-
-    CollectEffect(viewModel.effect) { effect ->
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.NavigateToPost -> onNavigateToPost(effect.postId)
             is Effect.NavigateToUser -> onNavigateToUser(effect.userId)
@@ -58,7 +57,6 @@ fun FeedScreenHost(
             Effect.NavigateToCreateStory -> onNavigateToCreateStory()
         }
     }
-
     val config = remember {
         ScreenUiConfig(
             topBar = {
@@ -95,12 +93,9 @@ fun FeedScreenHost(
             }
         )
     }
-
-
     LaunchedEffect(Unit) {
         onConfigureUi(config)
     }
-
     FeedScreen(
         uiState = uiState,
         onIntent = viewModel::handleIntent,

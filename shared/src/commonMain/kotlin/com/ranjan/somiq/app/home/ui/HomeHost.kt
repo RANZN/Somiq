@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,9 +29,8 @@ fun HomeNavigationHost(
     navigateToSettings: () -> Unit = {},
 ) {
     val viewModel: HomeViewModel = koinViewModel()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    CollectEffect(viewModel.effect) { effect ->
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    viewModel.collectEffects { effect ->
         when (effect) {
             HomeContract.Effect.Setting -> navigateToSettings()
             is HomeContract.Effect.NavigateToUser -> onNavigateToUser(effect.userId)
@@ -51,7 +50,6 @@ fun HomeNavigationHost(
             HomeContract.Effect.NavigateToNewChat -> {}
         }
     }
-
     HomeScreen(
         state = state,
         action = viewModel::handleIntent,

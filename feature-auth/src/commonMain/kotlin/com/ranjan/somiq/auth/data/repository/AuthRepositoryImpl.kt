@@ -11,7 +11,6 @@ import com.ranjan.somiq.auth.data.model.VerifyOtpResponse
 import com.ranjan.somiq.auth.domain.model.AuthResult
 import com.ranjan.somiq.auth.domain.model.VerifyOtpResult
 import com.ranjan.somiq.auth.domain.repository.AuthRepository
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.local.AuthStateManager
 import com.ranjan.somiq.core.data.local.DeviceIdProvider
 import com.ranjan.somiq.core.data.network.NetworkException
@@ -40,7 +39,7 @@ class AuthRepositoryImpl(
     override suspend fun verifyOtp(phone: String, otp: String): VerifyOtpResult {
         return try {
             val deviceId = deviceIdProvider.getDeviceId()
-            val response = nonAuthHttpClient.post("$BASE_URL/auth/verify-otp") {
+            val response = nonAuthHttpClient.post("auth/verify-otp") {
                 setBody(
                     VerifyOtpRequest(
                         phone = phone,
@@ -117,7 +116,7 @@ class AuthRepositoryImpl(
         profilePictureUrl: String?,
     ): AuthResult {
         return try {
-            val response = nonAuthHttpClient.post("$BASE_URL/auth/complete-signup") {
+            val response = nonAuthHttpClient.post("auth/complete-signup") {
                 header(HttpHeaders.Authorization, "Bearer $signupToken")
                 setBody(
                     CompleteSignupRequest(
@@ -163,7 +162,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun checkUserIdAvailable(userId: String): Result<Boolean> = runCatching {
-        val response = nonAuthHttpClient.post("$BASE_URL/auth/check-user-id") {
+        val response = nonAuthHttpClient.post("auth/check-user-id") {
             setBody(CheckUserIdRequest(userId))
         }
         require(response.status == HttpStatusCode.OK) { "Server error" }
@@ -178,7 +177,7 @@ class AuthRepositoryImpl(
         return safeApiCall(
             apiCall = {
                 nonAuthHttpClient.submitFormWithBinaryData(
-                    url = "$BASE_URL/v1/media/upload",
+                    url = "v1/media/upload",
                     formData = formData {
                         append(
                             key = "file",
@@ -205,7 +204,7 @@ class AuthRepositoryImpl(
 
         refreshToken?.let {
             runCatching {
-                authHttpClient.post("$BASE_URL/auth/logout") {
+                authHttpClient.post("auth/logout") {
                     header(HttpHeaders.Authorization, "Bearer $it")
                 }
             }

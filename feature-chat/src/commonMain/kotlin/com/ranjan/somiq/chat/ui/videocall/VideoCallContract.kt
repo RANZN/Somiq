@@ -1,8 +1,7 @@
 package com.ranjan.somiq.chat.ui.videocall
 
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
 
 object VideoCallContract {
     data class UiState(
@@ -13,15 +12,12 @@ object VideoCallContract {
         val isCameraOn: Boolean = true,
         val isMicOn: Boolean = true,
         val error: String? = null
-    ) : BaseUiState
-
-    sealed interface Intent : BaseUiIntent {
+    )sealed interface Intent : BaseUiIntent {
         data object StartCall : Intent
         data object EndCall : Intent
         data object ToggleCamera : Intent
         data object ToggleMic : Intent
     }
-
     sealed interface Effect : BaseUiEffect {
         data object CallEnded : Effect
     }

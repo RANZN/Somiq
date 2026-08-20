@@ -1,26 +1,29 @@
 package com.ranjan.somiq.notifications
 
 import androidx.lifecycle.viewModelScope
-import com.ranjan.somiq.core.presentation.error.toAppError
-import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.app.home.domain.repository.NotificationRepository
 import com.ranjan.somiq.app.home.domain.usecase.GetNotificationsUseCase
+import com.ranjan.somiq.core.presentation.error.toAppError
+import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
 import com.ranjan.somiq.notifications.NotificationsContract.Intent
 import com.ranjan.somiq.notifications.NotificationsContract.UiState
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class NotificationsViewModel : BaseViewModel<UiState, Intent, BaseUiEffect>(UiState()), KoinComponent {
-    private val getNotificationsUseCase: GetNotificationsUseCase by inject()
-    private val notificationRepository: NotificationRepository by inject()
+class NotificationsViewModel(
+    private val getNotificationsUseCase: GetNotificationsUseCase,
+    private val notificationRepository: NotificationRepository
+) : BaseViewModel<Intent, BaseUiEffect>() {
 
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState = _uiState.asStateFlow()
     init {
         handleIntent(Intent.LoadNotifications)
         handleIntent(Intent.LoadUnreadCount)
     }
-
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
             when (intent) {
@@ -35,14 +38,12 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, BaseUiEffect>(UiSt
             }
         }
     }
-
     private fun loadNotifications() {
-        setState { copy(isLoading = true, error = null) }
+        _uiState.update {it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             getNotificationsUseCase().fold(
                 onSuccess = { notifications ->
-                    setState {
-                        copy(
+                    _uiState.update {it.copy(
                             notifications = notifications,
                             isLoading = false
                         )
@@ -50,24 +51,22 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, BaseUiEffect>(UiSt
                 },
                 onFailure = { error ->
                     val appError = error.toAppError(NotificationsContract.ScreenError.LoadNotificationsFailed)
-                    setState { copy(isLoading = false, error = appError) }
+                    _uiState.update {it.copy(isLoading = false, error = appError) }
                     showSnackbar(appError)
                 }
             )
         }
     }
-
     private fun loadUnreadCount() {
         viewModelScope.launch {
             notificationRepository.getUnreadCount().fold(
                 onSuccess = { count ->
-                    setState { copy(unreadCount = count) }
+                    _uiState.update {it.copy(unreadCount = count) }
                 },
                 onFailure = { }
             )
         }
     }
-
     private fun markAsRead(notificationId: String) {
         viewModelScope.launch {
             notificationRepository.markAsRead(notificationId).fold(
@@ -83,7 +82,6 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, BaseUiEffect>(UiSt
             )
         }
     }
-
     private fun markAllAsRead() {
         viewModelScope.launch {
             notificationRepository.markAllAsRead().fold(
@@ -100,4 +98,3 @@ class NotificationsViewModel : BaseViewModel<UiState, Intent, BaseUiEffect>(UiSt
         }
     }
 }
-

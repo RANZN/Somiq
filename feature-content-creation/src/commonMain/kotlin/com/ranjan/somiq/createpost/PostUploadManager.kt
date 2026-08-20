@@ -8,20 +8,17 @@ import com.ranjan.somiq.core.platform.readUriToBytes
 import com.ranjan.somiq.feed.domain.model.CreatePostRequest
 import com.ranjan.somiq.feed.domain.usecase.CreatePostUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PostUploadManager(
-    private val createPostUseCase: CreatePostUseCase
+    private val createPostUseCase: CreatePostUseCase,
+    private val uploadScope: CoroutineScope
 ) : PostUploadService {
     private val _uploadState = MutableStateFlow<UploadState>(UploadState.Idle)
     override val uploadState: StateFlow<UploadState> = _uploadState.asStateFlow()
-
-    private val uploadScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     override fun uploadPost(caption: String, imageUris: List<String>) {
         _uploadState.value = UploadState.Uploading(caption, imageUris)

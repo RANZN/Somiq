@@ -1,6 +1,5 @@
 package com.ranjan.somiq.app.home.data.repository
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.app.home.data.model.NotificationResponse
@@ -28,14 +27,14 @@ class NotificationRepositoryImpl(
         }
         
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/notifications?$queryParams") },
+            apiCall = { httpClient.get("v1/notifications?$queryParams") },
             onSuccess = { response -> response.body<PaginationResult<NotificationResponse>>().data }
         )
     }
 
     override suspend fun getUnreadCount(): Result<Long> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/notifications/unread-count") },
+            apiCall = { httpClient.get("v1/notifications/unread-count") },
             onSuccess = { response ->
                 @kotlinx.serialization.Serializable
                 data class UnreadCountResponse(val unreadCount: Long)
@@ -46,13 +45,13 @@ class NotificationRepositoryImpl(
 
     override suspend fun markAsRead(notificationId: String): Result<Unit> {
         return safeApiCall(
-            apiCall = { httpClient.put("$BASE_URL/v1/notifications/$notificationId/read") }
+            apiCall = { httpClient.put("v1/notifications/$notificationId/read") }
         )
     }
 
     override suspend fun markAllAsRead(): Result<Unit> {
         return safeApiCall(
-            apiCall = { httpClient.put("$BASE_URL/v1/notifications/read-all") }
+            apiCall = { httpClient.put("v1/notifications/read-all") }
         )
     }
 }

@@ -2,21 +2,16 @@ package com.ranjan.somiq.app.home.ui
 
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 
 object HomeContract {
-
     data class UiState(
         val selectedTab: HomeTab = HomeTab.Updates,
         val searchQuery: String = "",
         val scrollToTopKey: Int = 0
-    ) : BaseUiState
-
-    sealed interface Intent : BaseUiIntent {
+    )sealed interface Intent : BaseUiIntent {
         data class SelectTab(val tab: HomeTab) : Intent
         data class SearchQueryChange(val query: String) : Intent
         data object Setting : Intent
-
         // Navigation Intents
         data class NavigateToUser(val userId: String) : Intent
         data class NavigateToPost(val postId: String) : Intent
@@ -34,10 +29,8 @@ object HomeContract {
         data object NewChat : Intent
         data object NavigateToCreateStory : Intent
     }
-
     sealed interface Effect : BaseUiEffect {
         data object Setting : Effect
-
         // Navigation Effects
         data class NavigateToUser(val userId: String) : Effect
         data class NavigateToPost(val postId: String) : Effect

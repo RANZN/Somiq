@@ -2,7 +2,6 @@ package com.ranjan.somiq.collections.data
 
 import com.ranjan.somiq.collections.domain.CollectionRepository
 import com.ranjan.somiq.collections.domain.ItemType
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
@@ -29,7 +28,7 @@ class CollectionRepositoryImpl(
 
     override suspend fun getCollections(): Result<List<CollectionResponse>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/collections") }
+            apiCall = { httpClient.get("v1/collections") }
         )
     }
 
@@ -37,7 +36,7 @@ class CollectionRepositoryImpl(
         val request = CreateCollectionRequest(name, description)
         return safeApiCall(
             apiCall = {
-                httpClient.post("$BASE_URL/v1/collections") {
+                httpClient.post("v1/collections") {
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
@@ -53,7 +52,7 @@ class CollectionRepositoryImpl(
         val request = UpdateCollectionRequest(name, description)
         return safeApiCall(
             apiCall = {
-                httpClient.put("$BASE_URL/v1/collections/$collectionId") {
+                httpClient.put("v1/collections/$collectionId") {
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
@@ -63,13 +62,13 @@ class CollectionRepositoryImpl(
 
     override suspend fun deleteCollection(collectionId: String): Result<Unit> {
         return safeApiCall(
-            apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId") }
+            apiCall = { httpClient.delete("v1/collections/$collectionId") }
         )
     }
 
     override suspend fun getCollectionItems(collectionId: String): Result<List<CollectionItemResponse>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/collections/$collectionId/items") }
+            apiCall = { httpClient.get("v1/collections/$collectionId/items") }
         )
     }
 
@@ -81,7 +80,7 @@ class CollectionRepositoryImpl(
         val request = AddItemRequest(itemType, itemRefId)
         return safeApiCall(
             apiCall = {
-                httpClient.post("$BASE_URL/v1/collections/$collectionId/items") {
+                httpClient.post("v1/collections/$collectionId/items") {
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
@@ -91,7 +90,7 @@ class CollectionRepositoryImpl(
 
     override suspend fun removeItemFromCollection(collectionId: String, itemId: String): Result<Unit> {
         return safeApiCall(
-            apiCall = { httpClient.delete("$BASE_URL/v1/collections/$collectionId/items/$itemId") }
+            apiCall = { httpClient.delete("v1/collections/$collectionId/items/$itemId") }
         )
     }
 }

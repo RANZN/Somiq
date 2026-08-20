@@ -2,12 +2,12 @@ package com.ranjan.somiq.app.postDetail.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Intent
 import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Effect
-import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.app.postDetail.ui.PostDetailContract.Intent
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -18,20 +18,17 @@ fun PostDetailHostScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: PostDetailViewModel = koinViewModel(parameters = { parametersOf(postId) })
-    val uiState by viewModel.state.collectAsState()
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(postId) {
         viewModel.handleIntent(Intent.Initialize)
     }
-
-    CollectEffect(viewModel.effect) { effect ->
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.CommentPosted -> {
                 // Handle success
             }
         }
     }
-
     PostDetailScreen(
         uiState = uiState,
         onBackClick = onBackClick,

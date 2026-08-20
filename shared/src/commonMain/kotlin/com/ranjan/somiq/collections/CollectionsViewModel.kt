@@ -1,25 +1,28 @@
 package com.ranjan.somiq.collections
 
 import androidx.lifecycle.viewModelScope
-import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
+import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.UiState
-import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.collections.domain.CollectionRepository
 import com.ranjan.somiq.collections.domain.GetCollectionsUseCase
+import com.ranjan.somiq.core.presentation.error.toAppError
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), KoinComponent {
-    private val getCollectionsUseCase: GetCollectionsUseCase by inject()
-    private val collectionRepository: CollectionRepository by inject()
+class CollectionsViewModel(
+    private val getCollectionsUseCase: GetCollectionsUseCase,
+    private val collectionRepository: CollectionRepository
+) : BaseViewModel<Intent, Effect>() {
 
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState = _uiState.asStateFlow()
     init {
         handleIntent(Intent.LoadCollections)
     }
-
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
             when (intent) {
@@ -29,14 +32,12 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
             }
         }
     }
-
     private fun loadCollections() {
-        setState { copy(isLoading = true, error = null) }
+        _uiState.update {it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             getCollectionsUseCase().fold(
                 onSuccess = { collections ->
-                    setState {
-                        copy(
+                    _uiState.update {it.copy(
                             collections = collections,
                             isLoading = false
                         )
@@ -44,13 +45,12 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
                 },
                 onFailure = { error ->
                     val appError = error.toAppError(CollectionsContract.ScreenError.LoadCollectionsFailed)
-                    setState { copy(isLoading = false, error = appError) }
+                    _uiState.update {it.copy(isLoading = false, error = appError) }
                     showSnackbar(appError)
                 }
             )
         }
     }
-
     private fun createCollection(name: String, description: String?) {
         viewModelScope.launch {
             collectionRepository.createCollection(name, description).fold(
@@ -67,4 +67,3 @@ class CollectionsViewModel : BaseViewModel<UiState, Intent, Effect>(UiState()), 
         }
     }
 }
-

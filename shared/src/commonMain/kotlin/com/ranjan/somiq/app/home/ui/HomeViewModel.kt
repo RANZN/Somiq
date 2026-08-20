@@ -18,34 +18,33 @@ import com.ranjan.somiq.app.home.ui.HomeContract.Effect.ShowMoreOptions
 import com.ranjan.somiq.app.home.ui.HomeContract.Effect.ShowShareDialog
 import com.ranjan.somiq.app.home.ui.HomeContract.Intent
 import com.ranjan.somiq.core.presentation.viewmodel.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-) : BaseViewModel<HomeContract.UiState, Intent, HomeContract.Effect>(
-    HomeContract.UiState()
-) {
+) : BaseViewModel<Intent, HomeContract.Effect>() {
 
+    private val _uiState = MutableStateFlow(HomeContract.UiState())
+    val uiState = _uiState.asStateFlow()
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
             when (intent) {
                 is Intent.SelectTab -> {
-                    val currentTab = state.value.selectedTab
-                    setState {
-                        copy(
+                    val currentTab = uiState.value.selectedTab
+                    _uiState.update {it.copy(
                             selectedTab = intent.tab,
-                            scrollToTopKey = if (intent.tab == currentTab) scrollToTopKey + 1 else scrollToTopKey
+                            scrollToTopKey = if (intent.tab == currentTab) it.scrollToTopKey + 1 else it.scrollToTopKey
                         )
                     }
                 }
-
                 is Intent.SearchQueryChange -> {
-                    setState { copy(searchQuery = intent.query) }
+                    _uiState.update {it.copy(searchQuery = intent.query) }
                 }
-
                 Intent.Setting -> {
                     emitEffect(HomeContract.Effect.Setting)
                 }
-
                 // Navigation
                 is Intent.NavigateToUser -> emitEffect(NavigateToUser(intent.userId))
                 is Intent.NavigateToPost -> emitEffect(NavigateToPost(intent.postId))

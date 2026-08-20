@@ -2,11 +2,10 @@ package com.ranjan.somiq.profile.ui
 
 import androidx.compose.runtime.Stable
 import com.ranjan.somiq.core.presentation.error.AppError
-import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.error.BaseScreenError
+import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.error_failed_to_load_profile
 import com.ranjan.somiq.core.resources.error_failed_to_refresh_profile
@@ -15,18 +14,15 @@ import com.ranjan.somiq.feed.domain.model.Story
 import com.ranjan.somiq.profile.domain.model.ProfileResponse
 
 enum class ProfileTab { MyPosts, Saved }
-
 object ProfileContract {
     sealed class ScreenError : BaseScreenError {
         data object LoadProfileFailed : ScreenError()
         data object RefreshProfileFailed : ScreenError()
-
         override fun toUiText(): UiText = when (this) {
             LoadProfileFailed -> UiText.Resource(Res.string.error_failed_to_load_profile)
             RefreshProfileFailed -> UiText.Resource(Res.string.error_failed_to_refresh_profile)
         }
     }
-
     @Stable
     data class UiState(
         val profile: ProfileResponse? = null,
@@ -39,11 +35,10 @@ object ProfileContract {
         val refreshing: Boolean = false,
         val showAppBar: Boolean = false,
         val appBarTitle: String? = null
-    ) : BaseUiState {
+    ) {
         val isOwnProfile: Boolean
             get() = profile != null && appBarTitle == null
     }
-
     sealed interface Intent : BaseUiIntent {
         data class LoadProfile(val userId: String?) : Intent
         object RefreshProfile : Intent
@@ -53,7 +48,6 @@ object ProfileContract {
         object Retry : Intent
         object Setting : Intent
     }
-
     sealed interface Effect : BaseUiEffect {
         data class NavigateToEditProfile(val userId: String) : Effect
         data object NavigateToSettings : Effect

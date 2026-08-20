@@ -16,15 +16,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import com.ranjan.somiq.app.search.ui.SearchContract.Intent
 import com.ranjan.somiq.app.search.ui.SearchContract.Effect
-import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.app.search.ui.SearchContract.Intent
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,28 +38,24 @@ fun SearchScreenHost(
     onNavigateToPost: (String) -> Unit = {}
 ) {
     val viewModel: SearchViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
-
     LaunchedEffect(externalSearchQuery) {
         if (externalSearchQuery != null) {
             viewModel.handleIntent(Intent.OnQueryChange(externalSearchQuery))
             viewModel.handleIntent(Intent.PerformSearch)
         }
     }
-
     LaunchedEffect(showSearchFieldInContent) {
         viewModel.handleIntent(Intent.SetShowSearchFieldInContent(showSearchFieldInContent))
     }
-
-    CollectEffect(viewModel.effect) { effect ->
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.NavigateToUser -> onNavigateToUser(effect.userId)
             is Effect.NavigateToHashtag -> onNavigateToHashtag(effect.hashtag)
             is Effect.NavigateToPost -> onNavigateToPost(effect.postId)
         }
     }
-
     when {
         !showSearchFieldInContent && externalSearchQuery != null -> {
             Scaffold(

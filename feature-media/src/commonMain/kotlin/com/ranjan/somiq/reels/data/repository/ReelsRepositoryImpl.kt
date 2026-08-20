@@ -1,6 +1,5 @@
 package com.ranjan.somiq.reels.data.repository
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.reels.data.model.Reel
 import com.ranjan.somiq.reels.data.model.ReelResponse
@@ -17,26 +16,26 @@ class ReelsRepositoryImpl(
 
     override suspend fun getReels(): Result<List<Reel>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/reels") },
+            apiCall = { httpClient.get("v1/reels") },
             onSuccess = { response -> response.body<ReelResponse>().data }
         )
     }
 
     override suspend fun getReel(reelId: String): Result<Reel> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/reels/$reelId") }
+            apiCall = { httpClient.get("v1/reels/$reelId") }
         )
     }
 
     override suspend fun toggleLike(reelId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/reels/$reelId/like") }
+            apiCall = { httpClient.post("v1/reels/$reelId/like") }
         )
     }
 
     override suspend fun toggleBookmark(reelId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/reels/$reelId/bookmark") }
+            apiCall = { httpClient.post("v1/reels/$reelId/bookmark") }
         )
     }
 }

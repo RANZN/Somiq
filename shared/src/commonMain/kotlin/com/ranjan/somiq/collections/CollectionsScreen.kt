@@ -6,17 +6,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.CollectionsContract.Effect
-import com.ranjan.somiq.core.presentation.error.asString
+import com.ranjan.somiq.collections.CollectionsContract.Intent
 import com.ranjan.somiq.collections.data.CollectionResponse
-import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.core.presentation.error.asString
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,20 +25,17 @@ fun CollectionsScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel : CollectionsViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsState()
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         viewModel.handleIntent(Intent.LoadCollections)
     }
-
-    CollectEffect(viewModel.effect) { effect ->
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.CollectionCreated -> {
                 // Handle success
             }
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -103,7 +100,6 @@ fun CollectionsScreen(
         }
     }
 }
-
 @Composable
 private fun CollectionItem(
     collection: CollectionResponse
@@ -137,4 +133,3 @@ private fun CollectionItem(
         }
     }
 }
-

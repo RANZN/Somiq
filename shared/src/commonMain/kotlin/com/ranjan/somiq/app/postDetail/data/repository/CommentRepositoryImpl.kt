@@ -1,6 +1,5 @@
 package com.ranjan.somiq.app.postDetail.data.repository
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.app.postDetail.data.model.CommentResponse
@@ -47,7 +46,7 @@ class CommentRepositoryImpl(
         }
         
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/comments?$queryParams") },
+            apiCall = { httpClient.get("v1/comments?$queryParams") },
             onSuccess = { response -> response.body<PaginationResult<CommentResponse>>().data }
         )
     }
@@ -69,7 +68,7 @@ class CommentRepositoryImpl(
         val request = CreateCommentRequest(content, parentCommentId)
         return safeApiCall(
             apiCall = {
-                httpClient.post("$BASE_URL/v1/comments?$queryParams") {
+                httpClient.post("v1/comments?$queryParams") {
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
@@ -81,7 +80,7 @@ class CommentRepositoryImpl(
         val request = UpdateCommentRequest(content)
         return safeApiCall(
             apiCall = {
-                httpClient.put("$BASE_URL/v1/comments/$commentId") {
+                httpClient.put("v1/comments/$commentId") {
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
@@ -91,13 +90,13 @@ class CommentRepositoryImpl(
 
     override suspend fun deleteComment(commentId: String): Result<Unit> {
         return safeApiCall(
-            apiCall = { httpClient.delete("$BASE_URL/v1/comments/$commentId") }
+            apiCall = { httpClient.delete("v1/comments/$commentId") }
         )
     }
 
     override suspend fun toggleLike(commentId: String): Result<Boolean> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/comments/$commentId/like") },
+            apiCall = { httpClient.post("v1/comments/$commentId/like") },
             onSuccess = { response -> response.status.value == 200 }
         )
     }

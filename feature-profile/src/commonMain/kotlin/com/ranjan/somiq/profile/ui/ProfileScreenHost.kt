@@ -10,11 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.ranjan.somiq.core.presentation.model.ScreenUiConfig
-import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import com.ranjan.somiq.profile.ui.ProfileContract.Effect
 import com.ranjan.somiq.profile.ui.ProfileContract.Intent
 import org.koin.compose.viewmodel.koinViewModel
@@ -33,13 +33,11 @@ fun ProfileScreenHost(
     navigateToSettings: () -> Unit = {},
 ) {
     val viewModel: ProfileViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsState()
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(userId) {
         viewModel.handleIntent(Intent.LoadProfile(userId))
     }
-
-    CollectEffect(viewModel.effect) { effect ->
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.NavigateToEditProfile -> onNavigateToEditProfile(effect.userId)
             is Effect.NavigateToSettings -> navigateToSettings()
@@ -47,7 +45,6 @@ fun ProfileScreenHost(
             is Effect.NavigateToFollowing -> onNavigateToFollowing(effect.userId)
         }
     }
-
     val config = remember(uiState.profile) {
         ScreenUiConfig(
             topBar = {
@@ -70,11 +67,9 @@ fun ProfileScreenHost(
             }
         )
     }
-
     LaunchedEffect(uiState.profile) {
         onConfigureUi(config)
     }
-
     ProfileScreen(
         uiState = uiState,
         onPostClick = onNavigateToPost,

@@ -1,6 +1,5 @@
 package com.ranjan.somiq.profile.data.repository
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.profile.data.mapper.toDomain
 import com.ranjan.somiq.profile.data.model.ProfileResponseDto
@@ -21,9 +20,9 @@ class ProfileRepositoryImpl(
 
     override suspend fun getProfile(userId: String?): Result<ProfileResponse> {
         val url = if (userId != null) {
-            "$BASE_URL/v1/account/$userId"
+            "v1/account/$userId"
         } else {
-            "$BASE_URL/v1/account"
+            "v1/account"
         }
         return safeApiCall(
             apiCall = { httpClient.get(url) },
@@ -41,7 +40,7 @@ class ProfileRepositoryImpl(
     ): Result<ProfileResponse> {
         return safeApiCall(
             apiCall = {
-                httpClient.put("$BASE_URL/v1/account/profile") {
+                httpClient.put("v1/account/profile") {
                     contentType(ContentType.Application.Json)
                     setBody(
                         UpdateProfileRequestDto(

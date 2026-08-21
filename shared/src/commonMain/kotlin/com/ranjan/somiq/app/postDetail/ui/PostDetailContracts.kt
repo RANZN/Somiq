@@ -4,11 +4,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.ranjan.somiq.app.postDetail.data.model.CommentResponse
 import com.ranjan.somiq.core.presentation.error.AppError
-import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.error.BaseScreenError
+import com.ranjan.somiq.core.presentation.model.UiText
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiEffect
 import com.ranjan.somiq.core.presentation.viewmodel.BaseUiIntent
-import com.ranjan.somiq.core.presentation.viewmodel.BaseUiState
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.error_failed_to_load_comments
 import com.ranjan.somiq.core.resources.error_failed_to_load_post
@@ -22,7 +21,6 @@ object PostDetailContract {
         data object LoadCommentsFailed : ScreenError()
         data object PostCommentFailed : ScreenError()
         data object ToggleCommentLikeFailed : ScreenError()
-
         override fun toUiText(): UiText = when (this) {
             LoadPostFailed -> UiText.Resource(Res.string.error_failed_to_load_post)
             LoadCommentsFailed -> UiText.Resource(Res.string.error_failed_to_load_comments)
@@ -30,7 +28,6 @@ object PostDetailContract {
             ToggleCommentLikeFailed -> UiText.Resource(Res.string.error_failed_to_toggle_comment_like)
         }
     }
-
     @Stable
     data class UiState(
         val isLoading: Boolean = false,
@@ -39,9 +36,7 @@ object PostDetailContract {
         val isLoadingComments: Boolean = false,
         val error: AppError? = null,
         val commentText: String = ""
-    ) : BaseUiState
-
-    @Immutable
+    )@Immutable
     sealed class Intent : BaseUiIntent {
         data object Initialize : Intent()
         data class UpdateCommentText(val text: String) : Intent()
@@ -51,7 +46,6 @@ object PostDetailContract {
         data object ToggleBookmark : Intent()
         data object Refresh : Intent()
     }
-
     sealed class Effect : BaseUiEffect {
         data object CommentPosted : Effect()
     }

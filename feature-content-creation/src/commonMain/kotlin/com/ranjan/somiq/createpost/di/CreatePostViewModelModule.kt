@@ -7,6 +7,6 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val createPostViewModelModule = module {
-    single<PostUploadService> { PostUploadManager(get()) }
+    single<PostUploadService> { PostUploadManager(get(), get()) }
     viewModelOf(::CreatePostViewModel)
 }

@@ -1,6 +1,5 @@
 package com.ranjan.somiq.app.search.data.repository
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.app.search.data.model.SearchResultResponse
 import com.ranjan.somiq.app.search.domain.model.SearchResult
@@ -16,7 +15,7 @@ class SearchRepositoryImpl(
 
     override suspend fun search(query: String): Result<SearchResult> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/search?q=$query") },
+            apiCall = { httpClient.get("v1/search?q=$query") },
             onSuccess = { response ->
                 response.body<SearchResultResponse>().toDomain()
             }

@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,13 +22,11 @@ fun NotificationsScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: NotificationsViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsState()
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         viewModel.handleIntent(Intent.LoadNotifications)
         viewModel.handleIntent(Intent.LoadUnreadCount)
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -102,7 +100,6 @@ fun NotificationsScreen(
         }
     }
 }
-
 @Composable
 private fun NotificationItem(
     notification: com.ranjan.somiq.app.home.data.model.NotificationResponse,
@@ -148,4 +145,3 @@ private fun NotificationItem(
         }
     }
 }
-

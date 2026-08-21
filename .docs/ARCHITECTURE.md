@@ -50,6 +50,9 @@ Flow:
 
 Contracts are usually grouped in a `*Contract` object (`UiState` / `Intent` / `Effect` nested types) per feature.
 
+### 2.1 Lifecycle-aware Composable Collection
+All UI states are collected in the Composable hosts using `collectAsStateWithLifecycle()` to prevent unnecessary flow collection when the app is in the background, conserving system resources.
+ 
 ---
 
 ## 3. `BaseViewModel`
@@ -57,36 +60,36 @@ Contracts are usually grouped in a `*Contract` object (`UiState` / `Intent` / `E
 **Location:** `core/.../presentation/viewmodel/BaseViewModel.kt`
 
 ```text
-BaseViewModel<S : BaseUiState, I : BaseUiIntent, E : BaseUiEffect>(initialState: S)
+BaseViewModel<I : BaseUiIntent, E : BaseUiEffect>
 ```
 
 | API | Responsibility |
 |-----|----------------|
-| `state: StateFlow<S>` | Current UI state; use `setState { }` for updates. |
-| `effect: Flow<E>` | One-shot effects; collect in the composable host. |
+| `effect: Flow<E>` | Flow of screen-specific UI effects. |
+| `commonEffect: Flow<BaseUiEffect.Common>` | Flow of shared/common UI effects (like snackbars) collected automatically. |
 | `handleIntent(intent)` | Public entry; delegates to `onIntent`. |
-| `emitEffect(effect)` | Queue an effect (buffered channel). |
+| `emitEffect(effect)` | Queue a screen-specific effect (buffered channel). |
+| `showSnackbar(message)` | Queue a common snackbar effect. |
 
-### 3.1 Initial state **must** be passed into `super(...)`
+### 3.1 State Management
+`BaseViewModel` is stateless. Concrete ViewModels manage state locally using standard `MutableStateFlow`:
 
-`MutableStateFlow(initialState)` runs **during** the `BaseViewModel` constructor. Subclass **properties** (e.g. `private val phone`) are **not** initialized until after the superclass constructor returns.
+- Expose state as: `val uiState: StateFlow<UiState> = _uiState.asStateFlow()`
+- Update state using: `_uiState.update { ... }` or `_uiState.value = ...`
 
-Therefore:
-
-- **Do:** `class X(...) : BaseViewModel<UiState, ...>(UiState(phoneDisplay = phone))` — use **constructor parameters** when building the first `UiState`.
-- **Don’t:** Override `initialState` with a getter that reads subclass `val` fields; that can crash or read garbage on some targets.
-
-This applies to any screen that seeds state from navigation arguments (phone, user ids, etc.).
+### 3.2 UI Effect Collection (`collectEffects`)
+To avoid reference boilerplate and ensure lifecycle safety, screen hosts use the `viewModel.collectEffects { ... }` extension function. This concurrently collects:
+- Screen-specific effects (emitted via `emitEffect`) passed to the lambda.
+- App-wide common effects (like `showSnackbar`) which are intercepted and automatically shown using the `LocalSnackbar.current` host state.
 
 ---
 
-## 4. Global UI effects
+## 4. Common UI Effects & Snackbars
 
-**Location:** `core/.../presentation/effect/GlobalUiEffect.kt`
+App-wide transient actions like showing a snackbar do not require local scaffold boilerplate or passing viewmodel references. They are routed via a second flow inside `BaseViewModel`:
 
-`GlobalUiEffect` is a **separate channel** from feature `Effect` types. It is used for app-wide transient UI such as **snackbars** when a feature should not own the scaffold (e.g. validation messages from a ViewModel that uses `GlobalEffectDispatcher`).
-
-Feature screens may still use **local** `Effect.ShowSnackbar` variants where the host already collects feature effects.
+- ViewModels trigger: `showSnackbar("Message")` (which maps to `BaseUiEffect.Common.ShowSnackbar`).
+- The `collectEffects` extension function automatically intercepts `commonEffect` emissions and displays them using Compose's `LocalSnackbar.current` provider.
 
 ---
 
@@ -118,10 +121,18 @@ Details, API table, and navigation diagram: [LOGIN_FLOW_PLAN.md](./LOGIN_FLOW_PL
 ## 7. Dependency injection
 
 **Koin** is used across modules. Feature ViewModels are registered in feature modules (e.g. `authViewModelModule`); `shared` aggregates modules for the running target.
+- **Global Context:** A global, application-wide `CoroutineScope` is registered in `networkModule` and injected into background managers (such as `PostUploadManager`) to avoid hardcoding coroutine dispatchers and scopes.
+ 
+---
+ 
+## 8. Network Configuration & Routing
+ 
+- **Base URL:** Defined globally via `BASE_URL` in `core`.
+- **Relative Paths:** The Ktor `HttpClient` is configured with `defaultRequest { url(BASE_URL) }` in `HttpClientFactory.kt`. Repositories make requests using clean relative paths (e.g., `httpClient.get("v1/posts")`), eliminating absolute URL path interpolation boilerplates.
 
 ---
 
-## 8. Related documents
+## 9. Related documents
 
 | Document | Topic |
 |----------|--------|
@@ -131,4 +142,4 @@ Details, API table, and navigation diagram: [LOGIN_FLOW_PLAN.md](./LOGIN_FLOW_PL
 
 ---
 
-*Last updated to reflect constructor-based `BaseViewModel(initialState)` and unified phone auth.*
+*Last updated to reflect stateless BaseViewModel, dual-channel common effects (collectEffects), injected coroutine scopes, relative network paths, and lifecycle-aware state collection.*

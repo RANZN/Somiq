@@ -1,6 +1,5 @@
 package com.ranjan.somiq.feed.data.repository
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.network.safeApiCall
 import com.ranjan.somiq.core.domain.common.model.PaginationResult
 import com.ranjan.somiq.feed.data.model.*
@@ -34,7 +33,7 @@ class FeedRepositoryImpl(
 
     override suspend fun getFeedPage(after: String?, limit: Int): Result<PaginationResult<Post>> {
         val url = buildString {
-            append("$BASE_URL/v1/posts?limit=$limit")
+            append("v1/posts?limit=$limit")
             if (!after.isNullOrBlank()) append("&after=$after")
         }
         return safeApiCall(
@@ -53,7 +52,7 @@ class FeedRepositoryImpl(
 
     override suspend fun getPostsByUser(userId: String): Result<List<Post>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/posts?authorId=$userId") },
+            apiCall = { httpClient.get("v1/posts?authorId=$userId") },
             onSuccess = { response ->
                 val posts = response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
                 cache.cachePosts(posts)
@@ -65,7 +64,7 @@ class FeedRepositoryImpl(
 
     override suspend fun getBookmarkedPosts(): Result<List<Post>> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/posts/bookmarks") },
+            apiCall = { httpClient.get("v1/posts/bookmarks") },
             onSuccess = { response ->
                 val posts = response.body<PaginationResult<PostDto>>().data.map { it.toDomain() }
                 cache.cachePosts(posts)
@@ -77,7 +76,7 @@ class FeedRepositoryImpl(
 
     override suspend fun getPost(postId: String): Result<Post> {
         return safeApiCall(
-            apiCall = { httpClient.get("$BASE_URL/v1/posts/$postId") },
+            apiCall = { httpClient.get("v1/posts/$postId") },
             onSuccess = { response ->
                 val post = response.body<PostDto>().toDomain()
                 cache.cachePost(post)
@@ -88,7 +87,7 @@ class FeedRepositoryImpl(
 
     override suspend fun toggleLike(postId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/like") },
+            apiCall = { httpClient.post("v1/posts/$postId/like") },
             onSuccess = { response ->
                 val toggleResult = response.body<ToggleResponseDto>().toDomain()
                 cache.updateLikeStatus(postId, toggleResult.isLiked, toggleResult.likesCount)
@@ -99,7 +98,7 @@ class FeedRepositoryImpl(
 
     override suspend fun toggleBookmark(postId: String): Result<ToggleResponse> {
         return safeApiCall(
-            apiCall = { httpClient.post("$BASE_URL/v1/posts/$postId/bookmark") },
+            apiCall = { httpClient.post("v1/posts/$postId/bookmark") },
             onSuccess = { response ->
                 val toggleResult = response.body<ToggleResponseDto>().toDomain()
                 cache.updateBookmarkStatus(postId, toggleResult.isBookmarked, toggleResult.bookmarksCount)
@@ -113,7 +112,7 @@ class FeedRepositoryImpl(
             apiCall = {
                 if (request.media.isNotEmpty()) {
                     httpClient.submitFormWithBinaryData(
-                        url = "$BASE_URL/v1/posts",
+                        url = "v1/posts",
                         formData = formData {
                             append(key = "caption", value = request.caption)
 
@@ -135,7 +134,7 @@ class FeedRepositoryImpl(
                         }
                     )
                 } else {
-                    httpClient.post("$BASE_URL/v1/posts") {
+                    httpClient.post("v1/posts") {
                         contentType(ContentType.Application.Json)
                         setBody(request.toDto())
                     }
@@ -153,7 +152,7 @@ class FeedRepositoryImpl(
         return safeApiCall(
             apiCall = {
                 httpClient.submitFormWithBinaryData(
-                    url = "$BASE_URL/v1/media/upload",
+                    url = "v1/media/upload",
                     formData = formData {
                         append(
                             key = "file",

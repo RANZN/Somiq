@@ -1,11 +1,5 @@
 package com.ranjan.somiq.chat.ui.chatlist
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ranjan.somiq.chat.ui.chatlist.ChatListContract.Effect
-import com.ranjan.somiq.core.presentation.util.CollectEffect
-import com.ranjan.somiq.core.presentation.model.ScreenUiConfig
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,9 +9,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ranjan.somiq.chat.ui.chatlist.ChatListContract.Effect
+import com.ranjan.somiq.core.presentation.model.ScreenUiConfig
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import com.ranjan.somiq.core.resources.Res
 import com.ranjan.somiq.core.resources.chats
 import org.jetbrains.compose.resources.stringResource
@@ -31,14 +31,12 @@ fun ChatListScreenHost(
     onNewChat: () -> Unit = {},
 ) {
     val viewModel: ChatListViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsStateWithLifecycle()
-
-    CollectEffect(viewModel.effect) { effect ->
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.NavigateToConversation -> onNavigateToConversation(effect.userId)
         }
     }
-
     val config = remember {
         ScreenUiConfig(
             topBar = {
@@ -64,11 +62,9 @@ fun ChatListScreenHost(
             }
         )
     }
-
     LaunchedEffect(Unit) {
         onConfigureUi(config)
     }
-
     ChatListScreen(
         uiState = uiState,
         onIntent = viewModel::handleIntent

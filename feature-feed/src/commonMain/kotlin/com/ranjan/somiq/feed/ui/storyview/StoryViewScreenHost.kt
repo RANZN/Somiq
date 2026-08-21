@@ -1,7 +1,7 @@
 package com.ranjan.somiq.feed.ui.storyview
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -14,8 +14,7 @@ fun StoryViewScreenHost(
     val viewModel: StoryViewViewModel = koinViewModel(
         parameters = { parametersOf(storyId) }
     )
-    val state by viewModel.state.collectAsState()
-
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     StoryViewScreen(
         state = state,
         onBack = onBack

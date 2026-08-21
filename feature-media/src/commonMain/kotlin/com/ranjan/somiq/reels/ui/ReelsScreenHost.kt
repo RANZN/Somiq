@@ -1,9 +1,9 @@
 package com.ranjan.somiq.reels.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
-import com.ranjan.somiq.core.presentation.util.CollectEffect
+import com.ranjan.somiq.core.presentation.util.collectEffects
 import com.ranjan.somiq.reels.ui.ReelsContract.Effect
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -14,16 +14,14 @@ fun ReelsScreenHost(
     onShowShareDialog: (String) -> Unit = {}
 ) {
     val viewModel: ReelsViewModel = koinViewModel()
-    val uiState by viewModel.state.collectAsState()
-
-    CollectEffect(viewModel.effect) { effect ->
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    viewModel.collectEffects { effect ->
         when (effect) {
             is Effect.NavigateToReel -> onNavigateToReel(effect.reelId)
             is Effect.NavigateToComments -> onNavigateToComments(effect.reelId)
             is Effect.ShowShareDialog -> onShowShareDialog(effect.reelId)
         }
     }
-
     ReelsScreen(
         uiState = uiState,
         onIntent = viewModel::handleIntent

@@ -7,16 +7,20 @@ import com.ranjan.somiq.reels.domain.usecase.GetReelsUseCase
 import com.ranjan.somiq.reels.ui.ReelsContract.Effect
 import com.ranjan.somiq.reels.ui.ReelsContract.Intent
 import com.ranjan.somiq.reels.ui.ReelsContract.UiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ReelsViewModel(
     private val getReelsUseCase: GetReelsUseCase
-) : BaseViewModel<UiState, Intent, Effect>(UiState()) {
+) : BaseViewModel<Intent, Effect>() {
 
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState = _uiState.asStateFlow()
     init {
         handleIntent(Intent.LoadReels)
     }
-
     override fun onIntent(intent: Intent) {
         viewModelScope.launch {
             when (intent) {
@@ -28,28 +32,25 @@ class ReelsViewModel(
                 }
                 is Intent.OnCommentClick -> emitEffect(Effect.NavigateToComments(intent.reelId))
                 is Intent.OnShareClick -> emitEffect(Effect.ShowShareDialog(intent.reelId))
-                is Intent.ClearError -> setState { copy(error = null) }
+                is Intent.ClearError -> _uiState.update {it.copy(error = null) }
                 is Intent.Retry -> {
-                    setState { copy(error = null) }
+                    _uiState.update {it.copy(error = null) }
                     loadReels()
                 }
             }
         }
     }
-
     private suspend fun loadReels() {
-        setState { copy(isLoading = true, error = null) }
+        _uiState.update {it.copy(isLoading = true, error = null) }
         getReelsUseCase().getOrElse { error ->
-            setState {
-                copy(
+            _uiState.update {it.copy(
                     isLoading = false,
                     error = error.toAppError(ReelsContract.ScreenError.LoadReelsFailed)
                 )
             }
             return
         }.let { reels ->
-            setState {
-                copy(
+            _uiState.update {it.copy(
                     reels = reels,
                     isLoading = false,
                     error = null
@@ -57,17 +58,15 @@ class ReelsViewModel(
             }
         }
     }
-
     private suspend fun refreshReels() {
-        setState { copy(refreshing = true, error = null) }
+        _uiState.update {it.copy(refreshing = true, error = null) }
         getReelsUseCase().getOrElse { error ->
             val appError = error.toAppError(ReelsContract.ScreenError.RefreshReelsFailed)
-            setState { copy(refreshing = false, error = appError) }
+            _uiState.update {it.copy(refreshing = false, error = appError) }
             showSnackbar(appError)
             return
         }.let { reels ->
-            setState {
-                copy(
+            _uiState.update {it.copy(
                     reels = reels,
                     refreshing = false,
                     error = null

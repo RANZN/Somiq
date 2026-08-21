@@ -1,6 +1,5 @@
 package com.ranjan.somiq.splash.data
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.timeout
@@ -12,7 +11,7 @@ class CheckForUpdateRepositoryImpl(
 ) : CheckForUpdateRepository {
 
     override suspend fun isUpdateNeeded(): Result<Boolean> = runCatching {
-        val response = httpClient.get("$BASE_URL/checkUpdate") {
+        val response = httpClient.get("checkUpdate") {
             timeout {
                 requestTimeoutMillis = 5.seconds.inWholeMilliseconds
                 connectTimeoutMillis = 3.seconds.inWholeMilliseconds

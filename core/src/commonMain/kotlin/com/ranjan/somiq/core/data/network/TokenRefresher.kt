@@ -1,6 +1,5 @@
 package com.ranjan.somiq.core.data.network
 
-import com.ranjan.somiq.core.consts.BASE_URL
 import com.ranjan.somiq.core.data.local.AuthStateManager
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -58,7 +57,7 @@ class TokenRefresherImpl(
 
             try {
                 // Make API call to refresh token using non-auth client to avoid circular dependency
-                val response = nonAuthHttpClient.post("$BASE_URL/auth/refresh") {
+                val response = nonAuthHttpClient.post("auth/refresh") {
                     setBody(RefreshTokenRequest(refreshToken))
                 }
 

@@ -45,6 +45,7 @@ fun HttpClientConfig<*>.setupCommonPlugins() {
     }
 
     defaultRequest {
+        url(BASE_URL.removeSuffix("/") + "/")
         contentType(ContentType.Application.Json) // default Content-Type
     }
 

@@ -1,11 +1,11 @@
 package com.ranjan.somiq.core.presentation.viewmodel
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.BaseScreenError
 import com.ranjan.somiq.core.presentation.error.toUiText
+import com.ranjan.somiq.core.presentation.model.AppSnackbarDuration
 import com.ranjan.somiq.core.presentation.model.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -28,27 +28,23 @@ abstract class BaseViewModel<I : BaseUiIntent, E : BaseUiEffect> : ViewModel() {
     val commonEffect: Flow<BaseUiEffect.Common> = _commonEffect.receiveAsFlow()
 
     protected fun emitEffect(effect: E) {
-        viewModelScope.launch {
-            _effect.send(effect)
-        }
+        _effect.trySend(effect)
     }
 
     protected fun showSnackbar(
         message: UiText,
         actionLabel: String? = null,
         withDismissAction: Boolean = false,
-        duration: SnackbarDuration? = null,
+        duration: AppSnackbarDuration? = null,
     ) {
-        viewModelScope.launch {
-            _commonEffect.send(
-                BaseUiEffect.Common.ShowSnackbar(
-                    message = message,
-                    actionLabel = actionLabel,
-                    withDismissAction = withDismissAction,
-                    duration = duration,
-                ),
-            )
-        }
+        _commonEffect.trySend(
+            BaseUiEffect.Common.ShowSnackbar(
+                message = message,
+                actionLabel = actionLabel,
+                withDismissAction = withDismissAction,
+                duration = duration,
+            ),
+        )
     }
 
     protected fun showSnackbar(error: AppError) {

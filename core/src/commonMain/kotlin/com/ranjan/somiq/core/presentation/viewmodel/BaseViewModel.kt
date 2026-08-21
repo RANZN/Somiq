@@ -1,11 +1,11 @@
 package com.ranjan.somiq.core.presentation.viewmodel
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranjan.somiq.core.presentation.error.AppError
 import com.ranjan.somiq.core.presentation.error.BaseScreenError
 import com.ranjan.somiq.core.presentation.error.toUiText
+import com.ranjan.somiq.core.presentation.model.AppSnackbarDuration
 import com.ranjan.somiq.core.presentation.model.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +37,7 @@ abstract class BaseViewModel<I : BaseUiIntent, E : BaseUiEffect> : ViewModel() {
         message: UiText,
         actionLabel: String? = null,
         withDismissAction: Boolean = false,
-        duration: SnackbarDuration? = null,
+        duration: AppSnackbarDuration? = null,
     ) {
         viewModelScope.launch {
             _commonEffect.send(

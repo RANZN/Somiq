@@ -1,8 +1,7 @@
 package com.ranjan.somiq.core.presentation.viewmodel
 
 import androidx.compose.runtime.Immutable
-
-import androidx.compose.material3.SnackbarDuration
+import com.ranjan.somiq.core.presentation.model.AppSnackbarDuration
 import com.ranjan.somiq.core.presentation.model.UiText
 
 /**
@@ -18,11 +17,9 @@ interface BaseUiEffect {
             val message: UiText,
             val actionLabel: String? = null,
             val withDismissAction: Boolean = false,
-            val duration: SnackbarDuration? = null
+            val duration: AppSnackbarDuration? = null
         ) : Common
     }
 }
-
-data object NoState
 
 interface NoIntent : BaseUiIntent

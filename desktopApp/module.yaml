@@ -4,8 +4,9 @@ dependencies:
   - //shared
   - $compose.desktop.currentOs
   - $compose.preview
-  - $libs.kotlinx.coroutines.swing
+  - $libs.kotlinx.coroutinesSwing
   - $libs.logback.classic
+  - $libs.ktor.client.cio
 
 settings:
   compose: enabled

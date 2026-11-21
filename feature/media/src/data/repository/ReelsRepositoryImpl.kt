@@ -1,0 +1,41 @@
+package com.ranjan.somiq.reels.data.repository
+
+import com.ranjan.somiq.core.data.network.safeApiCall
+import com.ranjan.somiq.reels.data.model.Reel
+import com.ranjan.somiq.reels.data.model.ReelResponse
+import com.ranjan.somiq.reels.data.model.ToggleResponse
+import com.ranjan.somiq.reels.domain.repository.ReelsRepository
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+
+class ReelsRepositoryImpl(
+    private val httpClient: HttpClient
+) : ReelsRepository {
+
+    override suspend fun getReels(): Result<List<Reel>> {
+        return safeApiCall(
+            apiCall = { httpClient.get("v1/reels") },
+            onSuccess = { response -> response.body<ReelResponse>().data }
+        )
+    }
+
+    override suspend fun getReel(reelId: String): Result<Reel> {
+        return safeApiCall(
+            apiCall = { httpClient.get("v1/reels/$reelId") }
+        )
+    }
+
+    override suspend fun toggleLike(reelId: String): Result<ToggleResponse> {
+        return safeApiCall(
+            apiCall = { httpClient.post("v1/reels/$reelId/like") }
+        )
+    }
+
+    override suspend fun toggleBookmark(reelId: String): Result<ToggleResponse> {
+        return safeApiCall(
+            apiCall = { httpClient.post("v1/reels/$reelId/bookmark") }
+        )
+    }
+}

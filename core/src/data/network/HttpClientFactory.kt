@@ -1,0 +1,108 @@
+package com.ranjan.somiq.core.data.network
+
+import com.ranjan.somiq.core.consts.BASE_URL
+import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.network.UnresolvedAddressException
+import kotlinx.io.IOException
+import kotlinx.serialization.json.Json
+
+expect fun createHttpClient(shared: HttpClientConfig<*>.() -> Unit): HttpClient
+
+fun createBaseHttpClient(
+    config: HttpClientConfig<*>.() -> Unit = {}
+): HttpClient = createHttpClient {
+    setupCommonPlugins()
+    config()
+}
+
+fun HttpClientConfig<*>.setupCommonPlugins() {
+    install(ContentNegotiation) {
+        json(
+            Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            },
+            contentType = ContentType.Application.Json
+        )
+    }
+
+    defaultRequest {
+        url(BASE_URL.removeSuffix("/") + "/")
+        contentType(ContentType.Application.Json) // default Content-Type
+    }
+
+    install(Logging) {
+        logger = Logger.DEFAULT
+        level = LogLevel.ALL
+    }
+
+    expectSuccess = false
+
+    HttpResponseValidator {
+        handleResponseExceptionWithRequest { cause, _ ->
+            throw when (cause) {
+                is UnresolvedAddressException -> NetworkException.NoNetwork()
+                is ConnectTimeoutException -> NetworkException.Timeout()
+                is SocketTimeoutException -> NetworkException.Timeout()
+                is IOException -> NetworkException.Generic(cause.message)
+                else -> NetworkException.Unknown(cause.message)
+            }
+        }
+
+        validateResponse { response ->
+            if (response.status.value >= 400) {
+                throw when (response.status) {
+                    HttpStatusCode.Unauthorized -> ApiException.Unauthorized()
+                    HttpStatusCode.NotFound -> ApiException.NotFound()
+                    else -> ApiException.ServerError(response.status.value)
+                }
+            }
+        }
+    }
+}
+
+fun provideNonAuthHttpClient(): HttpClient = createBaseHttpClient()
+
+fun provideAuthHttpClient(
+    tokenProvider: TokenProvider,
+    tokenRefresher: TokenRefresher
+): HttpClient = createBaseHttpClient {
+    install(Auth) {
+        bearer {
+            loadTokens {
+                val accessToken = tokenProvider.getAccessToken()
+                val refreshToken = tokenProvider.getRefreshToken()
+
+                if (accessToken == null) return@loadTokens null
+                BearerTokens(accessToken, refreshToken)
+            }
+
+            refreshTokens {
+                val newTokens = tokenRefresher.tryRefresh(oldRefreshToken = oldTokens?.refreshToken)
+                    ?: return@refreshTokens null
+                BearerTokens(newTokens.accessToken, newTokens.refreshToken)
+            }
+            sendWithoutRequest { request ->
+                BASE_URL.contains(request.url.host)
+            }
+        }
+    }
+}

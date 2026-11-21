@@ -1,0 +1,24 @@
+product:
+  type: kmp/lib
+  platforms: [ jvm, android, iosArm64, iosSimulatorArm64 ]
+
+dependencies:
+  - //core
+  - $compose.ui
+  - $libs.runtime
+  - $libs.foundation
+  - $libs.material3
+  - $libs.ui
+  - $libs.ui.tooling.preview
+  - $libs.material.icons.extended
+  - $libs.androidx.lifecycle.viewmodelCompose
+  - $libs.androidx.lifecycle.runtimeCompose
+  - $libs.koin.compose.viewmodel
+  - $libs.koin.core
+  - $libs.kotlinx.serialization.json
+  - $libs.ktor.client.core
+  - $libs.ktor.client.content.negotiation
+  - $libs.ktor.serialization.kotlinx.json
+
+settings:
+  compose: enabled

@@ -1,0 +1,135 @@
+package com.ranjan.somiq.collections
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.ranjan.somiq.collections.CollectionsContract.Effect
+import com.ranjan.somiq.collections.CollectionsContract.Intent
+import com.ranjan.somiq.collections.data.CollectionResponse
+import com.ranjan.somiq.core.presentation.error.asString
+import com.ranjan.somiq.core.presentation.util.collectEffects
+import org.koin.compose.viewmodel.koinViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CollectionsScreen(
+    modifier: Modifier = Modifier
+) {
+    val viewModel : CollectionsViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.handleIntent(Intent.LoadCollections)
+    }
+    viewModel.collectEffects { effect ->
+        when (effect) {
+            is Effect.CollectionCreated -> {
+                // Handle success
+            }
+        }
+    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Collections") }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /* TODO: Show create collection dialog */ }
+            ) {
+                Text("+")
+            }
+        }
+    ) { paddingValues ->
+        when {
+            uiState.isLoading && uiState.collections.isEmpty() -> {
+                Box(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            uiState.error != null && uiState.collections.isEmpty() -> {
+                Box(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        val errorRes = uiState.error
+                        if (errorRes != null) {
+                            Text(
+                                text = errorRes.asString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { viewModel.handleIntent(Intent.Refresh) }) {
+                            Text("Retry")
+                        }
+                    }
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.collections) { collection ->
+                        CollectionItem(collection = collection)
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+private fun CollectionItem(
+    collection: CollectionResponse
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = collection.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            collection.description?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${collection.itemsCount} items",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}

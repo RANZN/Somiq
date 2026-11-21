@@ -1,0 +1,15 @@
+product: android/app
+
+dependencies:
+  - //shared
+  - $libs.androidx.activity.compose
+  - $compose.preview
+  - $compose.uiTooling
+  - $libs.koin.android
+  - $libs.chucker
+
+settings:
+  compose: enabled
+  android:
+    namespace: com.ranjan.somiq
+    applicationId: com.ranjan.somiq

@@ -1,6 +1,18 @@
 package com.ranjan.somiq
 
 import android.app.Application
+import di.initKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 
-class SomiqApp : Application()
+class SomiqApp : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        initKoin {
+            androidContext(this@SomiqApp)
+            androidLogger()
+        }
+    }
+}
 

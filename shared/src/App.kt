@@ -20,28 +20,20 @@ import org.koin.dsl.koinConfiguration
 
 @Composable
 @Preview
-fun App(koinConfig: (KoinApplication.() -> Unit) = {}) {
-    KoinApplication(
-        configuration = koinConfiguration {
-            koinConfig()
-            modules(platformModules)
-            modules(sharedModules)
-        }
-    ) {
-        val context = LocalPlatformContext.current
-        val imageLoaderFactory: AppImageLoaderFactory = koinInject()
-        val imageLoader = remember(imageLoaderFactory, context) {
-            imageLoaderFactory.create(context)
-        }
+fun App() {
+    val context = LocalPlatformContext.current
+    val imageLoaderFactory: AppImageLoaderFactory = koinInject()
+    val imageLoader = remember(imageLoaderFactory, context) {
+        imageLoaderFactory.create(context)
+    }
 
-        MyApplicationTheme {
-            val snackbarHostState = remember { SnackbarHostState() }
-            CompositionLocalProvider(
-                LocalSnackbar provides snackbarHostState,
-                LocalAppImageLoader provides imageLoader,
-            ) {
-                AppNavigation()
-            }
+    MyApplicationTheme {
+        val snackbarHostState = remember { SnackbarHostState() }
+        CompositionLocalProvider(
+            LocalSnackbar provides snackbarHostState,
+            LocalAppImageLoader provides imageLoader,
+        ) {
+            AppNavigation()
         }
     }
 }

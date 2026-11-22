@@ -3,6 +3,7 @@ product:
   platforms: [ jvm, android, iosArm64, iosSimulatorArm64 ]
 
 dependencies:
+  - $libs.koin.core : exported
   - $libs.runtime
   - $libs.foundation
   - $libs.material3
@@ -14,7 +15,6 @@ dependencies:
   - $libs.material.icons.extended
   - $libs.kotlinx.serialization.json
   - $libs.koin.compose.viewmodel
-  - $libs.koin.core : exported
   - $libs.kotlinx.immutable.collections
   - $libs.ktor.client.core
   - $libs.ktor.client.auth

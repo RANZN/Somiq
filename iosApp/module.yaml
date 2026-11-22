@@ -1,6 +1,7 @@
 product: ios/app
 
 dependencies:
+  - //core
   - //shared
   - $compose.ui
 

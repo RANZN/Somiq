@@ -1,8 +1,10 @@
 package com.ranjan.somiq.core.domain
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.StateFlow
 import com.ranjan.somiq.core.presentation.error.AppError
 
+@Stable
 sealed interface UploadState {
     data object Idle : UploadState
     data class Uploading(val caption: String, val imageUris: List<String>) : UploadState

@@ -23,8 +23,6 @@ import com.ranjan.somiq.chat.ui.conversation.ConversationScreenHost
 import com.ranjan.somiq.chat.ui.videocall.VideoCallScreenHost
 import com.ranjan.somiq.chat.ui.voicecall.VoiceCallScreenHost
 import com.ranjan.somiq.collections.CollectionsScreen
-import com.ranjan.somiq.createpost.CreatePostScreenHost
-import com.ranjan.somiq.createstory.CreateStoryScreenHost
 import com.ranjan.somiq.feed.ui.storyview.StoryViewScreenHost
 import com.ranjan.somiq.navigation.AppNavGraph.Collections
 import com.ranjan.somiq.navigation.AppNavGraph.Conversation
@@ -63,11 +61,11 @@ fun EntryProviderScope<NavKey>.homeEntries(backStack: NavBackStack<NavKey>) {
     }
 
     entry<CreatePostScreen> {
-        CreatePostScreenHost(onBack = { backStack.removeLastOrNull() })
+//        CreatePostScreenHost(onBack = { backStack.removeLastOrNull() })
     }
 
     entry<CreateStoryScreen> {
-        CreateStoryScreenHost(onBack = { backStack.removeLastOrNull() })
+//        CreateStoryScreenHost(onBack = { backStack.removeLastOrNull() })
     }
 
     entry<StoryView> { key: StoryView ->

@@ -2,11 +2,12 @@ product: android/app
 
 dependencies:
   - //shared
+  - //core
   - $libs.androidx.activity.compose
   - $compose.preview
   - $compose.uiTooling
   - $libs.koin.android
-  - $libs.chucker
+  - $libs.chucker.release
 
 settings:
   compose: enabled

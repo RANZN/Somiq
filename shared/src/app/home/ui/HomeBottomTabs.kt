@@ -11,11 +11,11 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.ranjan.somiq.shared.resources.Res
-import com.ranjan.somiq.shared.resources.calls
-import com.ranjan.somiq.shared.resources.chats
-import com.ranjan.somiq.shared.resources.profile
-import com.ranjan.somiq.shared.resources.updates
+import com.ranjan.somiq.resources.Res
+import com.ranjan.somiq.resources.calls
+import com.ranjan.somiq.resources.chats
+import com.ranjan.somiq.resources.profile
+import com.ranjan.somiq.resources.updates
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.StringResource
 

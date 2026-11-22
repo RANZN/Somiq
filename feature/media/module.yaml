@@ -22,3 +22,5 @@ dependencies:
 
 settings:
   compose: enabled
+  kotlin:
+    serialization: enabled

@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Somiq.iml" filepath="$PROJECT_DIR$/Somiq.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Somiq.iosApp.iml" filepath="$PROJECT_DIR$/.idea/Somiq.iosApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Somiq.iosApp.iosApp.iml" filepath="$PROJECT_DIR$/.idea/Somiq.iosApp.iosApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
     </modules>
   </component>

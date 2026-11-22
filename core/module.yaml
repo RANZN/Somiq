@@ -14,7 +14,7 @@ dependencies:
   - $libs.material.icons.extended
   - $libs.kotlinx.serialization.json
   - $libs.koin.compose.viewmodel
-  - $libs.koin.core
+  - $libs.koin.core : exported
   - $libs.kotlinx.immutable.collections
   - $libs.ktor.client.core
   - $libs.ktor.client.auth
@@ -29,7 +29,7 @@ dependencies:
 dependencies@android:
   - $libs.koin.android
   - $libs.ktor.client.okhttp
-#  - $libs.chucker
+  - $libs.chucker.release
   - $libs.androidx.datastore.preferences
 
 dependencies@jvm:
@@ -46,3 +46,5 @@ settings:
     resources:
       packageName: com.ranjan.somiq.core.resources
       exposedAccessors: true
+  kotlin:
+    serialization: enabled

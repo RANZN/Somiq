@@ -9,6 +9,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.ranjan.somiq.data.db.dao.UserDao
 import com.ranjan.somiq.data.db.entity.User
 import kotlinx.coroutines.Dispatchers
+import org.koin.core.module.Module
 
 @Database(entities = [User::class], version = 1, exportSchema = false)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -27,3 +28,5 @@ fun getRoomDatabase(builder: Builder<AppDatabase>): AppDatabase {
         .fallbackToDestructiveMigrationOnDowngrade(true)
         .build()
 }
+
+expect fun platformDatabaseModule(): Module

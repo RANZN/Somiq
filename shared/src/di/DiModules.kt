@@ -13,8 +13,6 @@ import org.koin.core.module.Module
 
 val sharedModules
     get(): List<Module> = listOf(
-        networkModule,
-        localDatabaseModule,
         appDataModule,
         appViewModelModule,
         authModule,

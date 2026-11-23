@@ -4,6 +4,8 @@ package com.ranjan.somiq.data.db
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -24,4 +26,10 @@ private fun documentDirectory(): String {
         error = null,
     )
     return requireNotNull(documentDirectory?.path)
+}
+
+actual fun platformDatabaseModule(): Module = module {
+    single<RoomDatabase.Builder<AppDatabase>> {
+        getDatabaseBuilder()
+    }
 }

@@ -8,15 +8,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.LocalPlatformContext
 import com.ranjan.somiq.core.di.AppImageLoaderFactory
 import com.ranjan.somiq.core.di.LocalAppImageLoader
-import com.ranjan.somiq.core.di.platformModules
 import com.ranjan.somiq.core.presentation.snackbar.LocalSnackbar
-import com.ranjan.somiq.di.sharedModules
 import com.ranjan.somiq.navigation.AppNavigation
 import com.ranjan.somiq.presentation.theme.MyApplicationTheme
-import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
-import org.koin.core.KoinApplication
-import org.koin.dsl.koinConfiguration
 
 @Composable
 @Preview

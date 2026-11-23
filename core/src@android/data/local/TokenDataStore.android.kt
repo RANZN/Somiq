@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TOKEN_DATA_STORE_NAME = "somiq_tokens.preferences_pb"
 
@@ -15,10 +12,4 @@ private val Context.tokenDataStore: DataStore<Preferences> by preferencesDataSto
     name = TOKEN_DATA_STORE_NAME,
 )
 
-private object TokenDataStoreFactory : KoinComponent {
-    private val context: Context by inject()
-    fun create(scope: CoroutineScope): DataStore<Preferences> = context.tokenDataStore
-}
-
-actual fun createTokenDataStore(): DataStore<Preferences> =
-    TokenDataStoreFactory.create(GlobalScope)
+actual fun createTokenDataStore(): DataStore<Preferences> = getKoin().get<Context>().tokenDataStore

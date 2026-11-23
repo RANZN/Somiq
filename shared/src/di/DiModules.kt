@@ -5,7 +5,6 @@ import com.ranjan.somiq.app.postDetail.di.postDetailModule
 import com.ranjan.somiq.app.search.di.searchModule
 import com.ranjan.somiq.auth.di.authModule
 import com.ranjan.somiq.chat.di.chatModule
-import com.ranjan.somiq.core.di.networkModule
 import com.ranjan.somiq.feed.di.feedModule
 import com.ranjan.somiq.profile.di.profileModule
 import com.ranjan.somiq.reels.di.reelsModule

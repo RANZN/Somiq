@@ -6,8 +6,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import okio.Path.Companion.toPath
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -25,15 +26,13 @@ private fun tokenDataStoreFilePath(): String {
     )
     return requireNotNull(documentDirectory?.path) + "/" + TOKEN_DATA_STORE_NAME
 }
+private val dataStoreScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-private object TokenDataStoreFactory {
-    fun create(scope: CoroutineScope): DataStore<Preferences> =
-        PreferenceDataStoreFactory.createWithPath(
-            scope = scope,
-            produceFile = { tokenDataStoreFilePath().toPath() },
-        )
+private val tokenDataStore by lazy {
+    PreferenceDataStoreFactory.createWithPath(
+        scope = dataStoreScope,
+        produceFile = { tokenDataStoreFilePath().toPath() },
+    )
 }
 
-@OptIn(DelicateCoroutinesApi::class)
-actual fun createTokenDataStore(): DataStore<Preferences> =
-    TokenDataStoreFactory.create(GlobalScope)
+actual fun createTokenDataStore(): DataStore<Preferences> = tokenDataStore

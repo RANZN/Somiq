@@ -1,4 +1,4 @@
-package com.ranjan.somiq.data.db
+package com.ranjan.somiq.db
 
 import androidx.room.Room
 import androidx.room.RoomDatabase

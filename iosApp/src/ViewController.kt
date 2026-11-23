@@ -1,7 +1,7 @@
 package com.ranjan.somiq
 
 import androidx.compose.ui.window.ComposeUIViewController
-import di.initKoin
+import com.ranjan.somiq.di.initKoin
 import platform.UIKit.UIViewController
 
 fun ViewController(): UIViewController {

@@ -54,7 +54,7 @@ settings:
       exposedAccessors: true
   kotlin:
     freeCompilerArgs:
-      - Xexpect-actual-classes
+      - -Xexpect-actual-classes
     serialization: enabled
     ksp:
       processors:

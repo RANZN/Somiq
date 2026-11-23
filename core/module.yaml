@@ -48,3 +48,5 @@ settings:
       exposedAccessors: true
   kotlin:
     serialization: enabled
+    freeCompilerArgs:
+      - -Xexpect-actual-classes

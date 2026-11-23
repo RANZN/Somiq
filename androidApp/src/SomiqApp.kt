@@ -1,7 +1,7 @@
 package com.ranjan.somiq
 
 import android.app.Application
-import di.initKoin
+import com.ranjan.somiq.di.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 

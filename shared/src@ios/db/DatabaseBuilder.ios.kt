@@ -1,9 +1,8 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-
-package com.ranjan.somiq.data.db
+package com.ranjan.somiq.db
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
@@ -17,6 +16,7 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     )
 }
 
+@OptIn(ExperimentalForeignApi::class)
 private fun documentDirectory(): String {
     val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,

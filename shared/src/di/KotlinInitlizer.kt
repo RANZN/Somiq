@@ -1,9 +1,8 @@
-package di
+package com.ranjan.somiq.di
 
+import com.ranjan.somiq.core.di.coreModule
 import com.ranjan.somiq.core.di.networkModule
 import com.ranjan.somiq.core.di.platformModules
-import com.ranjan.somiq.di.localDatabaseModule
-import com.ranjan.somiq.di.sharedModules
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
@@ -14,5 +13,6 @@ fun initKoin(
     modules(platformModules)
     modules(localDatabaseModule)
     modules(networkModule)
+    modules(coreModule)
     modules(sharedModules)
 }

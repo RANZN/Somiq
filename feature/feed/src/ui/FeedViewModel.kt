@@ -61,7 +61,7 @@ class FeedViewModel(
                 is Intent.OnChatClick -> emitEffect(Effect.NavigateToChat)
                 is Intent.OnAddStoryClick -> emitEffect(Effect.NavigateToCreateStory)
                 is Intent.ClearError -> _uiState.update {it.copy(error = null) }
-                is Intent.DismissUploadProgress -> postUploadService.resetToIdle()
+                is Intent.DismissUploadProgress -> postUploadService.cancelUpload()
                 is Intent.Retry -> {
                     _uiState.update {it.copy(error = null) }
                     loadFeed()

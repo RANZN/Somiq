@@ -15,5 +15,5 @@ sealed interface UploadState {
 interface PostUploadService {
     val uploadState: StateFlow<UploadState>
     fun uploadPost(caption: String, imageUris: List<String>)
-    fun resetToIdle()
+    fun cancelUpload()
 }

@@ -1,9 +1,9 @@
 package com.ranjan.somiq.di
 
 import androidx.room.RoomDatabase
-import com.ranjan.somiq.data.db.AppDatabase
-import com.ranjan.somiq.data.db.getRoomDatabase
-import com.ranjan.somiq.data.db.platformDatabaseModule
+import com.ranjan.somiq.db.AppDatabase
+import com.ranjan.somiq.db.getRoomDatabase
+import com.ranjan.somiq.db.platformDatabaseModule
 import org.koin.dsl.module
 
 val localDatabaseModule = module {
